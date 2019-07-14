@@ -1,0 +1,6 @@
+.map {
+	height: 840px;
+	width: 100%;
+	background: url(map-background.jpg) repeat;
+	margin-bottom: 10px;
+}

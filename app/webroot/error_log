@@ -1,0 +1,4 @@
+[08-Feb-2019 16:59:46 UTC] PHP Fatal error:  Call to a member function find() on null in /home/elmundotec/observatorio/app/Controller/DistritosController.php on line 125
+[08-Feb-2019 17:00:06 UTC] PHP Fatal error:  Call to a member function find() on null in /home/elmundotec/observatorio/app/Controller/DistritosController.php on line 125
+[08-Feb-2019 17:00:15 UTC] PHP Fatal error:  Call to a member function find() on null in /home/elmundotec/observatorio/app/Controller/DistritosController.php on line 125
+[08-Feb-2019 17:00:49 UTC] PHP Fatal error:  Call to a member function find() on null in /home/elmundotec/observatorio/app/Controller/DistritosController.php on line 125
