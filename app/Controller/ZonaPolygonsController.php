@@ -15,6 +15,52 @@ class ZonaPolygonsController extends AppController {
  */
 	public $components = array('Paginator');
 
+	public function panamericanosgeojson(){
+	    
+	    $this->autoRender = false;
+	    $this->response->type('json');
+	    
+	    $options = array('fields'  =>  array('id','nombre'),
+            	        'conditions'   =>  array('Institucion.tipo_institucion_id' => 4), //Juegos Panamericanos
+            	        'recursive'    =>  -1
+                	    );        
+	    
+	    $zonas     = $this->ZonaPolygon->Institucion->find('all', $options);
+	    
+	    foreach ($zonas as $i => $row){
+	        
+	        $options = array('fields'      =>  array('id','horizontal','vertical','orden'),
+            	            'conditions'   =>  array('ZonaPolygon.institucion_id' => $row['Institucion']['id']),
+            	            'recursive'    =>  -1,
+            	            'order'        =>  array('id DESC')
+            	        );
+	        
+	        $polygon   =   $this->ZonaPolygon->find('all',$options);
+	        $cordenada =   null;
+	        
+	        foreach ($polygon as $pol){
+	            $cordenada[] = '['.$pol['ZonaPolygon']['horizontal'].','.$pol['ZonaPolygon']['vertical'].']';
+	        }
+	        if (empty($cordenada)){
+	            unset($zonas[$i]);
+	            continue;
+	        }
+	        
+	        $zonas[$i]['type'] = 'Feature';
+	        $zonas[$i]['properties'] = $row['Institucion'];
+	        unset($zonas[$i]['Institucion']);
+	        $zonas[$i]['geometry'] = array('type' => 'Polygon',"coordinates"=>array(array(implode($cordenada, ','))));
+	    }
+	    
+	    
+	    $zonas     = array('type' => 'FeatureCollection','features'=>$zonas);
+	    //pr($zonas);exit;
+	    $json = json_encode($zonas);
+	    $json = str_replace('[["[', '[[[', $json);
+	    $json = str_replace(']"]]', ']]]', $json);
+	    $this->response->body($json);
+	    
+	}
 /**
  * index method
  *

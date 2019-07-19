@@ -1,11 +1,10 @@
-
 	var style = new ol.style.Style({
 		fill : new ol.style.Fill({
-			color : 'rgba(255, 255, 255, 0.5)'//color de backgrount de poligono
+			color : 'rgba(255, 255, 255, 0.3)'//color de backgrount de poligono
 		}),
 		stroke : new ol.style.Stroke({
 			color : '#319FD3',
-			width : 2 //Ancho de limite
+			width : 1 //Ancho de limite
 		}),
 		text : new ol.style.Text({
 			font : '10px Calibri,sans-serif',
@@ -20,20 +19,18 @@
 	});
 
 	var departamento_id = $('#ReportesDepartamentoId option:selected').val();
-	var provincia_id = $('#ReportesProvinciaId option:selected').val();
-	
+	var provincia_id = $('#ReportesProvinciaId option:selected').val();	
 	var base = $('base').attr('href');
-	var url  = base+'/Distritos/geojson?departamento_id='+departamento_id+'&provincia_id='+provincia_id;
-	var url2 = base+'/Distritos/delitosgeojson?departamento_id='+departamento_id+'&provincia_id=' + provincia_id;
-	var url3 = base+'/Distritos/institucionesgeojson?departamento_id='+departamento_id+'&provincia_id=' + provincia_id;
+	var url  = base+'Distritos/geojson?departamento_id='+departamento_id+'&provincia_id='+provincia_id;
+	var url2 = base+'Distritos/delitosgeojson?departamento_id='+departamento_id+'&provincia_id=' + provincia_id;
+	var url3 = base+'Distritos/institucionesgeojson?departamento_id='+departamento_id+'&provincia_id=' + provincia_id;
+	var url4 = base+'ZonaPolygons/panamericanosgeojson';
 	
-	/*********Puntos*********/
-	var ftrCoordenadas = [];
+	/*********PUNTOS DELITOS*********/
+	var ftrCoordenadas 		= [];
 	var vectorSource;
-	var a_vectorLayer = [];
-	var a_style = [];
-	var a_clusterSource = [];
-	var distance = document.getElementById('distance');
+	var a_vectorLayerDelito	= [];
+	var a_style	 			= [];
 	
 	if($('.form-check input:checked').serialize()==''){
 		$("form input:checkbox").attr( "checked" , true );
@@ -45,7 +42,6 @@
 		async : false,
 		method: 'get',
 		data: $('.form-check input:checked, input[type=text], input[type=hidden]').serialize(),
-		//data: {categoria: $('.form-check input:checked').serialize()},
 		success : function(json1) {
 			$.each(json1, function(key, data) {
 				if (key == 'features') {
@@ -73,7 +69,7 @@
 								anchor : [ 0.5, 30 ],
 								anchorXUnits : 'fraction',
 								anchorYUnits : 'pixels',
-								scale: 0.4,
+								scale: 0.6,
 								src : './img/map/'+v.delito 
 							}))
 						});
@@ -84,19 +80,17 @@
 							url : url
 						});
 						
-						a_vectorLayer[k] = new ol.layer.Vector({
+						a_vectorLayerDelito[k] = new ol.layer.Vector({
 													source : vectorSource,
 													style : a_style[k]
 											});
-						
-						
 					});
 				}
 			});
 		}
 	});
 	
-	/*********Institucion*********/
+	/*********INSTITUTOS*********/
 	var ftrCoordenadasInst = [];
 	var vectorSourceInst;
 	var a_vectorLayerInst = [];
@@ -106,9 +100,7 @@
 		url : url3,
 		dataType : 'json',
 		async : false,
-		method: 'get',
-		//data: $('.form-check input:checked, input[type=text], input[type=hidden]').serialize(),
-		//data: {categoria: $('.form-check input:checked').serialize()},
+		method: 'get',		
 		success : function(json1) {
 			$.each(json1, function(key, data) {
 				if (key == 'features') {
@@ -136,7 +128,7 @@
 								anchor : [ 0.5, 30 ],
 								anchorXUnits : 'fraction',
 								anchorYUnits : 'pixels',
-								scale: 0.2,
+								scale: 0.3,
 								src : './img/map/'+v.institucion
 							}))
 						});
@@ -159,60 +151,50 @@
 	});
 
 	/*******Dibuja el mapa ********/
-	/*
 	var raster = new ol.layer.Tile({
-		source : new ol.source.OSM()
-	});
-	*/
-	var raster = new ol.layer.Tile({
-	source: new ol.source.XYZ({
-	attributions: 'Tiles © <a href="https://services.arcgisonline.com/ArcGIS/' +
-	  'rest/services/World_Topo_Map/MapServer">ArcGIS</a>',
-	url: 'https://server.arcgisonline.com/ArcGIS/rest/services/' +
-	  'World_Topo_Map/MapServer/tile/{z}/{y}/{x}'
-	})
-		});
-	
-	
+						source		: new ol.source.XYZ({
+						attributions: 'Tiles © <a href="https://services.arcgisonline.com/ArcGIS/' + 'rest/services/World_Topo_Map/MapServer">ArcGIS</a>',
+						url			: 'https://server.arcgisonline.com/ArcGIS/rest/services/' + 'World_Topo_Map/MapServer/tile/{z}/{y}/{x}'
+						})
+					});
+		
 	/*******End Dibuja el mapa ********/
 	
-	var source = new ol.source.Vector({
-		format : new ol.format.GeoJSON(),
-		url : url
-	});
+		var source = new ol.source.Vector({
+							format 	: new ol.format.GeoJSON(),
+							url 	: url
+						});
 	 
 	/*******Dibuja el perimetro ********/
 	var vectorLayer = new ol.layer.Vector({
-		source : source,
-		style : function(feature) {
-			style.getText().setText(feature.get('nombdist'));
-			return style;
-		}
+		source 	: source,
+		style 	: function(feature) {
+						style.getText().setText(feature.get('nombdist'));
+						return style;
+					}
 	});
 	/*******Dibuja el perimetro ********/
 	
 	/*******Centrar el poligo en el mapa********/
-	var coordenada;
-	var vectorSourcePol;
-
-	$.ajax({
-		url: base+'/Provincias/geojson?departamento_id='+departamento_id+'&provincia_id='+provincia_id,
-	    dataType: 'json',
-	    async: false,
-	}).done(function(data){
-		//debugger;
-	    var format = new ol.format.GeoJSON();
-	    vectorSourcePol = format.readFeatures(data, {
-					        defaultDataProjection: ol.proj.get('EPSG:3765'),
-					        featureProjection: 'EPSG:3857'
-					    });
-	    Extent = vectorSourcePol[0].getGeometry().getExtent();  
-	    
-	    X = Extent[0] + (Extent[2]-Extent[0])/2;
-	    Y = Extent[1] + (Extent[3]-Extent[1])/2;
-	    coordenada = [X, Y];
-	    
-	});
+		var coordenada;
+		var vectorSourcePol;
+	
+		$.ajax({
+			url: base+'Provincias/geojson?departamento_id='+departamento_id+'&provincia_id='+provincia_id,
+		    dataType: 'json',
+		    async: false,
+		}).done(function(data){
+		    var format = new ol.format.GeoJSON();
+		    vectorSourcePol = format.readFeatures(data, {
+						        defaultDataProjection: ol.proj.get('EPSG:3765'),
+						        featureProjection: 'EPSG:3857'
+						    });
+		    Extent = vectorSourcePol[0].getGeometry().getExtent();  
+		    
+		    X = Extent[0] + (Extent[2]-Extent[0])/2;
+		    Y = Extent[1] + (Extent[3]-Extent[1])/2;
+		    coordenada = [X, Y];	    
+		});
 	
 	var view = new ol.View({
 		center : coordenada
@@ -233,108 +215,92 @@
 	
 	/*******END Visualización de las coordenadas con el mouse********/
 	
-	var styles = [
-		  /* We are using two different styles for the polygons:
-		   *  - The first style is for the polygons themselves.
-		   *  - The second style is to draw the vertices of the polygons.
-		   *    In a custom `geometry` function the vertices of a polygon are
-		   *    returned as `MultiPoint` geometry, which will be used to render
-		   *    the style.
-		   */
-		  new ol.style.Style({
-		    stroke: new ol.style.Stroke({
-		      color: 'blue',
-		      width: 3
-		    }),
-		    fill: new ol.style.Fill({
-		      color: 'rgba(0, 0, 255, 0.1)'
-		    })
-		  }),
-		  new ol.style.Style({
-		    image: new ol.style.Circle({
-		      radius: 5,
-		      fill: new ol.style.Fill({
-		        color: 'orange'
-		      })
-		    }),
-		    geometry: function(feature) {
-		      // return the coordinates of the first ring of the polygon
-		      var coordinates = feature.getGeometry().getCoordinates()[0];
-		      return new ol.geom.MultiPoint(coordinates);
-		    }
-		  })
-		];
-
-		var geojsonObject = {
-		  'type': 'FeatureCollection',
-		  'crs': {
-		    'type': 'name',
-		    'properties': {
-		      'name': 'EPSG:3857'
-		    }
-		  },
-		  'features': [{
-		    'type': 'Feature',
-		    'geometry': {
-		      'type': 'Polygon',
-		      'coordinates': [[[-5e6, 6e6], [-5e6, 8e6], [-3e6, 8e6],
-		        [-3e6, 6e6], [-5e6, 6e6]]]
-		    }
-		  }, {
-		    'type': 'Feature',
-		    'geometry': {
-		      'type': 'Polygon',
-		      'coordinates': [[[-2e6, 6e6], [-2e6, 8e6], [0, 8e6],
-		        [0, 6e6], [-2e6, 6e6]]]
-		    }
-		  }, {
-		    'type': 'Feature',
-		    'geometry': {
-		      'type': 'Polygon',
-		      'coordinates': [[[1e6, 6e6], [1e6, 8e6], [3e6, 8e6],
-		        [3e6, 6e6], [1e6, 6e6]]]
-		    }
-		  }, {
-		    'type': 'Feature',
-		    'geometry': {
-		      'type': 'Polygon',
-		      'coordinates': [[[-2e6, -1e6], [-1e6, 1e6],
-		        [0, -1e6], [-2e6, -1e6]]]
-		    }
-		  }]
-		};
-
-		var source = new ol.source.Vector({
-		  features: (new ol.format.GeoJSON()).readFeatures(geojsonObject)
+	/*******Zonas Panamericanos********/
+		var stylePanamericano = new ol.style.Style({
+			fill : new ol.style.Fill({
+				color : 'rgba(255, 130, 46, 0.6)'//color de backgrount de poligono
+			}),
+			stroke : new ol.style.Stroke({
+				color : '#FA5B0F',
+				width : 2 //Ancho de limite
+			}),
+			text : new ol.style.Text({
+				font : '10px Calibri,sans-serif',
+				fill : new ol.style.Fill({
+					color : '#000'
+				}),
+				stroke : new ol.style.Stroke({
+					color : '#fff',
+					width : 5
+				})
+			})
+		});	
+		var sourcePanamericano = new ol.source.Vector({
+			format : new ol.format.GeoJSON(),
+			url : url4
 		});
 
-		var layer = new ol.layer.Vector({
-		  source: source,
-		  style: styles
+	var vectorLayerPanamericano = new ol.layer.Vector({
+		  source: sourcePanamericano,
+		  style : function(feature) {
+					  stylePanamericano.getText().setText(feature.get('nombre'));
+						return stylePanamericano;
+					}
 		});
+	/*******Zonas Panamericanos********/
 	
+	var a_layers = [ raster, vectorLayer, vectorLayerPanamericano];
 	
-	var a_layers = [ raster, layer, vectorLayer];
-	
-	for (var i = 0; i < a_vectorLayer.length; i++) {
-		a_layers.push(a_vectorLayer[i]);
+	for (var i = 0; i < a_vectorLayerDelito.length; i++) {
+		a_layers.push(a_vectorLayerDelito[i]);
 	}
-	
-	for (var i = 0; i < a_vectorLayerInst.length; i++) {
-		//a_layers.push(a_vectorLayerInst[i]);
+	for (var i = 0; i < a_vectorLayerInst.length; i++) {				
+		a_layers.push(a_vectorLayerInst[i]);
 	}
 		
+	/*******Popup detalle*******/
 	
+	var container 	= document.getElementById('popup');
+	var content 	= document.getElementById('popup-content');
+	var closer 		= document.getElementById('popup-closer');
+	
+	var overlay = new ol.Overlay({
+					  element			: container,
+					  autoPan			: true,
+					  autoPanAnimation	: {
+										    duration: 250
+										  }
+					});
+	
+	closer.onclick = function() {
+						  overlay.setPosition(undefined);
+						  closer.blur();
+						  return false;
+						};	
+						
 /*******MAPA*******/	
-var map = new ol.Map({
-	controls : controls,
+var map = new ol.Map({	
 	layers : a_layers,
+	overlays: [overlay],
 	target : 'map',
+	controls : controls,
 	view : view
 });
 
-	//Redimencionar el zoom para el tamaño del poligono
-	//map.getView().fit(vectorSourcePol[0].getGeometry(), map.getSize())
+/*******ACCION Popup detalle*******/
+map.on('singleclick', function(evt) {
+	var feature = map.forEachFeatureAtPixel(evt.pixel,function(feature) {return feature;});
+	
+	if (feature !== undefined && feature.get('name') !== undefined) {
+		  var coordinate 	= evt.coordinate;
+		  var xy 			= ol.coordinate.toStringXY(ol.proj.transform(coordinate,'EPSG:3857', 'EPSG:4326'), 15);	  
+		  content.innerHTML = '<p><b>Comiseria:</b></p>' + xy;
+		  overlay.setPosition(coordinate);
+	}  
+  
+});
+
+	/*****Redimencionar el zoom deacuerdo al poligono o marco de busqueda.****/	
 	ghostZoom = $('#ReportesGhostZoom').val();
 	centroZoom = $('#ReportesCentroZoom').val().split(',');
 	if (ghostZoom != '' && centroZoom != '') {
@@ -344,90 +310,169 @@ var map = new ol.Map({
 		map.getView().fit(vectorSourcePol[0].getGeometry(), map.getSize())
 	} 
 
-	var highlightStyle = new ol.style.Style({
-		stroke : new ol.style.Stroke({
-			color : '#f00',
-			width : 1
-		}),
-		fill : new ol.style.Fill({
-			color : 'rgba(255,0,0,0.1)'
-		}),
-		text : new ol.style.Text({
-			font : '12px Calibri,sans-serif',
-			fill : new ol.style.Fill({
-				color : '#000'
-			}),
-			stroke : new ol.style.Stroke({
-				color : '#fff',
-				width : 3
-			})
+	var ghostZoom = map.getView().getZoom();
+	    map.on('moveend', function(evt) {
+	    	//console.info(map.getView().getZoom());
+	        if (ghostZoom != map.getView().getZoom()) {
+	            ghostZoom = map.getView().getZoom();            
+	            $('#ReportesGhostZoom').val(ghostZoom);            
+	        }
+	        centroZoom =map.getView().getCenter();
+	        $('#ReportesCentroZoom').val(centroZoom);        
+	    });	
+	    
+/******Geolocación Ubicacoin GPS******/
+	/*
+	function el(id) {
+		  return document.getElementById(id);
+		}
+	
+	var geolocation = new ol.Geolocation({
+		  projection: view.getProjection()
 		})
-	});
-
-	var featureOverlay = new ol.layer.Vector({
-		source : new ol.source.Vector(),
-		map : map,
-		style : function(feature) {
-			highlightStyle.getText().setText(feature.get('nombdist'));
-			return highlightStyle;
-		}
-	});
-
-	var highlight;
-	var displayFeatureInfo = function(pixel) {
-		
-		var feature = map.forEachFeatureAtPixel(pixel, function(feature) {
-			return feature;
+	
+		el('chkGeolocalizacion').addEventListener('change', function() {
+		  geolocation.setTracking(this.checked);
 		});
-
-		var info = document.getElementById('info');
-		if (feature) {
-			console.log(source.getFeatures());
-			info.innerHTML = 'Distrito: '+ feature.get('nombdist') + ' Area: '+ feature.get('area_minam');
-		} else {
-			//info.innerHTML = '&nbsp;';
-		}
 		
-		if (feature !== highlight) {
-			if (highlight) {
-				featureOverlay.getSource().removeFeature(highlight);
-			}
-			if (feature) {
-				featureOverlay.getSource().addFeature(feature);
-			}
-			highlight = feature;
-		}
-
-	};
-
-	map.on('click', function(evt) {
-		displayFeatureInfo(evt.pixel);
-	});
-/*
-	var zoomDepartamento = document.getElementById('zoomDepartamento');
-	zoomDepartamento.addEventListener('click', function() {	
-
-		var departamento = $('#ReportesDepartamentoId option:selected').text();
-		
-		if(departamento == 'Seleccionar'){
-			location.reload();
-		}else{
-			var features = source.getFeatures();
-		    for(var i=0; i< features.length; i++) {
-		    	if(source.getFeatures()[i].get('nombdist') == departamento){
-			    	break;
-		    	}	    	
-		    }
-			
-			var feature = source.getFeatures()[i];
-			var polygon = (feature.getGeometry());
-			
-			view.fit(polygon, {
-				padding : [ 5, 20, 5, 20 ],
-				constrainResolution : false
-			});
-		}
-		
-		
-	}, false);
+		// update the HTML page when the position changes.
+		geolocation.on('change', function() {
+		});
 	*/
+		var positionFeature = new ol.Feature();
+	
+		positionFeature.setStyle(new ol.style.Style({
+			image: new ol.style.Icon(/** @type {olx.style.IconOptions} */
+					({
+						anchor : [ 0.5, 30 ],
+						anchorXUnits : 'fraction',
+						anchorYUnits : 'pixels',
+						src : '../img/map/icons8-visit-40.png'
+					}))
+		}));
+	/*
+		geolocation.on('change:position', function() {
+		  var coordinates = geolocation.getPosition();
+		  positionFeature.setGeometry(coordinates ?new ol.geom.Point(coordinates) : null);
+		  view.setCenter(coordinates);
+	      view.setZoom(14);
+		});
+	*/
+	new ol.layer.Vector({
+	  map: map,
+	  source: new ol.source.Vector({
+	    features: [positionFeature]
+	  })
+	});	
+
+/******Geolocación Ubicacoin GPS******/		    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    

@@ -23,12 +23,12 @@ class ReportesController extends AppController {
                                             'departamento_id'   => 15,
                                             'provincia_id'      => 112,
                                             //'distrito_id'       => 842,
-                                            'fecha_de'          => '2019-06-29',
+                                            'fecha_de'          => '2019-06-24',
                                             'hasta'             => '2019-06-30',
                                             'horas'             => '12:00 AM - 11:59 PM',
                                             'horas1'            => 0,
                                             'horas2'            => 24,
-                                            'ghostZoom'         => 12,
+                                            'ghostZoom'         => 12.5,
                                             'centroZoom'        => '-8570566.091968212,-1362649.9285509586'
                                         );
                                         break;

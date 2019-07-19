@@ -307,6 +307,7 @@ class DistritosController extends AppController {
 	 * @return void
 	 */
 	public function geojson() {
+	    
 	    $this->autoRender = false;
 	    $this->response->type('json');
 	    
@@ -315,25 +316,28 @@ class DistritosController extends AppController {
 	    if (isset($this->request->query['distrito_id'])){
 	        $distrito_ids = $this->request->query['distrito_id'];
 	    }else{
-	        $options = array('fields'=>array('DISTINCT distrito_id'),'recursive' => -1);
-	        $polygon_activo = $this->Distrito->DistPolygon->find('all',$options);
-	        $distrito_ids = Hash::extract($polygon_activo, '{n}.DistPolygon.distrito_id');
+	        $options           = array('fields'=>array('DISTINCT distrito_id'),'recursive' => -1);
+	        $polygon_activo    = $this->Distrito->DistPolygon->find('all',$options);
+	        $distrito_ids      = Hash::extract($polygon_activo, '{n}.DistPolygon.distrito_id');
 	    }
 	    
-	    $options = array('fields'=>array('id','iddist','nombdist','nombprov','area_minam'),
-	        'conditions' => array('provincia_id' => $provincia_id, 'id' => $distrito_ids),
-	        'recursive' => -1);
+	    $options = array('fields'      =>  array('id','iddist','nombdist','nombprov','area_minam'),
+            	        'conditions'   =>  array('provincia_id' => $provincia_id, 'id' => $distrito_ids),
+            	        'recursive'    =>  -1);
+	    
 	    $distritos = $this->Distrito->find('all',$options);
+	    
 	    foreach ($distritos as $i => $row){
 	        
-	        $options = array('fields'=>array('id','horizontal','vertical','orden'),
-	            'conditions'=>array('DistPolygon.distrito_id' => $row['Distrito']['id']),
-	            'recursive' => -1,
-	            'order' => array('id DESC')
-	        );
+	        $options = array('fields'      =>  array('id','horizontal','vertical','orden'),
+            	            'conditions'   =>  array('DistPolygon.distrito_id' => $row['Distrito']['id']),
+            	            'recursive'    =>  -1,
+            	            'order'        =>  array('id DESC')
+            	        );
 	        
-	        $polygon = $this->Distrito->DistPolygon->find('all',$options);
-	        $cordenada=null;
+	        $polygon   =   $this->Distrito->DistPolygon->find('all',$options);	        
+	        $cordenada =   null;
+	        
 	        foreach ($polygon as $pol){
 	            $cordenada[] = '['.$pol['DistPolygon']['horizontal'].','.$pol['DistPolygon']['vertical'].']';
 	        }
@@ -346,14 +350,15 @@ class DistritosController extends AppController {
 	        $distritos[$i]['properties'] = $row['Distrito'];
 	        unset($distritos[$i]['Distrito']);
 	        $distritos[$i]['geometry'] = array('type' => 'Polygon',"coordinates"=>array(array(implode($cordenada, ','))));
-	        //$distritos[$i]['geometry'] = array('type' => 'Polygon',"coordinates"=>array(array($cordenada)));
+
 	    }
 	    $distritos = array('type' => 'FeatureCollection','features'=>$distritos);
 	    //pr($distritos);exit;
 	    $json = json_encode($distritos);
 	    $json = str_replace('[["[', '[[[', $json);
 	    $json = str_replace(']"]]', ']]]', $json);
-	    $this->response->body($json);;
+	    $this->response->body($json);
+	    
 	}
 	
 	
