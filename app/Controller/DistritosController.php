@@ -109,8 +109,8 @@ class DistritosController extends AppController {
 	        $provincia_ids     = $this->request->query['provincia_id'];
 	    }else{
 	        $options           = array('fields'     => array('DISTINCT id'),
-	            'conditions'   =>  array('departamento_id' => $departamento_id),
-	            'recursive'  => -1);
+                        	            'conditions'   =>  array('departamento_id' => $departamento_id),
+                        	            'recursive'  => -1);
 	        $provincias_act    = $this->Distrito->Provincia->find('all',$options);
 	        $provincia_ids     = Hash::extract($provincias_act, '{n}.Provincia.id');
 	    }
@@ -120,17 +120,17 @@ class DistritosController extends AppController {
 	        $distrito_ids      = $this->request->query['distrito_id'];
 	    }else{
 	        $options           = array('fields'     =>  array('DISTINCT id'),
-	            'conditions' =>  array('provincia_id' => $provincia_ids),
-	            'recursive'  =>  -1);
+                        	            'conditions' =>  array('provincia_id' => $provincia_ids),
+                        	            'recursive'  =>  -1);
 	        $polygon_activo    = $this->Distrito->find('all',$options);
 	        $distrito_ids      = Hash::extract($polygon_activo, '{n}.Distrito.id');
 	    }
 	    
 	    //pr($provincia_ids);
 	    $options = array('fields'=>array('id','iddist','nombdist','nombprov','area_minam'),
-	        'conditions' => array('provincia_id' => $provincia_ids, 'Distrito.id' => $distrito_ids)
-	        //,'limit' => 2
-	        ,'recursive' => -1
+            	        'conditions' => array('provincia_id' => $provincia_ids, 'Distrito.id' => $distrito_ids)
+            	        //,'limit' => 2
+            	        ,'recursive' => -1
 	    );
 	    
 	    //Quitamos la relaccion del perimetro del distritos
@@ -141,36 +141,54 @@ class DistritosController extends AppController {
 	    $delitos = null;
 	    foreach ($distritos as $i => $distrito){
 	        
-	        $conditions = array('Institucion.distrito_id' => $distrito['Distrito']['id'],);
+	        $conditions    = array('Institucion.distrito_id' => $distrito['Distrito']['id'],);
 	        
-	        $options = array(//'fields'=>array('id','latitud','longitud','creador'),
-	            'conditions'=> $conditions,
-	            //'recursive' => -1,
-	            //'limit' => 2,
-	            'order' => array('Institucion.creador DESC'),
-	        );
+	        $options       = array(//'fields'=>array('id','latitud','longitud','creador'),
+                    	            'conditions'=> $conditions,
+                    	            //'recursive' => -1,
+                    	            //'limit' => 2,
+                    	            'order' => array('Institucion.creador DESC'),
+                    	        );
 	        
-	        $polygon = $this->Institucion->find('all',$options);
-	        
-	        $a_institucion=null;
+	        $polygon       = $this->Institucion->find('all',$options);
+	        //pr($polygon);
+	        $a_institucion = null;
 	        
 	        foreach ($polygon as $pol){
-	            $a_institucion[$pol['TipoInstitucion']['institucion']][] = '['.$pol['Institucion']['longitud'].','.$pol['Institucion']['latitud'].']';
+	            //$a_institucion[$pol['TipoInstitucion']['institucion']][] = '['.$pol['Institucion']['longitud'].','.$pol['Institucion']['latitud'].']';
+	            
+	            $tipoInstitucion           = $pol['TipoInstitucion']['institucion'];
+	            $institucionCoordenadas    = '['.$pol['Institucion']['longitud'].','.$pol['Institucion']['latitud'].']';
+	            $delitos[]                 = array( 'institucion'  => $tipoInstitucion.'60px.png',
+                                	                'type'             => 'Feature',
+	                                                'institucionId'    => $pol['Institucion']['id'],
+	                                                'nombre'           => $pol['Institucion']['nombre'],
+                                	                'geometry'         => array('type'         => 'Polygon',
+                                                    	                    'coordinates'  => array(
+                                                    	                        array($institucionCoordenadas)
+                                                    	                    )
+                                	                                   )
+                                	            );
+	            
 	        }
-	        
+	        /*
+	        pr($a_institucion);
 	        if (empty($a_institucion)){
 	            unset($distritos[$i]);
 	            continue;
 	        }
 	        
 	        foreach ($a_institucion as $tipoInstitucion => $institucionCoordenadas ){
-	            $delitos[] = array('institucion'   => $tipoInstitucion.'60px.png',
-	                'type'     => 'Feature',
-	                'geometry' => array('type'        =>  'Polygon',
-	                    'coordinates' =>  array(array(implode($institucionCoordenadas, ','))))
-	            );
+	            $delitos[] = array( 'institucion'   => $tipoInstitucion.'60px.png',
+                	                'type'         => 'Feature',
+                	                'geometry'     => array('type'         => 'Polygon',
+            	                                            'coordinates'  => array(
+            	                                                                     array(implode($institucionCoordenadas, ','))
+            	                                                                   )
+                	                                   )
+	                               );
 	        }
-	        
+	        */
 	    }
 	    
 	    $delitos = array('type' => 'FeatureCollection','features'=>$delitos);
@@ -299,8 +317,7 @@ class DistritosController extends AppController {
 	    $this->response->body($json);
 	    
 	}
-	
-	
+		
 	/**
 	 * add geojson
 	 *
@@ -360,8 +377,7 @@ class DistritosController extends AppController {
 	    $this->response->body($json);
 	    
 	}
-	
-	
+		
 	/**
 	 * addjson method
 	 *

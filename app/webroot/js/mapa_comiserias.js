@@ -51,11 +51,10 @@ var style = new ol.style.Style({
 							if (v.geometry.coordinates[0].length >= 1) {
 								$.each(v.geometry.coordinates[0], function(i, c) {
 									ftrCoordenadas[i] = new ol.Feature({
-										geometry : new ol.geom.Point(ol.proj
-												.transform(c, 'EPSG:4326','EPSG:3857')),
-										name : c,
-										population : 4000,
-										rainfall : 500
+										geometry 	: new ol.geom.Point(ol.proj.transform(c, 'EPSG:4326','EPSG:3857')),
+										name 		: c,
+										population 	: 4000,
+										rainfall 	: 500
 									});
 	
 								});
@@ -63,27 +62,27 @@ var style = new ol.style.Style({
 							}
 						}
 						
-						a_style[k] = new ol.style.Style({	
-							image : new ol.style.Icon(
-							({
-								anchor : [ 0.5, 30 ],
-								anchorXUnits : 'fraction',
-								anchorYUnits : 'pixels',
-								scale: 0.6,
-								src : './img/map/'+v.delito //Icono del hurto
-							}))
-						});
+						a_style[k] 			= new ol.style.Style({	
+												image : new ol.style.Icon(
+												({
+													anchor 			: [ 0.5, 30 ],
+													anchorXUnits 	: 'fraction',
+													anchorYUnits 	: 'pixels',
+													scale			: 0.6,
+													src 			: './img/map/'+v.delito //Icono del hurto
+												}))
+											});
 						
-						vectorSource = new ol.source.Vector({
-							features : ftrCoordenadas,
-							format : new ol.format.GeoJSON(),
-							url : url
-						});
+						vectorSource 		= new ol.source.Vector({
+												features 	: ftrCoordenadas,
+												format 		: new ol.format.GeoJSON(),
+												url 		: url
+											});
 						
 						a_vectorLayerDelito[k] = new ol.layer.Vector({
-													source : vectorSource,
-													style : a_style[k]
-											});
+														source 	: vectorSource,
+														style 	: a_style[k]
+												});
 					});
 				}
 			});
@@ -95,7 +94,7 @@ var style = new ol.style.Style({
 	var vectorSourceInst;
 	var a_vectorLayerInst = [];
 	var a_styleInst = [];
-	
+	var institucion_nombre;
 	$.ajax({
 		url : url3,
 		dataType : 'json',
@@ -107,14 +106,13 @@ var style = new ol.style.Style({
 					$.each(data, function(k, v) {
 						ftrCoordenadasInst = [];
 						if (v.type == 'Feature') {
+							institucion_nombre = v.nombre;
 							if (v.geometry.coordinates[0].length >= 1) {
 								$.each(v.geometry.coordinates[0], function(i, c) {
 									ftrCoordenadasInst[i] = new ol.Feature({
-										geometry : new ol.geom.Point(ol.proj
-												.transform(c, 'EPSG:4326','EPSG:3857')),
-										name : c,
-										population : 4000,
-										rainfall : 500
+										geometry 	: new ol.geom.Point(ol.proj.transform(c, 'EPSG:4326','EPSG:3857')),
+										name 		: c,
+										nombre 		: institucion_nombre
 									});
 	
 								});
@@ -122,26 +120,26 @@ var style = new ol.style.Style({
 							}
 						}
 						
-						a_styleInst[k] = new ol.style.Style({	
-							image : new ol.style.Icon(
-							({
-								anchor : [ 0.5, 30 ],
-								anchorXUnits : 'fraction',
-								anchorYUnits : 'pixels',
-								scale: 0.3,
-								src : './img/map/'+v.institucion
-							}))
-						});
+						a_styleInst[k] 		= new ol.style.Style({	
+													image : new ol.style.Icon(
+													({
+														anchor 			: [ 0.5, 30 ],
+														anchorXUnits 	: 'fraction',
+														anchorYUnits 	: 'pixels',
+														scale			: 0.3,
+														src 			: './img/map/'+v.institucion
+													}))
+												});
 						
-						vectorSourceInst = new ol.source.Vector({
-							features : ftrCoordenadasInst,
-							format : new ol.format.GeoJSON(),
-							url : url
-						});
+						vectorSourceInst 	= new ol.source.Vector({
+												features 	: ftrCoordenadasInst,
+												format 		: new ol.format.GeoJSON(),
+												url 		: url
+											});
 						
 						a_vectorLayerInst[k] = new ol.layer.Vector({
-													source : vectorSourceInst,
-													style : a_styleInst[k]
+													source 	: vectorSourceInst,
+													style 	: a_styleInst[k]
 											});
 						
 					});
@@ -288,14 +286,17 @@ var map = new ol.Map({
 
 	/*******ACCION Popup detalle*******/
 	map.on('singleclick', function(evt) {
-		var feature = map.forEachFeatureAtPixel(evt.pixel,function(feature, layer) {
-						return feature;
+		var seleccion = map.forEachFeatureAtPixel(evt.pixel,function(feature, layer) {
+						//return feature;
+						return [feature, layer];
 					});
+		var feature = seleccion[0];
+		var layer 	= seleccion[1];
 		
-		if (feature !== undefined && feature.get('name') !== undefined) {
+		if (feature !== undefined && feature.get('nombre') !== undefined) {
 			  var coordinate 	= evt.coordinate;
 			  //var xy 			= ol.coordinate.toStringXY(ol.proj.transform(coordinate,'EPSG:3857', 'EPSG:4326'), 15);	
-			  content.innerHTML = '<p><b>Comiseria:</b></p>' + feature.get('name')[0] + ',' + feature.get('name')[1];
+			  content.innerHTML = '<p><b>Comiseria:</b></p>' + feature.get('nombre');
 			  overlay.setPosition(coordinate);
 		}  
 	  
