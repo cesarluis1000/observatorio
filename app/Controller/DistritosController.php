@@ -102,26 +102,25 @@ class DistritosController extends AppController {
 	    }else{
 	        $departamento_id = 0;
 	    }
-	    //$provincia_id = $this->request->query['provincia_id'];
 	    
 	    //Obtenemos la provincia o provincias de los DEPARTAMENTO
 	    if (isset($this->request->query['provincia_id'])){
 	        $provincia_ids     = $this->request->query['provincia_id'];
 	    }else{
-	        $options           = array('fields'     => array('DISTINCT id'),
+	        $options           = array('fields'        => array('DISTINCT id'),
                         	            'conditions'   =>  array('departamento_id' => $departamento_id),
-                        	            'recursive'  => -1);
+                        	            'recursive'    => -1);
 	        $provincias_act    = $this->Distrito->Provincia->find('all',$options);
 	        $provincia_ids     = Hash::extract($provincias_act, '{n}.Provincia.id');
 	    }
 	    
 	    //Obtenemos el distrito o distritos si es por PROVINCIA
-	    if (isset($this->request->query['distrito_id'])){
+	    if (isset($this->request->query['distrito_id']) && !empty($this->request->query['distrito_id'])){
 	        $distrito_ids      = $this->request->query['distrito_id'];
 	    }else{
-	        $options           = array('fields'     =>  array('DISTINCT id'),
-                        	            'conditions' =>  array('provincia_id' => $provincia_ids),
-                        	            'recursive'  =>  -1);
+	        $options           = array('fields'        =>  array('DISTINCT id'),
+                        	            'conditions'   =>  array('provincia_id' => $provincia_ids),
+                        	            'recursive'    =>  -1);
 	        $polygon_activo    = $this->Distrito->find('all',$options);
 	        $distrito_ids      = Hash::extract($polygon_activo, '{n}.Distrito.id');
 	    }
@@ -137,58 +136,37 @@ class DistritosController extends AppController {
 	    //$this->Distrito->unbindModel(array('hasMany'=>array('DistPolygon','Denuncia')));
 	    
 	    $distritos = $this->Distrito->find('all',$options);
-	    
+	    //pr($distritos);exit;
 	    $delitos = null;
 	    foreach ($distritos as $i => $distrito){
 	        
 	        $conditions    = array('Institucion.distrito_id' => $distrito['Distrito']['id'],);
 	        
-	        $options       = array(//'fields'=>array('id','latitud','longitud','creador'),
-                    	            'conditions'=> $conditions,
-                    	            //'recursive' => -1,
-                    	            //'limit' => 2,
-                    	            'order' => array('Institucion.creador DESC'),
+	        $options       = array('conditions'=> $conditions,
                     	        );
 	        
 	        $polygon       = $this->Institucion->find('all',$options);
-	        //pr($polygon);
+	        //pr($polygon); exit();
 	        $a_institucion = null;
 	        
 	        foreach ($polygon as $pol){
-	            //$a_institucion[$pol['TipoInstitucion']['institucion']][] = '['.$pol['Institucion']['longitud'].','.$pol['Institucion']['latitud'].']';
-	            
 	            $tipoInstitucion           = $pol['TipoInstitucion']['institucion'];
 	            $institucionCoordenadas    = '['.$pol['Institucion']['longitud'].','.$pol['Institucion']['latitud'].']';
 	            $delitos[]                 = array( 'institucion'  => $tipoInstitucion.'60px.png',
-                                	                'type'             => 'Feature',
-	                                                'institucionId'    => $pol['Institucion']['id'],
-	                                                'nombre'           => $pol['Institucion']['nombre'],
-                                	                'geometry'         => array('type'         => 'Polygon',
-                                                    	                    'coordinates'  => array(
-                                                    	                        array($institucionCoordenadas)
-                                                    	                    )
+                                	                'type'                 => 'Feature',
+	                                                'tipoInstitucion'      => $pol['TipoInstitucion']['institucion'],	                
+	                                                'institucionId'        => $pol['Institucion']['id'],	                   
+	                                                'institucionNombre'    => $pol['Institucion']['nombre'],
+	                                                //'distritoNombre'       => $pol['Distrito']['nombdist'],
+	                                                'geometry'             => array('type'         => 'Polygon',
+                                                            	                    'coordinates'  => array(
+                                                            	                        array($institucionCoordenadas)
+                                                            	                    )
                                 	                                   )
                                 	            );
 	            
 	        }
-	        /*
-	        pr($a_institucion);
-	        if (empty($a_institucion)){
-	            unset($distritos[$i]);
-	            continue;
-	        }
-	        
-	        foreach ($a_institucion as $tipoInstitucion => $institucionCoordenadas ){
-	            $delitos[] = array( 'institucion'   => $tipoInstitucion.'60px.png',
-                	                'type'         => 'Feature',
-                	                'geometry'     => array('type'         => 'Polygon',
-            	                                            'coordinates'  => array(
-            	                                                                     array(implode($institucionCoordenadas, ','))
-            	                                                                   )
-                	                                   )
-	                               );
-	        }
-	        */
+	       
 	    }
 	    
 	    $delitos = array('type' => 'FeatureCollection','features'=>$delitos);
@@ -224,7 +202,7 @@ class DistritosController extends AppController {
 	    }
 	    
 	    //Obtenemos el distrito o distritos si es por PROVINCIA
-	    if (isset($this->request->query['distrito_id'])){
+	    if (isset($this->request->query['distrito_id']) && !empty($this->request->query['distrito_id'])){
 	        $distrito_ids      = $this->request->query['distrito_id'];
 	    }else{
 	        $options           = array('fields'     =>  array('DISTINCT id'),
@@ -330,7 +308,7 @@ class DistritosController extends AppController {
 	    
 	    $provincia_id = $this->request->query['provincia_id'];
 	    
-	    if (isset($this->request->query['distrito_id'])){
+	    if (isset($this->request->query['distrito_id']) && !empty($this->request->query['distrito_id'])){
 	        $distrito_ids = $this->request->query['distrito_id'];
 	    }else{
 	        $options           = array('fields'=>array('DISTINCT distrito_id'),'recursive' => -1);

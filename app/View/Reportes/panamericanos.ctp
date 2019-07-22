@@ -146,7 +146,8 @@
 <?php 
 echo $this->Html->script('feminicidio.js');
 if (!empty($this->request->data['Reportes']['distrito_id'])){
-    echo $this->Html->script('mapa_comiserias.js');
+    //echo $this->Html->script('mapa_comiserias.js');
+    echo $this->Html->script('mapa_distritos.js');
 }elseif(!empty($distritos)){
     echo $this->Html->script('mapa_distritos.js');
 }elseif (!empty($provincias)){

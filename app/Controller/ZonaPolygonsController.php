@@ -20,13 +20,13 @@ class ZonaPolygonsController extends AppController {
 	    $this->autoRender = false;
 	    $this->response->type('json');
 	    
-	    $options = array('fields'  =>  array('id','nombre'),
-            	        'conditions'   =>  array('Institucion.tipo_institucion_id' => 4), //Juegos Panamericanos
-            	        'recursive'    =>  -1
-                	    );        
+	    $options = array('conditions'   =>  array('Institucion.tipo_institucion_id' => 4), //Juegos Panamericanos
+            	        );        
 	    
-	    $zonas     = $this->ZonaPolygon->Institucion->find('all', $options);
+	    $this->ZonaPolygon->Institucion->unbindModel(array('belongsTo'=>array('Distrito')));
+	    $zonas     = $this->ZonaPolygon->Institucion->find('all', $options);	    
 	    
+	    //pr($zonas); exit;
 	    foreach ($zonas as $i => $row){
 	        
 	        $options = array('fields'      =>  array('id','horizontal','vertical','orden'),
@@ -46,10 +46,13 @@ class ZonaPolygonsController extends AppController {
 	            continue;
 	        }
 	        
-	        $zonas[$i]['type'] = 'Feature';
-	        $zonas[$i]['properties'] = $row['Institucion'];
+	        $zonas[$i]['type']                             = 'Feature';
+	        $zonas[$i]['properties']['tipoInstitucion']    = $row['TipoInstitucion']['institucion'];
+	        $zonas[$i]['properties']['institucionId']      = $row['Institucion']['id'];
+	        $zonas[$i]['properties']['institucionNombre']  = $row['Institucion']['nombre'];	        
 	        unset($zonas[$i]['Institucion']);
-	        $zonas[$i]['geometry'] = array('type' => 'Polygon',"coordinates"=>array(array(implode($cordenada, ','))));
+	        unset($zonas[$i]['TipoInstitucion']);
+	        $zonas[$i]['geometry']     = array('type' => 'Polygon',"coordinates"=>array(array(implode($cordenada, ','))));
 	    }
 	    
 	    
