@@ -157,7 +157,7 @@ class DistritosController extends AppController {
 	                                                'tipoInstitucion'      => $pol['TipoInstitucion']['institucion'],	                
 	                                                'institucionId'        => $pol['Institucion']['id'],	                   
 	                                                'institucionNombre'    => $pol['Institucion']['nombre'],
-	                                                //'distritoNombre'       => $pol['Distrito']['nombdist'],
+	                                                'institucionUbicacion' => $pol['Institucion']['ubicacion'],
 	                                                'geometry'             => array('type'         => 'Polygon',
                                                             	                    'coordinates'  => array(
                                                             	                        array($institucionCoordenadas)

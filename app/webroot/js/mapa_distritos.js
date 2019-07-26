@@ -109,11 +109,12 @@
 							if (v.geometry.coordinates[0].length >= 1) {
 								$.each(v.geometry.coordinates[0], function(i, c) {
 									ftrCoordenadasInst[i] = new ol.Feature({
-										geometry 			: new ol.geom.Point(ol.proj.transform(c, 'EPSG:4326','EPSG:3857')),
-										name 				: c,
-										tipoInstitucion 	: institucion.tipoInstitucion,
-										institucionId 		: institucion.institucionId,
-										institucionNombre	: institucion.institucionNombre
+										geometry 				: new ol.geom.Point(ol.proj.transform(c, 'EPSG:4326','EPSG:3857')),
+										name 					: c,
+										tipoInstitucion 		: institucion.tipoInstitucion,
+										institucionId 			: institucion.institucionId,
+										institucionNombre		: institucion.institucionNombre,
+										institucionUbicacion	: institucion.institucionUbicacion,
 									});
 	
 								});
@@ -295,8 +296,20 @@ var map = new ol.Map({
 		var layer 	= seleccion[1];
 		
 		if (feature !== undefined && feature.get('tipoInstitucion') !== undefined) {
-			  var coordinate 	= evt.coordinate;	
-			  content.innerHTML = '<p><b>' + feature.get('tipoInstitucion') + '</b></p>' + feature.get('institucionNombre');
+			  var coordinate 	= evt.coordinate;		
+			  content.innerHTML = '<p><b>' + feature.get('tipoInstitucion') + '</b></p>' +			  					  	
+			  					  '<b>' + feature.get('institucionNombre') + '</b></br>' + 
+			  					  feature.get('institucionUbicacion');
+			  overlay.setPosition(coordinate);
+		}
+		
+		if (feature !== undefined && feature.get('institucionImg') !== undefined) {
+			  var coordinate 	= evt.coordinate;
+			  imagen 			= '<img src="' + base + 'img/panamericanos/' + feature.get('institucionImg') + '.jpg" style="width: 300px;" alt="Sede">';
+			  content.innerHTML = imagen + '</br></br>' + 
+			  					  '<div class="sede">' + 	
+			  					  '<b>' + feature.get('institucionNombre') + '</b></br>' + 
+			  					  feature.get('institucionUbicacion')+ '</div>';
 			  overlay.setPosition(coordinate);
 		}
 	});

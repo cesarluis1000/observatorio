@@ -8,7 +8,7 @@
   background-color: white;
   -webkit-filter: drop-shadow(0 1px 4px rgba(0,0,0,0.2));
   filter: drop-shadow(0 1px 4px rgba(0,0,0,0.2));
-  padding: 10px;
+  padding: 0px;
   border-radius: 5px;
   border: 1px solid #cccccc;
   bottom: 12px;
@@ -37,6 +37,7 @@
   margin-left: -11px;
 }
 .ol-popup-closer {
+  color: black;
   text-decoration: none;
   position: absolute;
   top: 8px;
@@ -44,6 +45,12 @@
 }
 .ol-popup-closer:after {
   content: "✖";
+}
+.sede{
+	padding: 10px;
+}
+.textSede{
+	text-align: justify;	
 }
 -->
 </style>

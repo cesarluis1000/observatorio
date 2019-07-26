@@ -46,10 +46,12 @@ class ZonaPolygonsController extends AppController {
 	            continue;
 	        }
 	        
-	        $zonas[$i]['type']                             = 'Feature';
-	        $zonas[$i]['properties']['tipoInstitucion']    = $row['TipoInstitucion']['institucion'];
-	        $zonas[$i]['properties']['institucionId']      = $row['Institucion']['id'];
-	        $zonas[$i]['properties']['institucionNombre']  = $row['Institucion']['nombre'];	        
+	        $zonas[$i]['type']                                 = 'Feature';
+	        $zonas[$i]['properties']['tipoInstitucion']        = $row['TipoInstitucion']['institucion'];
+	        $zonas[$i]['properties']['institucionId']          = $row['Institucion']['id'];
+	        $zonas[$i]['properties']['institucionNombre']      = $row['Institucion']['nombre'];
+	        $zonas[$i]['properties']['institucionUbicacion']   = $row['Institucion']['ubicacion'];
+	        $zonas[$i]['properties']['institucionImg']         = strtolower(str_replace(' ', '_',$row['Institucion']['nombre']));
 	        unset($zonas[$i]['Institucion']);
 	        unset($zonas[$i]['TipoInstitucion']);
 	        $zonas[$i]['geometry']     = array('type' => 'Polygon',"coordinates"=>array(array(implode($cordenada, ','))));
