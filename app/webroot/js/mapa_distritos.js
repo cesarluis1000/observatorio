@@ -1,23 +1,3 @@
-	var style = new ol.style.Style({
-			fill : new ol.style.Fill({
-				color : 'rgba(255, 255, 255, 0.3)' //color de backgrount de poligono
-			}),
-			stroke : new ol.style.Stroke({
-				color : '#319FD3',
-				width : 1 //Ancho de limite
-			}),
-			text : new ol.style.Text({
-				font : '10px Calibri,sans-serif',
-				fill : new ol.style.Fill({
-					color : '#000'
-				}),
-				stroke : new ol.style.Stroke({
-					color : '#fff',
-					width : 5
-				})
-			})
-		});
-
 	var departamento_id = $('#ReportesDepartamentoId option:selected').val();
 	var provincia_id 	= $('#ReportesProvinciaId option:selected').val();
 	var distrito_id 	= $('#ReportesDistritoId option:selected').val();
@@ -87,8 +67,9 @@
 			});
 		}
 	});
-			
-	/*********INSTITUTOS*********/
+	/******************************/
+	
+	/*********PUNTOS INSTITUTOS*********/
 	var ftrCoordenadasInst = [];
 	var vectorSourceInst;
 	var a_vectorLayerInst = [];
@@ -149,6 +130,7 @@
 			});
 		}
 	});
+	/******************************/
 	
 	/*******Dibuja el mapa ********/		
 	var raster = new ol.layer.Tile({
@@ -158,14 +140,34 @@
 						})
 					});
 	
-	/*******End Dibuja el mapa ********/
-					
+	/******************************/
+	
+	/*******Zonas DISTRITO********/
+		var style = new ol.style.Style({
+			fill : new ol.style.Fill({
+				color : 'rgba(255, 255, 255, 0.3)' //color de backgrount de poligono
+			}),
+			stroke : new ol.style.Stroke({
+				color : '#319FD3',
+				width : 1 //Ancho de limite
+			}),
+			text : new ol.style.Text({
+				font : '10px Calibri,sans-serif',
+				fill : new ol.style.Fill({
+					color : '#000'
+				}),
+				stroke : new ol.style.Stroke({
+					color : '#fff',
+					width : 5
+				})
+			})
+		});
+	
 		var source = new ol.source.Vector({
 									format : new ol.format.GeoJSON(),
 									url : url
-								}); 
+								});	
 	
-	/*******Dibuja el perimetro ********/	
 	var vectorLayer = new ol.layer.Vector({
 		source 	: source,
 		style 	: function(feature) {
@@ -173,7 +175,7 @@
 						return style;
 					}
 	});
-	/*******Dibuja el perimetro ********/
+	/*******************************************/
 		
 	/*******Centrar el poligo en el mapa********/
 		var coordenada;
@@ -199,20 +201,8 @@
 	var view = new ol.View({
 		center : coordenada
 	});
-	/*******END Centrar el poligo en el mapa********/	
+	/**********************************************/	
 	
-	/*******Visualización de las coordenadas con el mouse********/		
-	var mousePositionControl = new ol.control.MousePosition({
-		coordinateFormat : ol.coordinate.createStringXY(12),
-		projection : 'EPSG:4326',// (-xx.xxxx)
-	});
-	
-	var controls = ol.control.defaults({
-		attributionOptions : {
-			collapsible : false
-		}
-	}).extend([ mousePositionControl ]);
-	/*******END Visualización de las coordenadas con el mouse********/
 		
 	/*******Zonas Panamericanos********/
 		var stylePanamericano = new ol.style.Style({
@@ -246,7 +236,7 @@
 						return stylePanamericano;
 					}
 		});
-	/*******End Zonas Panamericanos********/
+	/********************************/
 				
 	var a_layers = [raster, vectorLayer, vectorLayerPanamericano];
 	
@@ -257,8 +247,20 @@
 		a_layers.push(a_vectorLayerInst[i]);
 	}
 	
-	/*******Popup detalle*******/
+	/*******Visualización de las coordenadas con el mouse********/		
+		var mousePositionControl = new ol.control.MousePosition({
+			coordinateFormat : ol.coordinate.createStringXY(12),
+			projection : 'EPSG:4326',// (-xx.xxxx)
+		});
 	
+	var controls = ol.control.defaults({
+		attributionOptions : {
+			collapsible : false
+		}
+	}).extend([ mousePositionControl ]);
+	/****************************************************************/	
+	
+	/*******Popup detalle*******/	
 	var container 	= document.getElementById('popup');
 	var content 	= document.getElementById('popup-content');
 	var closer 		= document.getElementById('popup-closer');
