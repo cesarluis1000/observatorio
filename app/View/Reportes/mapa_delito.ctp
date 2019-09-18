@@ -6,7 +6,7 @@
     <div class="row">
     
     	<div class="col-md-2">
-    				 <legend><?php echo __('Mapa de delitos'); ?></legend>
+    				 <legend><?php echo __('Mapa Criminológico'); ?></legend>
                      <?php
                                 
                         echo $this->Form->create('Reportes', array(
@@ -116,7 +116,7 @@
 <?php 
 echo $this->Html->script('feminicidio.js');
 if (!empty($this->request->data['Reportes']['distrito_id'])){
-    echo $this->Html->script('mapa_comiserias.js');
+    echo $this->Html->script('mapa_distritos.js');
 }elseif(!empty($distritos)){
     echo $this->Html->script('mapa_distritos.js');
 }elseif (!empty($provincias)){
