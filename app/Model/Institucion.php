@@ -81,6 +81,16 @@ class Institucion extends AppModel {
 				//'on' => 'create', // Limit validation to 'create' or 'update' operations
 			),
 		),
+	    'tipo_denuncia_id' => array(
+	        'numeric' => array(
+	            'rule' => array('numeric'),
+	            //'message' => 'Your custom message here',
+	            //'allowEmpty' => false,
+	            //'required' => false,
+	            //'last' => false, // Stop validation after this rule
+	            //'on' => 'create', // Limit validation to 'create' or 'update' operations
+	        ),
+	    ),
 		'tipo_institucion_id' => array(
 			'numeric' => array(
 				'rule' => array('numeric'),
@@ -101,9 +111,16 @@ class Institucion extends AppModel {
  * @var array
  */
 	public $belongsTo = array(
-		'Distrito' => array(
-			'className' => 'Distrito',
-			'foreignKey' => 'distrito_id',
+	    'Distrito' => array(
+	        'className' => 'Distrito',
+	        'foreignKey' => 'distrito_id',
+	        'conditions' => '',
+	        'fields' => '',
+	        'order' => ''
+	    ),
+		'TipoDenuncia' => array(
+			'className' => 'TipoDenuncia',
+			'foreignKey' => 'tipo_denuncia_id',
 			'conditions' => '',
 			'fields' => '',
 			'order' => ''
