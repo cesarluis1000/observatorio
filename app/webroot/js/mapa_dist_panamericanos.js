@@ -4,7 +4,8 @@
 	var base = $('base').attr('href');
 	var url  = base+'Distritos/geojson?departamento_id='+departamento_id+'&provincia_id=' + provincia_id + '&distrito_id='+ distrito_id;
 	var url2 = base+'Distritos/delitosgeojson?departamento_id='+departamento_id+'&provincia_id=' + provincia_id + '&distrito_id=' + distrito_id;
-	var url3 = base+'Distritos/institucionesgeojson?departamento_id='+departamento_id+'&provincia_id=' + provincia_id + '&distrito_id=' + distrito_id + '&reporte=presos';	
+	var url3 = base+'Distritos/institucionesgeojson?departamento_id='+departamento_id+'&provincia_id=' + provincia_id + '&distrito_id=' + distrito_id + '&reporte=panamericano';
+	var url4 = base+'ZonaPolygons/panamericanosgeojson';
 		
 	/*********PUNTOS DELITOS*********/
 	var ftrCoordenadas 	= [];
@@ -200,9 +201,44 @@
 	var view = new ol.View({
 		center : coordenada
 	});
-	/**********************************************/
+	/**********************************************/	
+	
+		
+	/*******Zonas Panamericanos********/
+		var stylePanamericano = new ol.style.Style({
+			fill : new ol.style.Fill({
+				color : 'rgba(255, 130, 46, 0.6)'//color de backgrount de poligono
+			}),
+			stroke : new ol.style.Stroke({
+				color : '#FA5B0F',
+				width : 2 //Ancho de limite
+			}),
+			text : new ol.style.Text({
+				font : '10px Calibri,sans-serif',
+				fill : new ol.style.Fill({
+					color : '#000'
+				}),
+				stroke : new ol.style.Stroke({
+					color : '#fff',
+					width : 5
+				})
+			})
+		});	
+		var sourcePanamericano = new ol.source.Vector({
+			format : new ol.format.GeoJSON(),
+			url : url4
+		});
+
+	var vectorLayerPanamericano = new ol.layer.Vector({
+		  source: sourcePanamericano,
+		  style : function(feature) {
+					  stylePanamericano.getText().setText(feature.get('institucionNombre'));
+						return stylePanamericano;
+					}
+		});
+	/********************************/
 				
-	var a_layers = [raster, vectorLayer];
+	var a_layers = [raster, vectorLayer, vectorLayerPanamericano];
 	
 	for (var i = 0; i < a_vectorLayerDelito.length; i++) {
 		a_layers.push(a_vectorLayerDelito[i]);

@@ -1,59 +1,6 @@
 <?php echo $this->Html->css('jquery-ui.css'); ?>
 <?php echo $this->Html->script('jquery-ui.js'); ?>
 <?php echo $this->Html->css('layout.css'); ?>
-<style>
-<!--
-.ol-popup {
-  position: absolute;
-  background-color: white;
-  -webkit-filter: drop-shadow(0 1px 4px rgba(0,0,0,0.2));
-  filter: drop-shadow(0 1px 4px rgba(0,0,0,0.2));
-  padding: 0px;
-  border-radius: 5px;
-  border: 1px solid #cccccc;
-  bottom: 12px;
-  left: -140px;
-  min-width: 280px;
-}
-.ol-popup:after, .ol-popup:before {
-  top: 100%;
-  border: solid transparent;
-  content: " ";
-  height: 0;
-  width: 0;
-  position: absolute;
-  pointer-events: none;
-}
-.ol-popup:after {
-  border-top-color: white;
-  border-width: 10px;
-  left: 138px;
-  margin-left: -10px;
-}
-.ol-popup:before {
-  border-top-color: #cccccc;
-  border-width: 11px;
-  left: 138px;
-  margin-left: -11px;
-}
-.ol-popup-closer {
-  color: black;
-  text-decoration: none;
-  position: absolute;
-  top: 8px;
-  right: 8px;
-}
-.ol-popup-closer:after {
-  content: "✖";
-}
-.sede{
-	padding: 10px;
-}
-.textSede{
-	text-align: justify;	
-}
--->
-</style>
 <fieldset>
     
     <div class="row">
@@ -153,10 +100,9 @@
 <?php 
 echo $this->Html->script('feminicidio.js');
 if (!empty($this->request->data['Reportes']['distrito_id'])){
-    //echo $this->Html->script('mapa_comiserias.js');
-    echo $this->Html->script('mapa_distritos.js');
+    echo $this->Html->script('mapa_dist_panamericanos.js');
 }elseif(!empty($distritos)){
-    echo $this->Html->script('mapa_distritos.js');
+    echo $this->Html->script('mapa_dist_panamericanos.js');
 }elseif (!empty($provincias)){
     echo $this->Html->script('mapa_provincias.js');
 }else{

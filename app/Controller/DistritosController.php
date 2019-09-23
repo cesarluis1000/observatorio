@@ -138,40 +138,56 @@ class DistritosController extends AppController {
 	    $distritos = $this->Distrito->find('all',$options);
 	    //pr($distritos);exit;
 	    $delitos = null;
+	    
+	    $conditions   = array();
+	    if (isset($this->request->query['reporte']) && !empty($this->request->query['reporte'])){
+	        $reporte      = $this->request->query['reporte'];
+	        switch ($reporte){
+	            case 'panamericano': $conditions   = array('Institucion.tipo_institucion_id' =>  array('1','2')); break;
+	            case 'criminologico': $conditions  = array('Institucion.tipo_institucion_id' =>  array('1','2')); break;
+	            case 'presos'      : $conditions   = array('Institucion.tipo_institucion_id' =>  array('1','2','5'));break;
+	        }	        
+	    }
+	    
 	    foreach ($distritos as $i => $distrito){
 	        
-	        $conditions    = array('Institucion.distrito_id' => $distrito['Distrito']['id'],);
+	        $conditions2    = array('Institucion.distrito_id' => $distrito['Distrito']['id'],
+	                               'Institucion.longitud !=' => '0.00000000',
+	                               //'Institucion.tipo_denuncia_id' =>  array('1','5')
+	                               );
+	        $conditions    = array_merge($conditions,$conditions2);
 	        
-	        $options       = array('conditions'=> $conditions,
-                    	        );
-	        
+	        $options       = array('conditions'=> $conditions);
+	        //pr($options); //exit();
 	        $polygon       = $this->Institucion->find('all',$options);
 	        //pr($polygon); exit();
 	        $a_institucion = null;
 	        
 	        foreach ($polygon as $pol){
-	            $tipoInstitucion           = $pol['TipoInstitucion']['institucion'];
-	            $institucionCoordenadas    = '['.$pol['Institucion']['longitud'].','.$pol['Institucion']['latitud'].']';
-	            $delitos[]                 = array( 'institucion'  => $tipoInstitucion.'60px.png',
-                                	                'type'                 => 'Feature',
-	                                                'tipoInstitucion'      => $pol['TipoInstitucion']['institucion'],	                
-	                                                'institucionId'        => $pol['Institucion']['id'],	                   
-	                                                'institucionNombre'    => $pol['Institucion']['nombre'],
-	                                                'institucionUbicacion' => $pol['Institucion']['ubicacion'],
-	                                                'geometry'             => array('type'         => 'Polygon',
-                                                            	                    'coordinates'  => array(
-                                                            	                        array($institucionCoordenadas)
-                                                            	                    )
-                                	                                   )
-                                	            );
-	            
+	            if (in_array($pol['Institucion']['tipo_denuncia_id'], array('1','5')) || empty($pol['Institucion']['tipo_denuncia_id'])) {
+	                $tipoInstitucion           = $pol['TipoInstitucion']['institucion'];
+	                $institucionCoordenadas    = '['.$pol['Institucion']['longitud'].','.$pol['Institucion']['latitud'].']';
+	                $delitos[]                 = array( 'institucion'  => $tipoInstitucion.'60px.png',
+	                    'type'                 => 'Feature',
+	                    'tipoDenuncia'         => $pol['TipoDenuncia']['nombre'],
+	                    'tipoInstitucion'      => $pol['TipoInstitucion']['institucion'],
+	                    'institucionId'        => $pol['Institucion']['id'],
+	                    'institucionNombre'    => empty($pol['Institucion']['tipo_denuncia_id'])?$pol['Institucion']['nombre']:$pol['TipoDenuncia']['nombre'],
+	                    'institucionUbicacion' => $pol['Institucion']['ubicacion'],
+	                    'geometry'             => array('type'         => 'Polygon',
+	                        'coordinates'  => array(
+	                            array($institucionCoordenadas)
+	                        )
+	                    )
+	                );
+	            }
 	        }
 	       
 	    }
-	    
+	    //pr($delitos);exit;
 	    $delitos = array('type' => 'FeatureCollection','features'=>$delitos);
 	    
-	    //pr($delitos);exit;
+	    
 	    $json = json_encode($delitos);
 	    $json = str_replace('[["[', '[[[', $json);
 	    $json = str_replace(']"]]', ']]]', $json);

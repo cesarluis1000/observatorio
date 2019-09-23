@@ -103,7 +103,7 @@
         	</div>
         	<div style="display: none;">
               <!-- Popup -->
-              <div id="popup" title="Delito">
+              <div id="popup" title="Delito" class="ol-popup">
               		<a href="#" id="popup-closer" class="ol-popup-closer"></a>
       				<div id="popup-content"></div>
               </div>

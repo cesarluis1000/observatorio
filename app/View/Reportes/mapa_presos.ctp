@@ -103,7 +103,7 @@
         	</div>
         	<div style="display: none;">
               <!-- Popup -->
-              <div id="popup" title="Delito">
+              <div id="popup" title="Delito" class="ol-popup">
               		<a href="#" id="popup-closer" class="ol-popup-closer"></a>
       				<div id="popup-content"></div>
               </div>
@@ -116,9 +116,9 @@
 <?php 
 echo $this->Html->script('feminicidio.js');
 if (!empty($this->request->data['Reportes']['distrito_id'])){
-    echo $this->Html->script('mapa_distritos.js');
+    echo $this->Html->script('mapa_dist_presos.js');
 }elseif(!empty($distritos)){
-    echo $this->Html->script('mapa_distritos.js');
+    echo $this->Html->script('mapa_dist_presos.js');
 }elseif (!empty($provincias)){
     echo $this->Html->script('mapa_provincias.js');
 }else{

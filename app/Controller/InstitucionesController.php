@@ -114,4 +114,62 @@ class InstitucionesController extends AppController {
 		}
 		return $this->redirect(array('action' => 'index'));
 	}
+	
+	public function coordenadasjson(){
+	    set_time_limit(108000);
+	    ini_set('memory_limit','1024M');
+	    
+	    $options = array(//'fields'=>array('id','nro_denuncia','ubicacion','horizontal','vertical'),,'Denuncia.distrito_id'=>'811'
+	        'conditions' => array('estado_google IS NULL',
+	                              'tipo_institucion_id NOT IN'=> array('3','4'),
+	            //'Institucion.id'     => '458'
+	                           ),
+	        //'recursive' => -1,
+	        //'order' => array('nombdist')
+	    );
+	    $this->Institucion->unbindModel(array('belongsTo'=>array('TipoDenuncia','TipoInstitucion')));
+	    $instituciones = $this->Institucion->find('all',$options);
+	    
+	    //pr($instituciones);
+	    //exit;
+	    
+	    $transaccion = true;
+	    foreach ($instituciones as $institucion){
+	        //pr($denuncia['Denuncia']);
+	        $direccion = $institucion['Institucion']['ubicacion'].' '.$institucion['Distrito']['nombdist'].' '.$institucion['Distrito']['nombprov'];
+	        //pr($direccion);
+	        
+	        $direccion = str_replace(' ', '+', $direccion);
+	        
+	        //$url = "https://maps.googleapis.com/maps/api/geocode/json?address=1600+Amphitheatre+Parkway,+Mountain+View,+CA&key=YOUR_API_KEY";
+	        $url = "https://maps.googleapis.com/maps/api/geocode/json?address=$direccion&key=AIzaSyC7e2Iboim4HC-CfX2PmJR6BkSI8aSKb1U";
+	        //pr($url);
+	        $geo = file_get_contents($url);
+	        
+	        $geo = json_decode($geo, true); // Convert the JSON to an array
+	        
+	        if (isset($geo['status']) && ($geo['status'] == 'OK')) {
+	            $institucion['Institucion']['latitud']          = $geo['results'][0]['geometry']['location']['lat']; // Latitude
+	            $institucion['Institucion']['longitud']        = $geo['results'][0]['geometry']['location']['lng']; // Longitude
+	            $institucion['Institucion']['estado_google']     = $geo['status'];
+	            $institucion['Institucion']['ubicacion_google']  = $geo['results'][0]['formatted_address'];
+	        }else{
+	            $institucion['Institucion']['estado_google']    = 'KO';
+	        }
+	        //pr($institucion['Institucion']);
+	        //exit;
+	        
+	        if(!$this->Institucion->save($institucion['Institucion'])){
+	            $transaccion = false;
+	            break;
+	        }
+	    }
+	    
+	    if ($transaccion){
+	        $this->Flash->success(__('Las coordenadas de las denuncias se ha guardado.'));
+	    }else{
+	        $this->Flash->error(__('No se pudo guardar la denuncia. Por favor, inténtelo de nuevo.'));
+	    }
+	    
+	}
 }

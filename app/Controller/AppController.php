@@ -67,7 +67,7 @@ class AppController extends Controller {
 		$this->Auth->authError=__('You are not authorized to access that location.');		
 		$this->Auth->allow('login','logout','display','index','mapaDelito',
 		    'delitosgeojson','delitosgeojson','institucionesgeojson','geojson','listjson',
-		    'panamericanos','panamericanosgeojson'
+		    'panamericanosgeojson','panamericanos'
 		    );
 		
 		$this->__checkAuth();
@@ -76,9 +76,10 @@ class AppController extends Controller {
 
     private function __observatorio(){
         //Acciones que utilizarar el layout observatorio
+        
         $this->acciones_ecommerce = array('panamericanos');
         if (in_array($this->action, $this->acciones_ecommerce)){
-            $this->layout = 'observatorio';
+            //$this->layout = 'observatorio';
         }    
     }
     
