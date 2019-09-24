@@ -77,9 +77,9 @@ class AppController extends Controller {
     private function __observatorio(){
         //Acciones que utilizarar el layout observatorio
         
-        $this->acciones_ecommerce = array('panamericanos');
+        $this->acciones_ecommerce = array('mapaDelito');
         if (in_array($this->action, $this->acciones_ecommerce)){
-            //$this->layout = 'observatorio';
+            $this->layout = 'observatorio';
         }    
     }
     
