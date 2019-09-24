@@ -1,1 +1,1 @@
-<h2><?php echo __('MigraciÃ³n de coordenadas'); ?></h2>
+<h2><?php echo __('Migración de coordenadas'); ?></h2>
