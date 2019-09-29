@@ -202,7 +202,8 @@
 		center : coordenada
 	});
 	/**********************************************/	
-					
+	
+				
 	var a_layers = [raster, vectorLayer];
 	
 	for (var i = 0; i < a_vectorLayerDelito.length; i++) {

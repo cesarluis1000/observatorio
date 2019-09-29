@@ -15,21 +15,38 @@ class ReportesController extends AppController {
         $currentUser = $this->Auth->user();               
         unset($this->request->query['n']);
         //pr($currentUser);                
-        
-        $filtros = Array
-                        (
-                            'departamento_id'   => 15,
-                            'provincia_id'      => 112,
-                            //'distrito_id'       => 842,
-                            'fecha_de'          => '2019-08-26',
-                            'hasta'             => '2019-08-31',
-                            'horas'             => '12:00 AM - 11:59 PM',
-                            'horas1'            => 0,
-                            'horas2'            => 24,
-                            'ghostZoom'         => 12.5,
-                            'centroZoom'        => '-8570566.091968212,-1362649.9285509586'
-                            );
-        $this->request->query = $filtros;
+        /********Filtros momentaneos para Perla y Iquitos*******/
+        $currentUser = $this->Auth->user();
+        if(!empty($currentUser['username']) && empty($this->request->query)){
+            $filtros = null;
+            switch ($currentUser['username']){
+                case 'cramos': $filtros = Array
+                (
+                'departamento_id' => 15,
+                'provincia_id' => 112,
+                'distrito_id' => 816,
+                'fecha_de' => '2019-08-01',
+                'hasta' => '2019-09-30',
+                'horas' => '12:00 AM - 11:59 PM',
+                'horas1' => 0,
+                'horas2' => 24
+                );
+                break;
+                default:
+                    $filtros = Array
+                    (
+                    'departamento_id' => 15,
+                    'provincia_id' => 112,
+                    'distrito_id' => 816,
+                    'fecha_de' => '2019-09-01',
+                    'hasta' => '2019-09-15',
+                    'horas' => '12:00 AM - 11:59 PM',
+                    'horas1' => 0,
+                    'horas2' => 24
+                    );
+            }
+            $this->request->query = $filtros;
+        }
                         
         /********Filtros momentaneos para Perla y Iquitos*******/               
         
@@ -221,42 +238,29 @@ class ReportesController extends AppController {
             $filtros = null;
             switch ($currentUser['username']){
                 case 'cramos': $filtros = Array
-                (
-                'departamento_id' => 15,
-                'provincia_id' => 112,
-                'distrito_id' => 816,
-                'fecha_de' => '2019-03-31',
-                'hasta' => '2019-03-31',
-                'horas' => '12:00 AM - 11:59 PM',
-                'horas1' => 0,
-                'horas2' => 24
-                );
+                                (
+                                'departamento_id' => 15,
+                                'provincia_id' => 112,
+                                'distrito_id' => 816,
+                                'fecha_de' => '2019-08-01',
+                                'hasta' => '2019-09-30',
+                                'horas' => '12:00 AM - 11:59 PM',
+                                'horas1' => 0,
+                                'horas2' => 24
+                                );
                 break;
-                case 'iquitos': $filtros = Array
-                (
-                'departamento_id' => 16,
-                'provincia_id' => 122,
-                'distrito_id' => '',
-                'fecha_de' => '2019-01-01',
-                'hasta' => '2019-01-31',
-                'horas' => '12:00 AM - 11:59 PM',
-                'horas1' => 0,
-                'horas2' => 24
-                );
-                break;
-                
-                case 'cguillen': $filtros = Array
-                (
-                'departamento_id' => 15,
-                'provincia_id' => 112,
-                'distrito_id' => 816,
-                'fecha_de' => '2019-03-25',
-                'hasta' => '2019-03-31',
-                'horas' => '12:00 AM - 11:59 PM',
-                'horas1' => 0,
-                'horas2' => 24
-                );
-                break;
+                default:
+                    $filtros = Array
+                    (
+                    'departamento_id' => 15,
+                    'provincia_id' => 112,
+                    'distrito_id' => 816,
+                    'fecha_de' => '2019-09-01',
+                    'hasta' => '2019-09-15',
+                    'horas' => '12:00 AM - 11:59 PM',
+                    'horas1' => 0,
+                    'horas2' => 24
+                    );
             }
             $this->request->query = $filtros;
         }
@@ -455,19 +459,22 @@ class ReportesController extends AppController {
         //pr($this->request->query);
         
         /********Filtros momentaneos para Perla y Iquitos*******/
+        unset($this->request->query['n']);
+        if(empty($this->request->query)){
+            $filtros = Array
+            (
+                'departamento_id' => 15,
+                'provincia_id' => 112,
+                'distrito_id' => 816,
+                'fecha_de' => '2019-09-01',
+                'hasta' => '2019-09-15',
+                'horas' => '12:00 AM - 11:59 PM',
+                'horas1' => 0,
+                'horas2' => 24
+                );
+            $this->request->query = $filtros;
+        }
         
-        $filtros = Array
-        (
-            'departamento_id' => 15,
-            'provincia_id' => 112,
-            'distrito_id' => 816,
-            'fecha_de' => '2019-09-01',
-            'hasta' => '2019-09-15',
-            'horas' => '12:00 AM - 11:59 PM',
-            'horas1' => 0,
-            'horas2' => 24
-            );
-        $this->request->query = $filtros;
         /********Filtros momentaneos para Perla y Iquitos*******/
         
         
@@ -650,7 +657,7 @@ class ReportesController extends AppController {
             $this->request->data['Reportes']['delito'] = $this->request->query['delito'];
         }
         
-        //pr($denuncias);
+        //pr($denuncias);exit;
         
         $this->set(compact('departamentos','provincias','distritos','distrito', 'denuncias','total','horas1','horas2'));
 
