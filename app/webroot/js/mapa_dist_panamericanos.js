@@ -134,11 +134,14 @@
 	
 	/*******Dibuja el mapa ********/		
 	var raster = new ol.layer.Tile({
-						source		: new ol.source.XYZ({
-						attributions: 'Tiles © <a href="https://services.arcgisonline.com/ArcGIS/' + 'rest/services/World_Topo_Map/MapServer">ArcGIS</a>',
-						url			: 'https://server.arcgisonline.com/ArcGIS/rest/services/' + 'World_Topo_Map/MapServer/tile/{z}/{y}/{x}'
-						})
-					});
+						source: new ol.source.OSM({
+				            url: 'http://mt{0-3}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}',
+				            attributions: [
+				                new ol.Attribution({ html: '© Google' }),
+				                new ol.Attribution({ html: '<a href="https://developers.google.com/maps/terms">Terms of Use.</a>' })
+				            ]
+				        })
+	});
 	
 	/******************************/
 	
