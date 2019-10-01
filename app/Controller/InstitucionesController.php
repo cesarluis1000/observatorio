@@ -122,7 +122,7 @@ class InstitucionesController extends AppController {
 	    $options = array(//'fields'=>array('id','nro_denuncia','ubicacion','horizontal','vertical'),,'Denuncia.distrito_id'=>'811'
 	        'conditions' => array('estado_google IS NULL',
 	                              'tipo_institucion_id NOT IN'=> array('3','4'),
-	            //'Institucion.id'     => '458'
+	            //'Institucion.id'     => '2314'
 	                           ),
 	        //'recursive' => -1,
 	        //'order' => array('nombdist')
@@ -130,24 +130,23 @@ class InstitucionesController extends AppController {
 	    $this->Institucion->unbindModel(array('belongsTo'=>array('TipoDenuncia','TipoInstitucion')));
 	    $instituciones = $this->Institucion->find('all',$options);
 	    
-	    //pr($instituciones);
-	    //exit;
+	    //pr($instituciones); exit;
 	    
 	    $transaccion = true;
 	    foreach ($instituciones as $institucion){
 	        //pr($denuncia['Denuncia']);
 	        $direccion = $institucion['Institucion']['ubicacion'].' '.$institucion['Distrito']['nombdist'].' '.$institucion['Distrito']['nombprov'];
-	        //pr($direccion);
+	        //pr($direccion); exit;
 	        
 	        $direccion = str_replace(' ', '+', $direccion);
 	        
 	        //$url = "https://maps.googleapis.com/maps/api/geocode/json?address=1600+Amphitheatre+Parkway,+Mountain+View,+CA&key=YOUR_API_KEY";
 	        $url = "https://maps.googleapis.com/maps/api/geocode/json?address=$direccion&key=AIzaSyC7e2Iboim4HC-CfX2PmJR6BkSI8aSKb1U";
-	        //pr($url);
+	        //pr($url); exit;
 	        $geo = file_get_contents($url);
 	        
 	        $geo = json_decode($geo, true); // Convert the JSON to an array
-	        
+	        //pr($geo); exit;
 	        if (isset($geo['status']) && ($geo['status'] == 'OK')) {
 	            $institucion['Institucion']['latitud']          = $geo['results'][0]['geometry']['location']['lat']; // Latitude
 	            $institucion['Institucion']['longitud']        = $geo['results'][0]['geometry']['location']['lng']; // Longitude
@@ -160,6 +159,7 @@ class InstitucionesController extends AppController {
 	        //exit;
 	        
 	        if(!$this->Institucion->save($institucion['Institucion'])){
+	            //debug($this->Institucion->validationErrors);  exit;
 	            $transaccion = false;
 	            break;
 	        }

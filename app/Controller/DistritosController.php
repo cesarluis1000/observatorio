@@ -144,8 +144,8 @@ class DistritosController extends AppController {
 	        $reporte      = $this->request->query['reporte'];
 	        switch ($reporte){
 	            case 'panamericano': $conditions   = array('Institucion.tipo_institucion_id' =>  array('1','2')); break;
-	            case 'criminologico': $conditions  = array('Institucion.tipo_institucion_id' =>  array('1','2')); break;
-	            case 'presos'      : $conditions   = array('Institucion.tipo_institucion_id' =>  array('1','2','5'));break;
+	            case 'criminologico': $conditions  = array('Institucion.tipo_institucion_id' =>  array('2')); break;
+	            case 'presos'      : $conditions   = array('Institucion.tipo_institucion_id' =>  array('1','2','5','6'));break;
 	        }	        
 	    }
 	    
@@ -327,9 +327,18 @@ class DistritosController extends AppController {
 	    if (isset($this->request->query['distrito_id']) && !empty($this->request->query['distrito_id'])){
 	        $distrito_ids = $this->request->query['distrito_id'];
 	    }else{
+	        /*
 	        $options           = array('fields'=>array('DISTINCT distrito_id'),'recursive' => -1);
 	        $polygon_activo    = $this->Distrito->DistPolygon->find('all',$options);
 	        $distrito_ids      = Hash::extract($polygon_activo, '{n}.DistPolygon.distrito_id');
+	        */
+	        $options       = array('fields'=>array('id'),
+	                               'conditions'   =>  array(//'id' => array('860','880'), 
+	                                   'estado'=>'A', 'provincia_id' => $provincia_id),
+                    	            'recursive'    =>  -1);
+	        $distritos_act = $this->Distrito->find('all',$options);
+	        $distrito_ids  = Hash::extract($distritos_act, '{n}.Distrito.id');
+	        
 	    }
 	    
 	    $options = array('fields'      =>  array('id','iddist','nombdist','nombprov','area_minam'),
@@ -365,6 +374,7 @@ class DistritosController extends AppController {
 	    }
 	    $distritos = array('type' => 'FeatureCollection','features'=>$distritos);
 	    //pr($distritos);exit;
+	    
 	    $json = json_encode($distritos);
 	    $json = str_replace('[["[', '[[[', $json);
 	    $json = str_replace(']"]]', ']]]', $json);
