@@ -144,7 +144,7 @@ class DistritosController extends AppController {
 	        $reporte      = $this->request->query['reporte'];
 	        switch ($reporte){
 	            case 'panamericano': $conditions   = array('Institucion.tipo_institucion_id' =>  array('1','2')); break;
-	            case 'criminologico': $conditions  = array('Institucion.tipo_institucion_id' =>  array('2')); break;
+	            case 'criminologico': $conditions  = array('Institucion.tipo_institucion_id' =>  array('1','2','6')); break;
 	            case 'presos'      : $conditions   = array('Institucion.tipo_institucion_id' =>  array('1','2','5','6'));break;
 	        }	        
 	    }

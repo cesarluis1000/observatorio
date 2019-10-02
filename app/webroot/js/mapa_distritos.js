@@ -109,7 +109,7 @@
 														anchor 			: [ 0.5, 30 ],
 														anchorXUnits 	: 'fraction',
 														anchorYUnits 	: 'pixels',
-														scale			: 0.3,
+														scale			: 0.25,
 														src 			: './img/map/'+v.institucion
 													}))
 												});
