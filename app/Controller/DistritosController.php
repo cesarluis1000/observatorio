@@ -333,8 +333,7 @@ class DistritosController extends AppController {
 	        $distrito_ids      = Hash::extract($polygon_activo, '{n}.DistPolygon.distrito_id');
 	        */
 	        $options       = array('fields'=>array('id'),
-	                               'conditions'   =>  array(//'id' => array('860','880'), 
-	                                   'estado'=>'A', 'provincia_id' => $provincia_id),
+	                               'conditions'   =>  array('estado'=>'A', 'provincia_id' => $provincia_id),
                     	            'recursive'    =>  -1);
 	        $distritos_act = $this->Distrito->find('all',$options);
 	        $distrito_ids  = Hash::extract($distritos_act, '{n}.Distrito.id');
