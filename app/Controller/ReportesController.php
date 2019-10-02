@@ -470,7 +470,8 @@ class ReportesController extends AppController {
                 'hasta' => '2019-09-15',
                 'horas' => '12:00 AM - 11:59 PM',
                 'horas1' => 0,
-                'horas2' => 24
+                'horas2' => 24,
+                'delito'=> array('hurto'=>'on','robo'=>'on')
                 );
             $this->request->query = $filtros;
         }
