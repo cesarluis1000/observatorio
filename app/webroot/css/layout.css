@@ -53,3 +53,25 @@
 .textSede{
 	text-align: justify;	
 }
+section article.skills {
+  height: auto;
+}
+section article.skills p {
+  z-index: 2;
+  padding: 0px 5px;
+  position: relative;
+  box-sizing: border-box;
+  overflow: hidden;
+  margin: 7px;
+}
+section article.skills div span:nth-child(4) {
+  z-index: -1;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: #5E95E8;
+  height: 100%;
+  margin-left: 20px;
+}
