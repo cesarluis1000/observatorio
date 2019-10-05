@@ -148,16 +148,16 @@
 	/*******Zonas DISTRITO********/
 		var style = new ol.style.Style({
 			fill : new ol.style.Fill({
-				color : 'rgba(255, 255, 255, 0.3)' //color de backgrount de poligono
+				color : 'RGBA(136,217,176,0.4)' //color de backgrount de poligono
 			}),
 			stroke : new ol.style.Stroke({
-				color : '#319FD3',
-				width : 1 //Ancho de limite
+				color : '#85B037',
+				width : 2 //Ancho de limite
 			}),
 			text : new ol.style.Text({
 				font : '10px Calibri,sans-serif',
 				fill : new ol.style.Fill({
-					color : '#000'
+					color : '#ccc'
 				}),
 				stroke : new ol.style.Stroke({
 					color : '#fff',
