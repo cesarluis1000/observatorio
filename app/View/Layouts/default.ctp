@@ -15,13 +15,15 @@
 	<?php
 		echo $this->Html->meta('icon');
 		echo $this->Html->css('bootstrap.min.css');
-		echo $this->Html->css('bootstrap-datetimepicker.css');
-		echo $this->Html->css('elmundotec.css');
+		echo $this->Html->css('bootstrap-datetimepicker.css');		
 		echo $this->Html->css('ol.css');
 		echo $this->Html->script('ol.js');		         
 	?>
-	<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-	<?php echo $this->Html->script('jquery-3.2.1.min.js'); ?>
+	<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->	
+	<?php echo $this->Html->script('jquery-3.2.1.min.js'); ?>	
+	<?php echo $this->Html->script('Chart.min.js'); ?>
+	<?php echo $this->Html->script('utils.js'); ?>
+	<?php echo $this->Html->css('elmundotec.css'); ?>
 	<base href="<?php echo Router::url('/', true);?>">	
 	<script src="https://cdn.polyfill.io/v2/polyfill.min.js?features=requestAnimationFrame,Element.prototype.classList,URL"></script>
 </head>

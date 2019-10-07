@@ -79,7 +79,7 @@ class AppController extends Controller {
         
         $this->acciones_ecommerce = array('mapaDelito');
         if (in_array($this->action, $this->acciones_ecommerce)){
-            $this->layout = 'observatorio';
+            //$this->layout = 'observatorio';
         }    
     }
     

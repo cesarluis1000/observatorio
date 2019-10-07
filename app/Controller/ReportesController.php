@@ -668,4 +668,90 @@ class ReportesController extends AppController {
         
     }
     
+    public function cuadroDelito(){
+        
+        /********Filtros momentaneos para Perla y Iquitos*******/
+        unset($this->request->query['n']);
+        if(empty($this->request->query)){
+            $filtros = Array
+            (
+                'departamento_id' => 15,
+                'provincia_id' => 112,
+                'distrito_id' => 842,
+                'fecha_de' => '2019-09-01',
+                'hasta' => '2019-09-15',
+                'horas' => '12:00 AM - 11:59 PM',
+                'horas1' => 0,
+                'horas2' => 24,
+                'delito'=> array('hurto'=>'on','robo'=>'on')
+                );
+            $this->request->query = $filtros;
+        }
+        
+        /********Filtros momentaneos para Perla y Iquitos*******/
+        
+        
+        $this->loadModel('Departamento');
+        $this->loadModel('Provincia');
+        $this->loadModel('Distrito');
+        $this->loadModel('Denuncia');
+        
+        $options = array('recursive'=>-1);
+        $departamentos = $this->Departamento->find('list',$options);
+        
+        //pr($this->request->query);
+        $conditions = array();
+        $provincias = null;
+        if (isset($this->request->query['departamento_id'])){
+            $departamento_id = $this->request->data['Reportes']['departamento_id'] = $this->request->query['departamento_id'];
+            $options = array('conditions' => array('departamento_id' => $departamento_id),
+                'recursive' => -1
+            );
+            $provincias = $this->Provincia->find('list',$options);
+        }else{
+            $departamento_id = 0;
+        }
+        
+        $distritos = null;
+        $a_distrito_id = null;
+        if (isset($this->request->query['provincia_id']) && !empty($this->request->query['provincia_id'])){
+            $provincia_id = $provincia_ids = $this->request->data['Reportes']['provincia_id'] = $this->request->query['provincia_id'];
+            $options = array('conditions' => array('provincia_id' => $provincia_id),
+                'order' =>array('Distrito.nombdist' => 'asc'),
+                'recursive' => -1
+            );
+            $distritos = $this->Distrito->find('list',$options);
+            
+        }else{
+            $options           = array('fields'     => array('DISTINCT id'),
+                'conditions'   =>  array('departamento_id' => $departamento_id),
+                'recursive'  => -1);
+            $provincias_act    = $this->Distrito->Provincia->find('all',$options);
+            $provincia_ids     = Hash::extract($provincias_act, '{n}.Provincia.id');
+        }
+        
+        if (isset($this->request->query['distrito_id']) && !empty($this->request->query['distrito_id'])){
+            
+            $distrito_id = $distrito_ids = $this->request->data['Reportes']['distrito_id'] = $this->request->query['distrito_id'];
+            
+            $options = array('conditions' => array('Distrito.id' => $distrito_id),
+                'order' =>array('Distrito.nombdist' => 'asc'),
+                'recursive' => -1
+            );
+            
+            $distrito = $this->Distrito->find('first',$options);
+            $distrito['Distrito']['nombdist'] = ucwords(strtolower($distrito['Distrito']['nombdist']));
+        }else{
+            $options           = array( 'fields'     =>  array('DISTINCT id'),
+                'conditions' =>  array('provincia_id' => $provincia_ids),
+                'recursive'  =>  -1);
+            $polygon_activo    = $this->Distrito->find('all',$options);
+            $distrito_ids      = Hash::extract($polygon_activo, '{n}.Distrito.id');
+        }
+
+        
+        $this->set(compact('departamentos','provincias','distritos','distrito', 'total'));
+        
+        
+    }
 }

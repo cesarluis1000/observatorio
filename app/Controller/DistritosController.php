@@ -193,6 +193,7 @@ class DistritosController extends AppController {
 	    $json = str_replace(']"]]', ']]]', $json);
 	    $this->response->body($json);;
 	}
+
 	
 	public function delitosgeojson() {
 	    $this->layout = false;
@@ -311,7 +312,7 @@ class DistritosController extends AppController {
 	    $this->response->body($json);
 	    
 	}
-		
+	
 	/**
 	 * add geojson
 	 *
@@ -372,15 +373,26 @@ class DistritosController extends AppController {
 
 	    }
 	    $distritos = array('type' => 'FeatureCollection','features'=>$distritos);
-	    //pr($distritos);exit;
 	    
+	    //pr($distritos);
 	    $json = json_encode($distritos);
+	    //pr($json);
 	    $json = str_replace('[["[', '[[[', $json);
 	    $json = str_replace(']"]]', ']]]', $json);
+	    //pr($json);exit;
 	    $this->response->body($json);
 	    
 	}
-		
+
+	public function delitoschartjs(){
+	    $this->layout = false;
+	    $this->autoRender = false;
+	    $delitos = array('type' => 'line','data'=>'cesar');
+	    //pr($delitos);exit;
+	    $json = json_encode($delitos);
+	    $this->response->body($json);
+	}
+	
 	/**
 	 * addjson method
 	 *

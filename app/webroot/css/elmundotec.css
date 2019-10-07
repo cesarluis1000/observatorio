@@ -3,7 +3,7 @@ html, body {
 }
 @charset "UTF-8";
 * {
-   font-size: 12px;
+   /*font-size: 12px;*/
 }
 #container {
     padding-right: 15px;
