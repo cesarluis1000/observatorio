@@ -58,11 +58,12 @@ section article.skills {
 }
 section article.skills p {
   z-index: 2;
-  padding: 0px 5px;
+  padding: 0px;
   position: relative;
   box-sizing: border-box;
   overflow: hidden;
-  margin: 7px;
+  margin: 0px;
+  font-size: 10px;	
 }
 section article.skills div span:nth-child(4) {
   z-index: -1;
@@ -73,5 +74,5 @@ section article.skills div span:nth-child(4) {
   right: 0;
   background: #5E95E8;
   height: 100%;
-  margin-left: 20px;
+  margin-left: 14px;
 }
