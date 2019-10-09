@@ -387,7 +387,73 @@ class DistritosController extends AppController {
 	public function delitoschartjs(){
 	    $this->layout = false;
 	    $this->autoRender = false;
-	    $delitos = array('type' => 'line','data'=>'cesar');
+	    $this->loadModel('Denuncia');
+	    
+	    $denuncias = $this->Denuncia->find('all', array('fields' => array('DISTINCT Denuncia.categoria')));
+	    
+	    $datasets = array();
+	    foreach ($denuncias as $i => $row){	        
+	        $datasets[$i]  = array(  'label'             =>  $row['Denuncia']['categoria'],
+                    	            'fill'              =>  false,
+                    	            'backgroundColor'   =>  'RGBA(255, 0, 0, 0.2)',
+                    	            'borderColor'       =>  'RGBA(255, 0, 0, 0.8)',
+                    	            'data'              =>  array(881,734,786,670,761,780,669,885,415),
+                    	        );
+	        $conditions    = array('Denuncia.categoria'    => $row['Denuncia']['categoria'],
+	                               'Denuncia.fecha_hecho BETWEEN ? AND ?'  => array('2019-01-01','2019-09-15'),
+	                               'Denuncia.distrito_id'  => 842,
+	                               'Denuncia.estado_google'  => 'OK',
+	                               );
+	        $options       = array(
+                	            'conditions' => $conditions,
+                	            'fields'=>array('YEAR(fecha_hecho)', 'MONTH(fecha_hecho)', 'COUNT(id) as `denuncia_count`'),
+                	            //'joins' => array('LEFT JOIN `entities` AS Entity ON `Entity`.`category_id` = `Category`.`id`'),
+	                            'group' => array('YEAR(fecha_hecho)', 'MONTH(fecha_hecho)'),'recursive'=>-1
+                	            //'contain' => array('Domain' => array('fields' => array('title')))
+                	        );
+	        
+	        $cantidad      = $this->Denuncia->find('all', $options);
+	        //pr($cantidad);
+	    }
+	    
+	    //pr($datasets);
+	    //exit;
+	    $delitos = array(  'type'      => 'line',
+	                       'data'      =>  array(  'labels' => array('Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Augusto', 'Septiembre'),
+	                                               'datasets'  =>  array(  array(  'label'             =>  'HURTO',
+	                                                                               'fill'              =>  false,
+	                                                                               'backgroundColor'   =>  'RGBA(255, 0, 0, 0.2)',
+	                                                                               'borderColor'       =>  'RGBA(255, 0, 0, 0.8)',
+	                                                                               'data'              =>  array(881,734,786,670,761,780,669,885,415),
+	                                                                           ),
+                    	                                                   array(  'label'             =>  'ROBO',
+                        	                                                       'fill'              =>  false,
+                        	                                                       'backgroundColor'   =>  'RGBA(0, 255, 0, 0.2)',
+                        	                                                       'borderColor'       =>  'RGBA(0, 255, 0, 0.8)',
+                        	                                                       'data'              =>  array(500,800,600,761,780,669,885,415,900),
+                    	                                                       )
+	                                                                   )
+                                                ),
+            	           'options'   =>  array(  'responsive'    => true,
+            	                                   'title'         => array(   'display'   =>  true,
+            	                                                               'text'      =>  'Distrito Lima'),
+            	                                   'tooltips'      => array(   'mode'      =>  'index',
+            	                                                               'intersect' =>  false),            	               
+            	                                   'hover'         => array(   'mode'      =>  'nearest',
+            	                                                               'intersect' =>  true),
+            	                                   'scales'        =>  array(  'xAxes'     => array(array( 'display'       =>  true,
+            	                                                                                           'scaleLabel'    =>  array(  'display'       =>  true,
+            	                                                                                                                       'labelString'   =>  'Meses')
+            	                                                                                       )
+            	                                                                                   ),
+            	                                                               'yAxes'     => array(array( 'display'       =>  true,
+                                    	                                                                   'scaleLabel'    =>  array(  'display'       =>  true,
+                                    	                                                                                               'labelString'   =>  'Valor')
+                                    	                                                               )
+                                    	                                                           )
+                            	                                           )
+                            	               )
+	                   );
 	    //pr($delitos);exit;
 	    $json = json_encode($delitos);
 	    $this->response->body($json);
