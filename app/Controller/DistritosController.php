@@ -392,31 +392,47 @@ class DistritosController extends AppController {
 	    $denuncias = $this->Denuncia->find('all', array('fields' => array('DISTINCT Denuncia.categoria')));
 	    
 	    $datasets = array();
+	
 	    foreach ($denuncias as $i => $row){	        
-	        $datasets[$i]  = array(  'label'             =>  $row['Denuncia']['categoria'],
-                    	            'fill'              =>  false,
-                    	            'backgroundColor'   =>  'RGBA(255, 0, 0, 0.2)',
-                    	            'borderColor'       =>  'RGBA(255, 0, 0, 0.8)',
-                    	            'data'              =>  array(881,734,786,670,761,780,669,885,415),
-                    	        );
+	        
 	        $conditions    = array('Denuncia.categoria'    => $row['Denuncia']['categoria'],
 	                               'Denuncia.fecha_hecho BETWEEN ? AND ?'  => array('2019-01-01','2019-09-15'),
 	                               'Denuncia.distrito_id'  => 842,
 	                               'Denuncia.estado_google'  => 'OK',
+	                               //'MONTH(fecha_hecho)' => 1
 	                               );
 	        $options       = array(
                 	            'conditions' => $conditions,
-                	            'fields'=>array('YEAR(fecha_hecho)', 'MONTH(fecha_hecho)', 'COUNT(id) as `denuncia_count`'),
+	                            'fields'=>array('Denuncia.categoria','YEAR(fecha_hecho) as anio', 'MONTH(fecha_hecho) as mes', 'COUNT(id) as denuncia_count'),
                 	            //'joins' => array('LEFT JOIN `entities` AS Entity ON `Entity`.`category_id` = `Category`.`id`'),
 	                            'group' => array('YEAR(fecha_hecho)', 'MONTH(fecha_hecho)'),'recursive'=>-1
                 	            //'contain' => array('Domain' => array('fields' => array('title')))
                 	        );
 	        
-	        $cantidad      = $this->Denuncia->find('all', $options);
-	        //pr($cantidad);
+	        $denuncia_cant = $this->Denuncia->find('all', $options);
+	        	        
+	        $data = Hash::extract($denuncia_cant, '{n}.0.denuncia_count');
+	        $data = Hash::combine($denuncia_cant, '{n}.0.mes', '{n}.0.denuncia_count');
+	        //pr($data);
+	        
+	        $mes_fin = 9;
+	        for ($mes_ini=1; $mes_ini <= $mes_fin; $mes_ini++){
+	            if (!isset($data[$mes_ini])){
+	                $data[$mes_ini] = 0;
+	            }
+	        }
+	        ksort($data);
+	        //pr($data);
+	        
+	        $datasets[$i]  = array( 'label'             =>  $row['Denuncia']['categoria'],
+                    	            'fill'              =>  false,
+                    	            'backgroundColor'   =>  'RGBA(255, 0, 0, 0.2)',
+                    	            'borderColor'       =>  'RGBA(255, 0, 0, 0.8)',
+	                                'data'              =>  $data//array(881,734,786,670,761,780,669,885,415),
+                    	        );
 	    }
 	    
-	    //pr($datasets);
+	   // pr($datasets);
 	    //exit;
 	    $delitos = array(  'type'      => 'line',
 	                       'data'      =>  array(  'labels' => array('Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Augusto', 'Septiembre'),
@@ -454,6 +470,32 @@ class DistritosController extends AppController {
                             	                                           )
                             	               )
 	                   );
+	    //pr($delitos);
+	    $delitos2 = array(  'type'      => 'line',
+	        'data'      =>  array(  'labels' => array('Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Augusto', 'Septiembre'),
+	            'datasets'  =>  $datasets
+	        ),
+	        'options'   =>  array(  'responsive'    => true,
+	            'title'         => array(   'display'   =>  true,
+	                'text'      =>  'Distrito Lima'),
+	            'tooltips'      => array(   'mode'      =>  'index',
+	                'intersect' =>  false),
+	            'hover'         => array(   'mode'      =>  'nearest',
+	                'intersect' =>  true),
+	            'scales'        =>  array(  'xAxes'     => array(array( 'display'       =>  true,
+	                'scaleLabel'    =>  array(  'display'       =>  true,
+	                    'labelString'   =>  'Meses')
+	            )
+	            ),
+	                'yAxes'     => array(array( 'display'       =>  true,
+	                    'scaleLabel'    =>  array(  'display'       =>  true,
+	                        'labelString'   =>  'Valor')
+	                )
+	                )
+	            )
+	        )
+	    );
+	    //pr($delitos);
 	    //pr($delitos);exit;
 	    $json = json_encode($delitos);
 	    $this->response->body($json);
