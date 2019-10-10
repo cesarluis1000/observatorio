@@ -389,15 +389,41 @@ class DistritosController extends AppController {
 	    $this->autoRender = false;
 	    $this->loadModel('Denuncia');
 	    
+	    $provincia_id = $this->request->query['provincia_id'];
+	    
+	    if (isset($this->request->query['distrito_id']) && !empty($this->request->query['distrito_id'])){
+	        $distrito_ids = $this->request->query['distrito_id'];
+	    }else{
+	        /*
+	         $options           = array('fields'=>array('DISTINCT distrito_id'),'recursive' => -1);
+	         $polygon_activo    = $this->Distrito->DistPolygon->find('all',$options);
+	         $distrito_ids      = Hash::extract($polygon_activo, '{n}.DistPolygon.distrito_id');
+	         */
+	        $options       = array('fields'=>array('id'),
+	            'conditions'   =>  array('estado'=>'A', 'provincia_id' => $provincia_id),
+	            'recursive'    =>  -1);
+	        $distritos_act = $this->Distrito->find('all',$options);
+	        $distrito_ids  = Hash::extract($distritos_act, '{n}.Distrito.id');
+	        
+	    }
+	    
+	    //pr($distrito_ids);	    
+	    
+	    
 	    $denuncias = $this->Denuncia->find('all', array('fields' => array('DISTINCT Denuncia.categoria')));
 	    
 	    $datasets = array();
 	
+	    //pr($denuncias);
+	    
+	    $backgroundColor   = array('RGBA(215, 222, 7, 0.2)','RGBA(149, 79, 219, 0.2)','RGBA(79, 207, 219, 0.2)','RGBA(255, 0, 0, 0.2)','RGBA(216, 123, 219, 0.2)','RGBA(0, 0, 255, 0.2)','RGBA(0, 255, 0, 0.2)','RGBA(100, 50, 0, 0.2)','RGBA(50, 0, 50, 0.2)');
+	    $borderColor       = array('RGBA(215, 222, 7, 0.8)','RGBA(149, 79, 219, 0.8)','RGBA(79, 207, 219, 0.8)','RGBA(255, 0, 0, 0.8)','RGBA(216, 123, 219, 0.8)','RGBA(0, 0, 255, 0.8)','RGBA(0, 255, 0, 0.8)','RGBA(100, 50, 0, 0.8)','RGBA(50, 0, 50, 0.8)');
+	    
 	    foreach ($denuncias as $i => $row){	        
 	        
 	        $conditions    = array('Denuncia.categoria'    => $row['Denuncia']['categoria'],
 	                               'Denuncia.fecha_hecho BETWEEN ? AND ?'  => array('2019-01-01','2019-09-15'),
-	                               'Denuncia.distrito_id'  => 842,
+	                               'Denuncia.distrito_id'  => $distrito_ids,
 	                               'Denuncia.estado_google'  => 'OK',
 	                               //'MONTH(fecha_hecho)' => 1
 	                               );
@@ -422,18 +448,21 @@ class DistritosController extends AppController {
 	            }
 	        }
 	        ksort($data);
+	        $data = implode(',',$data);
+	        $data =  explode(',', $data);
 	        //pr($data);
 	        
 	        $datasets[$i]  = array( 'label'             =>  $row['Denuncia']['categoria'],
                     	            'fill'              =>  false,
-                    	            'backgroundColor'   =>  'RGBA(255, 0, 0, 0.2)',
-                    	            'borderColor'       =>  'RGBA(255, 0, 0, 0.8)',
+	                                'backgroundColor'   =>  $backgroundColor[$i],
+	                                'borderColor'       =>  $borderColor[$i],
 	                                'data'              =>  $data//array(881,734,786,670,761,780,669,885,415),
                     	        );
 	    }
 	    
-	   // pr($datasets);
+	    //pr($datasets);
 	    //exit;
+	    /*
 	    $delitos = array(  'type'      => 'line',
 	                       'data'      =>  array(  'labels' => array('Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Augusto', 'Septiembre'),
 	                                               'datasets'  =>  array(  array(  'label'             =>  'HURTO',
@@ -470,6 +499,7 @@ class DistritosController extends AppController {
                             	                                           )
                             	               )
 	                   );
+        */	    
 	    //pr($delitos);
 	    $delitos2 = array(  'type'      => 'line',
 	        'data'      =>  array(  'labels' => array('Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Augusto', 'Septiembre'),
@@ -495,9 +525,10 @@ class DistritosController extends AppController {
 	            )
 	        )
 	    );
-	    //pr($delitos);
+	    //pr($delitos2);
 	    //pr($delitos);exit;
-	    $json = json_encode($delitos);
+	    //$json = json_encode($delitos);
+	    $json = json_encode($delitos2);
 	    $this->response->body($json);
 	}
 	
