@@ -388,6 +388,7 @@ class DistritosController extends AppController {
 	    $this->layout = false;
 	    $this->autoRender = false;
 	    $this->loadModel('Denuncia');
+	    $this->loadModel('TipoDenuncia');
 	    
 	    $provincia_id = $this->request->query['provincia_id'];
 	    
@@ -407,22 +408,23 @@ class DistritosController extends AppController {
 	        
 	    }
 	    
-	    //pr($distrito_ids);	    
-	    
-	    
-	    $denuncias = $this->Denuncia->find('all', array('fields' => array('DISTINCT Denuncia.categoria')));
+	    //No se esta conciderando OTROS y vIOLENCIA FAMILIAR
+	    $denuncias = $this->TipoDenuncia->find('all', array('fields'       => array('TipoDenuncia.nombre'),
+                                                	        'conditions'   => array('TipoDenuncia.id !=' => array(8,9)),
+	                                                         'recursive'   => -1
+                                                	    ));
 	    
 	    $datasets = array();
-	
+	    
+	    $backgroundColor   = array('RGBA(215, 222, 7, 0.2)','RGBA(79, 207, 219, 0.2)','RGBA(255, 0, 0, 0.2)','RGBA(216, 123, 219, 0.2)','RGBA(0, 0, 255, 0.2)','RGBA(0, 255, 0, 0.2)','RGBA(100, 50, 0, 0.2)','RGBA(50, 0, 50, 0.2)');
+	    $borderColor       = array('RGBA(215, 222, 7, 0.8)','RGBA(79, 207, 219, 0.8)','RGBA(255, 0, 0, 0.8)','RGBA(216, 123, 219, 0.8)','RGBA(0, 0, 255, 0.8)','RGBA(0, 255, 0, 0.8)','RGBA(100, 50, 0, 0.8)','RGBA(50, 0, 50, 0.8)');
+	    
 	    //pr($denuncias);
-	    
-	    $backgroundColor   = array('RGBA(215, 222, 7, 0.2)','RGBA(149, 79, 219, 0.2)','RGBA(79, 207, 219, 0.2)','RGBA(255, 0, 0, 0.2)','RGBA(216, 123, 219, 0.2)','RGBA(0, 0, 255, 0.2)','RGBA(0, 255, 0, 0.2)','RGBA(100, 50, 0, 0.2)','RGBA(50, 0, 50, 0.2)');
-	    $borderColor       = array('RGBA(215, 222, 7, 0.8)','RGBA(149, 79, 219, 0.8)','RGBA(79, 207, 219, 0.8)','RGBA(255, 0, 0, 0.8)','RGBA(216, 123, 219, 0.8)','RGBA(0, 0, 255, 0.8)','RGBA(0, 255, 0, 0.8)','RGBA(100, 50, 0, 0.8)','RGBA(50, 0, 50, 0.8)');
-	    
+	    //pr($backgroundColor);
 	    foreach ($denuncias as $i => $row){	        
 	        
-	        $conditions    = array('Denuncia.categoria'    => $row['Denuncia']['categoria'],
-	                               'Denuncia.fecha_hecho BETWEEN ? AND ?'  => array('2019-01-01','2019-09-15'),
+	        $conditions    = array('Denuncia.categoria'    => $row['TipoDenuncia']['nombre'],
+	                               'Denuncia.fecha_hecho BETWEEN ? AND ?'  => array('2019-01-01','2019-09-31'),
 	                               'Denuncia.distrito_id'  => $distrito_ids,
 	                               'Denuncia.estado_google'  => 'OK',
 	                               //'MONTH(fecha_hecho)' => 1
@@ -452,7 +454,7 @@ class DistritosController extends AppController {
 	        $data =  explode(',', $data);
 	        //pr($data);
 	        
-	        $datasets[$i]  = array( 'label'             =>  $row['Denuncia']['categoria'],
+	        $datasets[$i]  = array( 'label'             =>  $row['TipoDenuncia']['nombre'],
                     	            'fill'              =>  false,
 	                                'backgroundColor'   =>  $backgroundColor[$i],
 	                                'borderColor'       =>  $borderColor[$i],

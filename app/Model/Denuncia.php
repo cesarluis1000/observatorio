@@ -59,6 +59,13 @@ class Denuncia extends AppModel {
 			'conditions' => '',
 			'fields' => '',
 			'order' => ''
-		)
+		),
+	    'TipoDenuncia' => array(
+	        'className' => 'TipoDenuncia',
+	        'foreignKey' => 'tipo_denuncia_id',
+	        'conditions' => '',
+	        'fields' => '',
+	        'order' => ''
+	    )
 	);
 }
