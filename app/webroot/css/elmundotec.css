@@ -1,152 +1,135 @@
-html, body {
-    /*height: 100%;*/
-	font-size: 12px;
+#container, #content, .index, .mapfieldset, .row, .menu10, .mapcontainer, .map {
+        margin: 0;
+        padding: 0;
+        /*width: 100%;*/
+        height: 100%;
+      }
+.box-shadow {
+     -webkit-box-shadow: 6px 5px 10px 0px rgba(50, 50, 50, 0.22);
+     -moz-box-shadow: 6px 5px 10px 0px rgba(50, 50, 50, 0.22);
+     -o-box-shadow: 6px 5px 10px 0px rgba(50, 50, 50, 0.22);
+     box-shadow: 6px 5px 10px 0px rgba(50, 50, 50, 0.22);
+ }
+ .box-shadow2 {
+     -webkit-box-shadow: 0px 0px 10px 0px rgba(50, 50, 50, 0.75);
+     -moz-box-shadow: 0px 0px 10px 0px rgba(50, 50, 50, 0.75);
+     -o-box-shadow: 0px 0px 10px 0px rgba(50, 50, 50, 0.75);
+     box-shadow: 0px 0px 10px 0px rgba(50, 50, 50, 0.75);
+ }
+ .transition05 {
+     -webkit-transition: all 0.5s ease;
+     -moz-transition: all 0.5s ease;
+     -ms-transition: all 0.5s ease;
+     -o-transition: all 0.5s ease;
+     transition: all 0.5s ease;
+ }
+ html,
+ body {
+     font-family: 'Open Sans', helvetica, calibri, arial;
+     height: 100%;
+ }
+ @font-face {
+     font-family: 'Open Sans';
+     font-style: normal;
+     font-weight: 400;
+     src: local('Open Sans Regular'), local('OpenSans-Regular'), url(https://fonts.gstatic.com/s/opensans/v17/mem8YaGs126MiZpBA-UFVZ0e.ttf) format('truetype');
+ }
+ a {
+     color: white;
+ }
+ a:hover {
+     color: hsl(0, 0%, 67%);
+ }
+ ul li {
+     list-style: none;
+ }
+ .contenedor--menu {
+     background-color: #eee;
+     z-index: 300;
+     height: 100%;
+     width: 250px;
+     -webkit-box-shadow: 6px 5px 10px 0px rgba(50, 50, 50, 0.22);
+     -moz-box-shadow: 6px 5px 10px 0px rgba(50, 50, 50, 0.22);
+     -o-box-shadow: 6px 5px 10px 0px rgba(50, 50, 50, 0.22);
+     box-shadow: 6px 5px 10px 0px rgba(50, 50, 50, 0.22);
+     overflow-y: auto;
+     position: fixed;
+ }
+ .menu {
+     font-size: 1.1em;
+     z-index: 500;
+     padding: 80px 10px 50px 10px;
+ }
+ .menu li,
+ .menu a {
+     padding: 15px 5px;
+     color: #606060;
+     width: 200px;
+ }
+ .menu a {
+     text-decoration: none;
+ }
+ .menu a:hover {
+     color: hsl(0, 0%, 67%);
+ }
+ .menu li {
+     border-bottom: 1px solid #606060;
+     display: block;
+ }
+ .submenu {
+     padding-left: 15px;
+     font-size: 0.9em;
+ }
+ .submenu li,
+ .submenu a {
+     padding: 8px 5px;
+ }
+ .submenu li {
+     border-bottom: 0px;
+ }
+ .icono--div {
+	z-index: 600;
+    padding: 5px;
+    position: fixed;
 }
-@charset "UTF-8";
-* {
-   /*font-size: 12px;*/
-}
-#container {
-    padding-right: 10px;
-    padding-left: 10px;
-    margin-right: auto;
-    margin-left: auto;
-	height: 100%;
-	min-height: 100%;
-}
-.row {
-    margin-right: -10px;
-    margin-left: -10px;
-}
-/* label input requeridos */
-.form-group.required .control-label:after {
-  content:" *";color:red;
-}
-/*Header elmundotec*/
-#header  {
-	margin: 0px;
-	padding-bottom: 0px;
-}
-#header .banner {
-	background-image: url("../img/wallpaper_banner.jpg");
-	background-repeat: no-repeat;
-    background-size: 100% 100%;
-    padding-top: 3px;
-}
-#titulo {
-    margin-top: 0px;
-    margin-bottom: 0px;
-}	
-/**/
-.alert h4{
-	margin-bottom: 0px;
-}
-/*Catalogo Producto*/
-.sin_imagen{
-	opacity: 0.2;
-}
-.thumbnail {
-	margin-bottom: 5px;
-}
-.nombre_producto{
-	height: 30px;
-}
-.text-price{
-	color: red;
-}
-/* Menu tap espacio y cabecera*/
-.menu-level2{
-	padding-left: 11px;
-}
-.panel-body {
-    padding: 0px; 
-}
-.panel-heading {
- padding: 5px 10px;
-}
-/* Formulario Buscador*/
-.form-buscador{
-	margin-top: 10px;
-}
-.titulo-buscador{
-    margin-top: 10px;
-    margin-bottom: 10px;
-    height: 24px;
-    font-size: 14px;
-    text-align: center;
-    color: red;
-}
+ }
+ .icono {
+     position: absolute;
+     z-index: 1000;
+     display: inline-block;
+ }
+ .icono a {
+ 	-webkit-box-shadow: 0px 0px 10px 0px rgba(50, 50, 50, 0.75);
+    -moz-box-shadow: 0px 0px 10px 0px rgba(50, 50, 50, 0.75);
+    -o-box-shadow: 0px 0px 10px 0px rgba(50, 50, 50, 0.75);
+    box-shadow: 0px 0px 10px 0px rgba(50, 50, 50, 0.75);
 
-.text-left{
-	text-align: left !important;	
-}
- /***Menu catalogo***/
-.panel-scroll-categoria {
-    max-height: 400px;
-	overflow: hidden;
-	overflow-y: auto;
- } 
 
- .panel-scroll-subcategoria {
-    max-height: 205px;
-	overflow: hidden;
-	overflow-y: auto;
- } 
- 
-.panel-scroll-marca {
-    max-height: 162px;
-	overflow: hidden;
-	overflow-y: auto;
- } 
-/* Menu oringinal */
-.panel a {
-  color:#777;
-}
-.panel-scroll {
-    max-height: 460px;
-	overflow: hidden;
-	overflow-y: auto;
- } 
-.panel a:hover {
- text-decoration:none;
- color:#222;
-}
-.panel .table td {
- border-color: #f3f3f3;
-}
-
-/*Tabla Index td boton*/
-table .btn-xs{
-	line-height: 1;
-}
-.table-condensed>tbody>tr>td, 
-.table-condensed>tbody>tr>th, 
-.table-condensed>tfoot>tr>td, 
-.table-condensed>tfoot>tr>th, 
-.table-condensed>thead>tr>td, 
-.table-condensed>thead>tr>th {
-    padding: 2px;
-}
-/*Buscador Input*/
-.input-xs {
-	height: 27px;
-    padding: 5px 10px;
-    font-size: 12px;
-    line-height: 1.5;
-    border-radius: 3px;
-}
-/*Paginador*/
-.pagination {    
-    margin: 10px 0;
-}
-.pagination-sm>li>a, .pagination-sm>li>span {
-	padding: 5px 7px;
-    line-height: 1;
-}
-
-.col-lg-1, .col-lg-10, .col-lg-11, .col-lg-12, .col-lg-2, .col-lg-3, .col-lg-4, .col-lg-5, .col-lg-6, .col-lg-7, .col-lg-8, .col-lg-9, .col-md-1, .col-md-10, .col-md-11, .col-md-12, .col-md-2, .col-md-3, .col-md-4, .col-md-5, .col-md-6, .col-md-7, .col-md-8, .col-md-9, .col-sm-1, .col-sm-10, .col-sm-11, .col-sm-12, .col-sm-2, .col-sm-3, .col-sm-4, .col-sm-5, .col-sm-6, .col-sm-7, .col-sm-8, .col-sm-9, .col-xs-1, .col-xs-10, .col-xs-11, .col-xs-12, .col-xs-2, .col-xs-3, .col-xs-4, .col-xs-5, .col-xs-6, .col-xs-7, .col-xs-8, .col-xs-9 {
-    min-height: 1px;
-    padding-left: 10px;
-    padding-right: 15px;
-    position: relative;
-}
+ 	 border-radius: 5px; 	
+     padding: 10px 15px;
+     background-color: white;
+     display: inline-block;
+     color: white;
+     -webkit-transition: all 0.5s ease;
+     -moz-transition: all 0.5s ease;
+     -ms-transition: all 0.5s ease;
+     -o-transition: all 0.5s ease;
+     transition: all 0.5s ease;
+ }
+ .icono a:hover {
+     background-color: hsl(0, 0%, 67%);
+     color: #0f0f0f;
+     -webkit-transition: all 0.5s ease;
+     -moz-transition: all 0.5s ease;
+     -ms-transition: all 0.5s ease;
+     -o-transition: all 0.5s ease;
+     transition: all 0.5s ease;
+ }
+ .span__raya {
+     display: block;
+     height: 3px;
+     padding: 2px;
+     width: 20px;
+     background-color: black;
+     margin: 3px 0px;
+ }

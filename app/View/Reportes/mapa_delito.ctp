@@ -1,11 +1,11 @@
 <?php echo $this->Html->css('jquery-ui.css'); ?>
 <?php echo $this->Html->script('jquery-ui.js'); ?>
 <?php echo $this->Html->css('layout.css'); ?>
-<fieldset>
+<fieldset class="mapfieldset">
     
     <div class="row">
     
-    	<div class="col-md-2">
+    	<div class="menu2 col-md-2">
 				 <legend><?php echo __('Mapa Criminológico'); ?></legend>
                  <?php
                             
@@ -90,16 +90,10 @@
     			</div>
     			
             	<?php echo $this->Form->end(); ?>
-            	<br/>          	
-			            	
-
-              
+            	<br/>              
     	</div>
-    
-
-    
-    
-    	<div class="col-md-10">
+    	    
+    	<div class="menu10 col-md-10">
         	<div class="mapcontainer">
         		<div id="map" class="map"></div>
 
