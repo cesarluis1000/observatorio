@@ -1,4 +1,14 @@
 $(function(){
+	
+    
+    $(".contenedor--menu").hide();
+
+    $(".icono").click(function () {
+        $(".contenedor--menu").animate({width: "toggle"});
+        event.preventDefault();
+        elem.slideToggle();
+    });
+	
 	var base = $('base').attr('href');
 	$('#ReportesDepartamentoId').click(function(){
 		var departamento_id = $(this).val();		

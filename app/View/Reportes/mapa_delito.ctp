@@ -3,9 +3,19 @@
 <?php echo $this->Html->css('layout.css'); ?>
 <fieldset class="mapfieldset">
     
-    <div class="row">
+    <div class="maprow">
     
-    	<div class="menu2 col-md-2">
+    	<div id="header" class="page-header, icono--div">    
+            <div class="icono">
+                <a  href="#">
+                    <span class="span__raya"></span>
+                    <span class="span__raya"></span>
+                    <span class="span__raya"></span>
+                </a>
+            </div>
+        </div>
+        
+    	<div class="contenedor--menu">
 				 <legend><?php echo __('Mapa Criminológico'); ?></legend>
                  <?php
                             
@@ -93,7 +103,7 @@
             	<br/>              
     	</div>
     	    
-    	<div class="menu10 col-md-10">
+    	<div class="menu10 col-md-12">
         	<div class="mapcontainer">
         		<div id="map" class="map"></div>
 

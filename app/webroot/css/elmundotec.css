@@ -6,7 +6,7 @@ html,body {
     padding-right: 10px;
     padding-left: 10px;
 }
-#container, #content, .index, .mapfieldset, .row, .menu10, .mapcontainer, .map {
+#container, #content, .index, .mapfieldset, .maprow, .menu10, .mapcontainer, .map {
 	margin: 0;
 	height: 100%;
 }
