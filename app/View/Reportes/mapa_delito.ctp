@@ -16,7 +16,7 @@
         </div>
         
     	<div class="contenedor--menu">
-				 <legend><?php echo __('Mapa Criminológico'); ?></legend>
+				 <legend class="maplegend"><?php echo __('Mapa Criminológico'); ?></legend>
                  <?php
                             
                     echo $this->Form->create('Reportes', array(
@@ -53,7 +53,7 @@
                 <br/>
                 <?php if (isset($distrito) && !empty($distrito)){ ?>                    
                 <fieldset>
-                	<legend><?php echo $distrito['Distrito']['nombdist'] ?></legend>
+                	<legend class="maplegend"><?php echo $distrito['Distrito']['nombdist'] ?></legend>
                 	<ul>
                 		<li>Area: <?php echo $distrito['Distrito']['area_minam'] ?> Km2.</li>
                 		<li>Población en miles: <?php echo $distrito['Distrito']['poblacion'] ?></li>
@@ -63,7 +63,7 @@
 
 				
                 <fieldset>
-                	<legend>Delitos</legend>
+                	<legend class="maplegend">Delitos</legend>
                 	
                 	<section id="skills" class="toad-fullscreen">
                 		<article class="skills">
@@ -83,7 +83,7 @@
                                     	<input type="checkbox" class="form-check-input" name="delito[<?php echo $denuncia['Denuncia']['id'] ?>]" id="<?php echo $denuncia['Denuncia']['id'] ?>" <?php echo $denuncia['Denuncia']['checked'] ?>>                        
                                     	<label class="form-check-label" for="<?php echo $denuncia['Denuncia']['id'] ?>"><?php echo $denuncia['Denuncia']['categoria'] ?> (<?php echo $denuncia['Denuncia']['subTotal'] ?>)</label>
                                     	<img alt="" src="<?php echo $denuncia['Denuncia']['img'] ?>" style="width: 20px">
-                                	<span style="width: <?php echo  $denuncia['Denuncia']['subTotal']*100/$total ?>%;" ></span><span class="skills"></span></p>                              
+                                	<span style="width: <?php echo  $total==0?0:$denuncia['Denuncia']['subTotal']*100/$total ?>%;" ></span><span class="skills"></span></p>                              
                                 </div>
                             <?php } ?>
                             
