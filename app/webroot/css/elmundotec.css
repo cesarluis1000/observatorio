@@ -5,12 +5,7 @@ html,body {
 #container {
     padding-right: 10px;
     padding-left: 10px;
-}
-#container, #content, .index, .mapfieldset, .maprow, .menu10, .mapcontainer, .map {
-	margin: 0;
-	height: 100%;
-}
-      
+}     
 .row {
     margin-right: -10px;
     margin-left: -10px;
@@ -78,6 +73,20 @@ html,body {
 	text-align: left !important;	
 }
  /***Menu catalogo***/
+.legend{	
+	margin-bottom: 5px;
+}
+#ReportesMapaDelitoForm{
+	margin: 5px;
+}
+#slider-range{
+	margin: 5px;
+}
+#container, #content, .index, .mapfieldset, .maprow, .menu10, .mapcontainer, .map {
+	margin: 0;
+	height: 100%;
+}
+
 .panel-scroll-categoria {
     max-height: 400px;
 	overflow: hidden;
@@ -179,6 +188,7 @@ table .btn-xs{
      list-style: none;
  }
  .contenedor--menu {
+ 	 padding-top: 50px;
      background-color: #eee;
      z-index: 300;
      height: 100%;

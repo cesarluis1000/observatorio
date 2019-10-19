@@ -16,7 +16,7 @@
         </div>
         
     	<div class="contenedor--menu">
-				 <legend><?php echo __('Mapa Criminológico'); ?></legend>
+				 <legend class="maplegend"><?php echo __('Mapa Criminológico'); ?></legend>
                  <?php
                             
                     echo $this->Form->create('Reportes', array(
@@ -53,7 +53,7 @@
                 <br/>
                 <?php if (isset($distrito) && !empty($distrito)){ ?>                    
                 <fieldset>
-                	<legend><?php echo $distrito['Distrito']['nombdist'] ?></legend>
+                	<legend class="maplegend"><?php echo $distrito['Distrito']['nombdist'] ?></legend>
                 	<ul>
                 		<li>Area: <?php echo $distrito['Distrito']['area_minam'] ?> Km2.</li>
                 		<li>Población en miles: <?php echo $distrito['Distrito']['poblacion'] ?></li>
@@ -63,7 +63,7 @@
 
 				
                 <fieldset>
-                	<legend>Delitos</legend>
+                	<legend class="maplegend">Delitos</legend>
                 	
                 	<section id="skills" class="toad-fullscreen">
                 		<article class="skills">
