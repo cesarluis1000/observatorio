@@ -86,7 +86,15 @@ html,body {
 	margin: 0;
 	height: 100%;
 }
-
+.menu10{
+	padding: 0px !important;
+}
+.mapindex{
+	padding: 0px !important;
+}
+.mapcontainer{
+	padding: 0px !important;
+}
 .panel-scroll-categoria {
     max-height: 400px;
 	overflow: hidden;

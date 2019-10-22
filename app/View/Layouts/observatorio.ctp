@@ -26,22 +26,12 @@
 	<script src="https://cdn.polyfill.io/v2/polyfill.min.js?features=requestAnimationFrame,Element.prototype.classList,URL"></script>
 </head>
 <body>
-	<div id="container">
-		<div id="header" class="page-header">		
-			<h1 id="titulo" class="banner">
-			<?php    	
-        	echo $this->Html->link(
-        	    $this->Html->image('dircri_banner.png', ['alt' => 'observatorio']),
-        	    '/?n='.time(),['escapeTitle' => false, 'title' =>'observatorio']
-        	    );
-        	?>
-        	</h1>        	     	
-			<?php //echo $this->element('logeado'); ?>
-		</div>
+	<div id="container" class="mapcontainer">
+		
 		
 		<div id="content" class="row">			
 			<!-- Vista -->
-			<div class="index col-md-12">
+			<div class="index mapindex col-md-12">
 				<?php echo $this->Flash->render(); ?>
 				<?php echo $this->fetch('content'); ?>
 			</div>

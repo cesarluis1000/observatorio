@@ -226,7 +226,7 @@
 		attributionOptions : {
 			collapsible : false
 		}
-	}).extend([ mousePositionControl ]);
+	}).extend([ mousePositionControl, new ol.control.FullScreen(),new ol.control.ZoomSlider() ]);
 	/****************************************************************/	
 	
 	/*******Popup detalle*******/	
