@@ -196,9 +196,9 @@ class DistritosController extends AppController {
 
 	
 	public function delitosgeojson() {
-	    $this->layout = false;
+	    //$this->layout = false;
 	    $this->autoRender = false;
-	    //$this->response->type('json');	    	    
+	    $this->response->type('json');	    	    
 	    
 	    //Obtenemos el departamento o departamento del PERU
 	    if (isset($this->request->query['departamento_id'])){
@@ -374,7 +374,7 @@ class DistritosController extends AppController {
 	    }
 	    $distritos = array('type' => 'FeatureCollection','features'=>$distritos);
 	    
-	    //pr($distritos);
+	    //pr($distritos);exit;
 	    $json = json_encode($distritos);
 	    //pr($json);
 	    $json = str_replace('[["[', '[[[', $json);
