@@ -270,19 +270,19 @@ class DistritosController extends AppController {
 	            $conditions = array_merge($conditions,array("HOUR(fecha_hecho) <=" => $horas2));
 	        }
 	        
-	        $options = array('fields'=>array('id','horizontal','vertical','categoria'),
+	        $options = array('fields'=>array('id','horizontal','vertical','categoria', 'ST_X(geom) as lat', 'ST_Y(geom) as lng'),
 	            'conditions'=> $conditions,
 	            'recursive' => -1,
 	            'order' => array('categoria DESC'),
 	        );
 	        
 	        $polygon = $this->Distrito->Denuncia->find('all',$options);
-	        //pr($polygon);
+	        //pr($polygon); exit;
 	        $cordenada=null;
 	        $a_delitos=null;
 	        foreach ($polygon as $pol){
 	            $cordenada[] = '['.$pol['Denuncia']['horizontal'].','.$pol['Denuncia']['vertical'].']';
-	            $a_delitos[$pol['Denuncia']['categoria']][] = '['.$pol['Denuncia']['horizontal'].','.$pol['Denuncia']['vertical'].']';
+	            $a_delitos[$pol['Denuncia']['categoria']][] = '['.$pol['0']['lng'].','.$pol['0']['lat'].']';
 	        }	        
 	        
 	        if (empty($cordenada)){
@@ -304,7 +304,7 @@ class DistritosController extends AppController {
 	    }
 	 
 	    $delitos = array('type' => 'FeatureCollection','features'=>$delitos);
-	//pr($delitos);exit;
+	   //pr($delitos);exit;
 	    
 	    $json = json_encode($delitos);
 	    $json = str_replace('[["[', '[[[', $json);

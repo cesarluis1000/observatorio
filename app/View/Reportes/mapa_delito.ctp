@@ -77,11 +77,11 @@
                                 	                        	                
                                 </div>
                 		       
-                            <?php foreach ($denuncias as $denuncia){ ?>                  	
+                            <?php foreach ($tipoDenuncias as $denuncia){ ?>                  	
                                 <div class="form-check">
                                 	<p>
                                     	<input type="checkbox" class="form-check-input" name="delito[<?php echo $denuncia['Denuncia']['id'] ?>]" id="<?php echo $denuncia['Denuncia']['id'] ?>" <?php echo $denuncia['Denuncia']['checked'] ?>>                        
-                                    	<label class="form-check-label" for="<?php echo $denuncia['Denuncia']['id'] ?>"><?php echo $denuncia['Denuncia']['categoria'] ?> (<?php echo $denuncia['Denuncia']['subTotal'] ?>)</label>
+                                    	<label class="form-check-label" for="<?php echo $denuncia['Denuncia']['id'] ?>"><?php echo $denuncia['TipoDenuncia']['nombre'] ?> (<?php echo $denuncia['Denuncia']['subTotal'] ?>)</label>
                                     	<img alt="" src="<?php echo $denuncia['Denuncia']['img'] ?>" style="width: 20px">
                                 	<span style="width: <?php echo  $total==0?0:$denuncia['Denuncia']['subTotal']*100/$total ?>%;" ></span><span class="skills"></span></p>                              
                                 </div>

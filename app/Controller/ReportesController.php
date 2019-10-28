@@ -483,6 +483,7 @@ class ReportesController extends AppController {
         $this->loadModel('Provincia');
         $this->loadModel('Distrito');
         $this->loadModel('Denuncia');
+        $this->loadModel('TipoDenuncia');
         
         $options = array('recursive'=>-1);
         $departamentos = $this->Departamento->find('list',$options);
@@ -603,8 +604,13 @@ class ReportesController extends AppController {
         
         //pr($horas1);
         //pr($horas2);
-        
-        $denuncias = $this->Denuncia->find('all', array('fields' => array('DISTINCT Denuncia.categoria')));
+        $tipoDenuncias = $this->TipoDenuncia->find('all', array('fields'       => array('TipoDenuncia.id','TipoDenuncia.nombre'),
+                                                'conditions'   => array('TipoDenuncia.id !=' => array(8,9),'TipoDenuncia.estado' => 'A'),
+                                                'recursive'   => -1
+                                            ));
+        //pr($tipoDenuncias); exit;
+        //$denuncias = $this->Denuncia->find('all', array('fields' => array('DISTINCT Denuncia.categoria')));
+        //pr($denuncias); exit;
         
         $ckdAll = false;
         if (isset($this->request->query['ckdAll'])){
@@ -628,11 +634,11 @@ class ReportesController extends AppController {
         
         $total = $this->Denuncia->find('count',$options);        
         
-        if (!empty($denuncias)){            
+        if (!empty($tipoDenuncias)){            
             
-            foreach ($denuncias as $i => $denuncia){
+            foreach ($tipoDenuncias as $i => $tipoDenuncia){
                 
-                $conditions = array_merge($conditions,array('Denuncia.categoria' => $denuncia['Denuncia']['categoria']));                
+                $conditions = array_merge($conditions,array('Denuncia.tipo_denuncia_id' => $tipoDenuncia['TipoDenuncia']['id']));                
                 $options = null;
                 //pr($conditions);
                 $options = array('fields' => array('Denuncia.id'),
@@ -641,15 +647,15 @@ class ReportesController extends AppController {
                 
                 $subTotal = $this->Denuncia->find('count',$options);                 
                 
-                $denuncias[$i]['Denuncia']['id'] = strtolower(str_replace(' ', '_', $denuncia['Denuncia']['categoria']));
-                $denuncias[$i]['Denuncia']['img'] = "./img/map/".strtolower(str_replace(' ', '_', $denuncia['Denuncia']['categoria'])).'_20px.png';
-                $denuncias[$i]['Denuncia']['subTotal'] = $subTotal;
+                $tipoDenuncias[$i]['Denuncia']['id'] = strtolower(str_replace(' ', '_', $tipoDenuncia['TipoDenuncia']['nombre']));
+                $tipoDenuncias[$i]['Denuncia']['img'] = "./img/map/".strtolower(str_replace(' ', '_', $tipoDenuncia['TipoDenuncia']['nombre'])).'_20px.png';
+                $tipoDenuncias[$i]['Denuncia']['subTotal'] = $subTotal;
                 
                 $checked = false;
-                if (isset($this->request->query['delito'][$denuncias[$i]['Denuncia']['id']]) || $ckdAll){
+                if (isset($this->request->query['delito'][$tipoDenuncias[$i]['Denuncia']['id']]) || $ckdAll){
                     $checked = 'checked';
                 }
-                $denuncias[$i]['Denuncia']['checked'] = $checked;
+                $tipoDenuncias[$i]['Denuncia']['checked'] = $checked;
                 
             }
         }
@@ -658,9 +664,9 @@ class ReportesController extends AppController {
             $this->request->data['Reportes']['delito'] = $this->request->query['delito'];
         }
         
-        //pr($denuncias);exit;
+        //pr($tipoDenuncias);exit;
         
-        $this->set(compact('departamentos','provincias','distritos','distrito', 'denuncias','total','horas1','horas2'));
+        $this->set(compact('departamentos','provincias','distritos','distrito', 'tipoDenuncias', 'denuncias','total','horas1','horas2'));
 
     }
     
