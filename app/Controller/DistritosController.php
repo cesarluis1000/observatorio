@@ -383,6 +383,59 @@ class DistritosController extends AppController {
 	    $this->response->body($json);
 	    
 	}
+	
+	public function geometry(){
+	    $this->layout = false;
+	    $this->autoRender = false;
+	    //$this->response->type('json');	   
+	    
+	    $provincia_id = $this->request->query['provincia_id'];
+	    if (isset($this->request->query['distrito_id']) && !empty($this->request->query['distrito_id'])){
+	        $distrito_ids = $this->request->query['distrito_id'];
+	    }else{
+	        $options       = array('fields'=>array('id'),
+                    	            'conditions'   =>  array('estado'=>'A', 'provincia_id' => $provincia_id),
+                    	            'recursive'    =>  -1);
+	        $distritos_act = $this->Distrito->find('all',$options);
+	        $distrito_ids  = Hash::extract($distritos_act, '{n}.Distrito.id');
+	        
+	    }
+	    $options = array('fields'      =>  array('id','iddist','nombdist','nombprov','area_minam'),
+            	         'conditions'   =>  array('provincia_id' => $provincia_id, 'id' => $distrito_ids),
+            	         'recursive'    =>  -1);
+	    
+	    $distritos = $this->Distrito->find('all',$options);
+	    //pr($distritos);
+	    $poligonos = null;
+	    foreach ($distritos as $i => $row){
+	        
+	        $options = array('fields'      =>  array('id','vertical','horizontal','orden'),
+            	            'conditions'   =>  array('DistPolygon.distrito_id' => $row['Distrito']['id']),
+            	            'recursive'    =>  -1,
+            	            'order'        =>  array('id DESC')
+	        );
+	        
+	        $polygon   =   $this->Distrito->DistPolygon->find('all',$options);	        
+	        $cordenada =   null;
+	        
+	        foreach ($polygon as $pol){
+	            $cordenada[] = $pol['DistPolygon']['vertical'].' '.$pol['DistPolygon']['horizontal'];
+	        }
+	        
+	        
+	        
+	        if (empty($cordenada)){
+	            unset($distritos[$i]);
+	            continue;
+	        }
+	        unset($distritos[$i]['Distrito']);
+	        $poligonos .= "UPDATE distritos SET geom = ST_GeomFromText('POLYGON((".implode($cordenada, ',')."))') WHERE id = ".$row['Distrito']['id'].';<br>';
+	        
+	    }
+	    pr($poligonos);
+	    $this->response->body();
+	    
+	}
 
 	public function delitoschartjs(){
 	    $this->layout = false;
