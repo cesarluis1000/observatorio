@@ -272,7 +272,7 @@ class DistritosController extends AppController {
         ));        
 	       //pr($conditions); //exit;
 	        
-        $options = array('fields'=>array('id','horizontal','vertical','categoria', 'ST_X(geom) as lat', 'ST_Y(geom) as lng'),
+        $options = array('fields'=>array('id','horizontal','vertical','categoria', 'ST_X(geom) as lng', 'ST_Y(geom) as lat'),
         	            'conditions'=> $conditions,
         	            'recursive' => -1,
         	            'order' => array('categoria DESC'),
@@ -313,8 +313,8 @@ class DistritosController extends AppController {
 	    $provincia_id = $this->request->query['provincia_id'];
 	    
 	    $options = array('fields'      =>  array('id','iddist','nombdist','nombprov','area_minam','ST_AsGeoJSON(geom) AS geometry'),
-	        'conditions'   =>  array('provincia_id' => $provincia_id),
-	        'recursive'    =>  -1);
+            	        'conditions'   =>  array('provincia_id' => $provincia_id),
+            	        'recursive'    =>  -1);
 	    
 	    if (isset($this->request->query['distrito_id']) && !empty($this->request->query['distrito_id'])){	        
 	        $options['conditions']['id'] = $this->request->query['distrito_id'];
