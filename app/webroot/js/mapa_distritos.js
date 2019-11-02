@@ -58,7 +58,7 @@
 												format 		: new ol.format.GeoJSON(),
 												url 		: url
 											});
-						
+						//new ol.layer.Vector
 						a_vectorLayerDelito[k] = new ol.layer.Heatmap({
 														source 	: vectorSource,
 														style 	: a_style[k]
