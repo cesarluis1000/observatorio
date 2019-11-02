@@ -621,6 +621,7 @@ class ReportesController extends AppController {
         }
         
         $conditions = array_merge($conditions,array("distrito_id"=> $distrito_ids));
+        //$conditions = array_merge($conditions,array("estado_google"=> 'OK', 'ST_Distance(Distrito.geom, Point(ST_X(Denuncia.geom), ST_Y(Denuncia.geom)))*110 <= 1'));
         $conditions = array_merge($conditions,array("estado_google"=> 'OK'));
         $conditions = array_merge($conditions,array("fecha_hecho >=" => $this->request->data['Reportes']['fecha_de']));
         $conditions = array_merge($conditions,array("fecha_hecho <=" => $this->request->data['Reportes']['hasta']));

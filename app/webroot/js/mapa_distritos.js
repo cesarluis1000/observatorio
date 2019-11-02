@@ -59,7 +59,7 @@
 												url 		: url
 											});
 						
-						a_vectorLayerDelito[k] = new ol.layer.Vector({
+						a_vectorLayerDelito[k] = new ol.layer.Heatmap({
 														source 	: vectorSource,
 														style 	: a_style[k]
 												});
@@ -149,7 +149,7 @@
 	/*******Zonas DISTRITO********/
 		var style = new ol.style.Style({
 			fill : new ol.style.Fill({
-				color : 'RGBA(136,217,176,0.4)' //color de backgrount de poligono
+				color : 'RGBA(128,128,128,0.2)' //color de backgrount de poligono
 			}),
 			stroke : new ol.style.Stroke({
 				color : '#85B037',

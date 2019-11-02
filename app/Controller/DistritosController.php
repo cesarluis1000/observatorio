@@ -268,13 +268,14 @@ class DistritosController extends AppController {
 	        
         $conditions = array_merge($conditions,array('Denuncia.distrito_id' => $distrito_ids,// $distrito['Distrito']['id'],
                         	                        'Denuncia.estado_google' => 'OK',
+                                                    //'ST_Distance(Distrito.geom, Point(ST_X(Denuncia.geom), ST_Y(Denuncia.geom)))*110 <= 1',
                                                     'Denuncia.geom IS NOT NULL'
         ));        
 	       //pr($conditions); //exit;
 	        
-        $options = array('fields'=>array('id','horizontal','vertical','categoria', 'ST_X(geom) as lng', 'ST_Y(geom) as lat'),
+        $options = array('fields'=>array('id','horizontal','vertical','categoria', 'ST_X(Denuncia.geom) as lng', 'ST_Y(Denuncia.geom) as lat'),
         	            'conditions'=> $conditions,
-        	            'recursive' => -1,
+        	            //'recursive' => -1,
         	            'order' => array('categoria DESC'),
                        );
         
