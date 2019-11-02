@@ -100,39 +100,94 @@ class ProvinciasController extends AppController {
 	    
 	    $departamento_id = $this->request->query['departamento_id'];
 	    
-	    $options = array('fields'=>array('id','first_idpr','first_nomb','nombprov','ha'),
-	        'conditions' => array('departamento_id' => $departamento_id),
-	        'recursive' => -1);
+	    $options = array('fields'=>array('id','first_idpr','first_nomb','nombprov','ha','ST_AsGeoJSON(geom) AS geometry'),
+            	        'conditions' => array('departamento_id' => $departamento_id),
+            	        'recursive' => -1);
 	    
-	    if (isset($this->request->query['provincia_id'])){
-	        $provincia_id = $this->request->query['provincia_id'];
-	        $options['conditions']['id'] = $provincia_id;	        
+	    if (isset($this->request->query['provincia_id']) && !empty($this->request->query['provincia_id'])){
+	        $options['conditions']['id'] = $this->request->query['provincia_id'];
 	    }
 	    
 	    $provincias = $this->Provincia->find('all',$options);
 	    
 	    foreach ($provincias as $i => $row){
-	        $options = array('fields'=>array('id','horizontal','vertical'),
-	            'conditions'=>array('ProvPolygon.provincia_id' => $row['Provincia']['id']),
-	            'recursive' => -1
-	        );
-	        $polygon = $this->Provincia->ProvPolygon->find('all',$options);
-	        $cordenada=null;
-	        foreach ($polygon as $pol){
-	            $cordenada[] = '['.$pol['ProvPolygon']['horizontal'].','.$pol['ProvPolygon']['vertical'].']';
-	        }
-	        
 	        $provincias[$i]['type'] = 'Feature';
-	        $provincias[$i]['properties'] = $row['Provincia'];
+	        $provincias[$i]['properties'] = $row['Provincia'];	
+	        
+	        if (!empty($row[0]['geometry'])){
+	            $provincias[$i]['geometry'] = $row[0]['geometry'];
+	        }else{
+	            $options = array('fields'=>array('id','horizontal','vertical'),
+	                'conditions'=>array('ProvPolygon.provincia_id' => $row['Provincia']['id']),
+	                'recursive' => -1
+	            );
+	            $polygon = $this->Provincia->ProvPolygon->find('all',$options);
+	            $cordenada=null;
+	            foreach ($polygon as $pol){
+	                $cordenada[] = '['.$pol['ProvPolygon']['horizontal'].','.$pol['ProvPolygon']['vertical'].']';
+	            }
+	            
+	            $provincias[$i]['geometry'] = array('type' => 'Polygon',"coordinates"=>array(array(implode($cordenada, ','))));
+	        }	        
+	        
 	        unset($provincias[$i]['Provincia']);
-	        $provincias[$i]['geometry'] = array('type' => 'Polygon',"coordinates"=>array(array(implode($cordenada, ','))));
+	        unset($provincias[$i][0]);
 	    }
 	    
 	    $provincias = array('type' => 'FeatureCollection','features'=>$provincias);
 	    $json = json_encode($provincias);
 	    $json = str_replace('[["[', '[[[', $json);
 	    $json = str_replace(']"]]', ']]]', $json);
+	    
+	    $json = str_replace(':"{', ':{', $json);
+	    $json = str_replace('}"}', '}}', $json);
+	    $json = str_replace('\\', '', $json);
+	    
 	    $this->response->body($json);
+	}
+	
+	public function geometry(){
+	    $this->layout = false;
+	    $this->autoRender = false;
+	    //$this->response->type('json')
+	    $departamento_id = $this->request->query['departamento_id'];
+	    
+	    $options = array('fields'=>array('id','first_idpr','first_nomb','nombprov','ha','ST_AsGeoJSON(geom) AS geometry'),
+            	        'conditions' => array('departamento_id' => $departamento_id),
+            	        'recursive' => -1);
+	    
+	    if (isset($this->request->query['provincia_id']) && !empty($this->request->query['provincia_id'])){
+	        $options['conditions']['id'] = $this->request->query['provincia_id'];
+	    }
+	    
+	    $provincias = $this->Provincia->find('all',$options);
+	    //pr($distritos);
+	    $poligonos = null;
+	    foreach ($provincias as $i => $row){
+	        
+	        $options = array('fields'      =>  array('id','vertical','horizontal'),
+            	            'conditions'   =>  array('ProvPolygon.provincia_id' => $row['Provincia']['id']),
+            	            'recursive'    =>  -1
+            	        );
+	        
+	        $polygon   =   $this->Provincia->ProvPolygon->find('all',$options);
+	        $cordenada =   null;
+	        
+	        foreach ($polygon as $pol){
+	            $cordenada[] = $pol['ProvPolygon']['horizontal'].' '.$pol['ProvPolygon']['vertical'];
+	        }
+	        
+	        if (empty($cordenada)){
+	            unset($provincias[$i]);
+	            continue;
+	        }
+	        unset($provincias[$i]['Provincia']);
+	        $poligonos .= "UPDATE provincias SET geom = ST_GeomFromText('POLYGON((".implode($cordenada, ',')."))') WHERE id = ".$row['Provincia']['id'].';<br>';
+	        
+	    }
+	    pr($poligonos);
+	    $this->response->body();
+	    
 	}
 	
 	/**

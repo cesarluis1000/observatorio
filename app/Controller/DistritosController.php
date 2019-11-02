@@ -304,12 +304,7 @@ class DistritosController extends AppController {
 	    $this->response->body($json);
 	    
 	}
-	
-	/**
-	 * add geojson
-	 *
-	 * @return void
-	 */
+		
 	public function geojson() {
 	    
 	    $this->autoRender = false;
@@ -317,20 +312,13 @@ class DistritosController extends AppController {
 	    
 	    $provincia_id = $this->request->query['provincia_id'];
 	    
-	    if (isset($this->request->query['distrito_id']) && !empty($this->request->query['distrito_id'])){
-	        $distrito_ids = $this->request->query['distrito_id'];
-	    }else{
-	        $options       = array('fields'=>array('id'),
-	                               'conditions'   =>  array('estado'=>'A', 'provincia_id' => $provincia_id),
-                    	            'recursive'    =>  -1);
-	        $distritos_act = $this->Distrito->find('all',$options);
-	        $distrito_ids  = Hash::extract($distritos_act, '{n}.Distrito.id');
-	        
-	    }
-	    
 	    $options = array('fields'      =>  array('id','iddist','nombdist','nombprov','area_minam','ST_AsGeoJSON(geom) AS geometry'),
-            	        'conditions'   =>  array('provincia_id' => $provincia_id, 'id' => $distrito_ids),
-            	        'recursive'    =>  -1);
+	        'conditions'   =>  array('provincia_id' => $provincia_id),
+	        'recursive'    =>  -1);
+	    
+	    if (isset($this->request->query['distrito_id']) && !empty($this->request->query['distrito_id'])){	        
+	        $options['conditions']['id'] = $this->request->query['distrito_id'];
+	    }
 	    
 	    $distritos = $this->Distrito->find('all',$options);
 	    
@@ -348,15 +336,11 @@ class DistritosController extends AppController {
             	        );
 	        
     	        $polygon   =   $this->Distrito->DistPolygon->find('all',$options);	        
-    	        $cordenada =   null;
-    	        
+    	        $cordenada =   null;    	        
     	        foreach ($polygon as $pol){
     	            $cordenada[] = '['.$pol['DistPolygon']['horizontal'].','.$pol['DistPolygon']['vertical'].']';
     	        }
-    	        if (empty($cordenada)){
-    	            unset($distritos[$i]);
-    	            continue;
-    	        }
+    	        
     	        $distritos[$i]['geometry'] = array('type' => 'Polygon',"coordinates"=>array(array(implode($cordenada, ','))));
 	        }
 	        
