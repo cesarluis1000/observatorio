@@ -211,9 +211,9 @@ class DistritosController extends AppController {
 	    if (isset($this->request->query['provincia_id'])){
 	        $provincia_ids     = $this->request->query['provincia_id'];
 	    }else{
-	        $options           = array('fields'     => array('DISTINCT id'),
-	            'conditions'   =>  array('departamento_id' => $departamento_id),
-	            'recursive'  => -1);
+	        $options           = array('fields'     => array('id'),
+                        	            'conditions'   =>  array('departamento_id' => $departamento_id),
+                        	            'recursive'  => -1);
 	        $provincias_act    = $this->Distrito->Provincia->find('all',$options);
 	        $provincia_ids     = Hash::extract($provincias_act, '{n}.Provincia.id');	        
 	    }
@@ -222,7 +222,7 @@ class DistritosController extends AppController {
 	    if (isset($this->request->query['distrito_id']) && !empty($this->request->query['distrito_id'])){
 	        $distrito_ids      = $this->request->query['distrito_id'];
 	    }else{
-	        $options           = array('fields'     =>  array('DISTINCT id'),
+	        $options           = array('fields'     =>  array('id'),
 	                                   'conditions' =>  array('provincia_id' => $provincia_ids),
 	                                   'recursive'  =>  -1);
 	        $polygon_activo    = $this->Distrito->find('all',$options);
@@ -238,73 +238,65 @@ class DistritosController extends AppController {
 	    
 	    $distritos = $this->Distrito->find('all',$options);
 	    //pr($distritos);exit;
-	    $delitos = null;
-	    foreach ($distritos as $i => $distrito){
-	        
-	        $conditions = array('Denuncia.distrito_id' => $distrito['Distrito']['id'],
-	                            'Denuncia.estado_google' => 'OK',	            
-	                           );
-	        
-	        //Si exite la categoria del delito los asiginamos
-	        if (isset($this->request->query['delito'])){	            
-	            $delito = $this->request->query['delito'];
-	            $a_delito = array_keys($delito);
-	            $conditions = array_merge($conditions,array("replace(categoria,' ','_')" => $a_delito));
-	        }
-	        
-	        if (isset($this->request->query['fecha_de'])){
-	            $fecha_de = $this->request->query['fecha_de'];
-	            $conditions = array_merge($conditions,array("fecha_hecho >=" => $fecha_de));
-	        }
-	        
-	        if (isset($this->request->query['hasta'])){
-	            $fecha_hasta = $this->request->query['hasta'];
-	            $conditions = array_merge($conditions,array("fecha_hecho <=" => $fecha_hasta));
-	        }
-	        
-	        if (isset($this->request->query['horas'])){
-	            $horas1 = $this->request->data['Reportes']['horas1'] = $this->request->query['horas1'];
-	            $horas2 = $this->request->data['Reportes']['horas2'] = $this->request->query['horas2'];
-	            
-	            $conditions = array_merge($conditions,array("HOUR(fecha_hecho) >=" => $horas1));
-	            $conditions = array_merge($conditions,array("HOUR(fecha_hecho) <=" => $horas2));
-	        }
-	        
-	        $options = array('fields'=>array('id','horizontal','vertical','categoria', 'ST_X(geom) as lat', 'ST_Y(geom) as lng'),
-	            'conditions'=> $conditions,
-	            'recursive' => -1,
-	            'order' => array('categoria DESC'),
-	        );
-	        
-	        $polygon = $this->Distrito->Denuncia->find('all',$options);
-	        //pr($polygon); exit;
-	        $cordenada=null;
-	        $a_delitos=null;
-	        foreach ($polygon as $pol){
-	            $cordenada[] = '['.$pol['Denuncia']['horizontal'].','.$pol['Denuncia']['vertical'].']';
-	            $a_delitos[$pol['Denuncia']['categoria']][] = '['.$pol['0']['lng'].','.$pol['0']['lat'].']';
-	        }	        
-	        
-	        if (empty($cordenada)){
-	            unset($distritos[$i]);
-	            continue;
-	        }        
-	        
-	  
-	        foreach ($a_delitos as $denuncia => $delitoCoordenadas ){	        
-	            $delitos[] = array('delito'   => strtolower(str_replace(' ', '_', $denuncia)).'_20px.png',
-	                               'type'     => 'Feature',
-	                               'geometry' => array('type'        =>  'Polygon',
-	                                   'coordinates' =>  array(array(implode($delitoCoordenadas, ','))))
-	            );
-	        }
-	        
-	        //pr($distrito);
-	        //pr($delitos);
+	    $delitos       = null;
+	    $conditions    = array();
+	    
+	    //Si exite la categoria del delito los asiginamos
+	    if (isset($this->request->query['delito'])){
+	        $delito = $this->request->query['delito'];
+	        $a_delito = array_keys($delito);
+	        $conditions = array_merge($conditions,array("replace(categoria,' ','_')" => $a_delito));
 	    }
+	    
+	    if (isset($this->request->query['fecha_de'])){
+	        $fecha_de = $this->request->query['fecha_de'];
+	        $conditions = array_merge($conditions,array("fecha_hecho >=" => $fecha_de));
+	    }
+	    
+	    if (isset($this->request->query['hasta'])){
+	        $fecha_hasta = $this->request->query['hasta'];
+	        $conditions = array_merge($conditions,array("fecha_hecho <=" => $fecha_hasta));
+	    }
+	    
+	    if (isset($this->request->query['horas'])){
+	        $horas1 = $this->request->data['Reportes']['horas1'] = $this->request->query['horas1'];
+	        $horas2 = $this->request->data['Reportes']['horas2'] = $this->request->query['horas2'];
+	        
+	        $conditions = array_merge($conditions,array("HOUR(fecha_hecho) >=" => $horas1));
+	        $conditions = array_merge($conditions,array("HOUR(fecha_hecho) <=" => $horas2));
+	    }
+	        
+        $conditions = array_merge($conditions,array('Denuncia.distrito_id' => $distrito_ids,// $distrito['Distrito']['id'],
+                        	                        'Denuncia.estado_google' => 'OK',
+                                                    'Denuncia.geom IS NOT NULL'
+        ));        
+	       //pr($conditions); //exit;
+	        
+        $options = array('fields'=>array('id','horizontal','vertical','categoria', 'ST_X(geom) as lat', 'ST_Y(geom) as lng'),
+        	            'conditions'=> $conditions,
+        	            'recursive' => -1,
+        	            'order' => array('categoria DESC'),
+                       );
+        
+        $denuncias = $this->Distrito->Denuncia->find('all',$options);
+        //pr($denuncias); //exit;
+     
+        $a_delitos=null;
+        foreach ($denuncias as $pol){	            
+            $a_delitos[$pol['Denuncia']['categoria']][] = '['.$pol['0']['lng'].','.$pol['0']['lat'].']';
+        }	        
+
+        //pr($a_delitos); // exit;
+        foreach ($a_delitos as $denuncia => $delitoCoordenadas ){	        
+            $delitos[] = array('delito'   => strtolower(str_replace(' ', '_', $denuncia)).'_20px.png',
+                               'type'     => 'Feature',
+                               'geometry' => array('type'        =>  'Polygon',
+                                   'coordinates' =>  array(array(implode($delitoCoordenadas, ','))))
+            );
+        }	       
 	 
 	    $delitos = array('type' => 'FeatureCollection','features'=>$delitos);
-	   //pr($delitos);exit;
+	   //pr($delitos);
 	    
 	    $json = json_encode($delitos);
 	    $json = str_replace('[["[', '[[[', $json);
@@ -328,11 +320,6 @@ class DistritosController extends AppController {
 	    if (isset($this->request->query['distrito_id']) && !empty($this->request->query['distrito_id'])){
 	        $distrito_ids = $this->request->query['distrito_id'];
 	    }else{
-	        /*
-	        $options           = array('fields'=>array('DISTINCT distrito_id'),'recursive' => -1);
-	        $polygon_activo    = $this->Distrito->DistPolygon->find('all',$options);
-	        $distrito_ids      = Hash::extract($polygon_activo, '{n}.DistPolygon.distrito_id');
-	        */
 	        $options       = array('fields'=>array('id'),
 	                               'conditions'   =>  array('estado'=>'A', 'provincia_id' => $provincia_id),
                     	            'recursive'    =>  -1);
@@ -341,35 +328,40 @@ class DistritosController extends AppController {
 	        
 	    }
 	    
-	    $options = array('fields'      =>  array('id','iddist','nombdist','nombprov','area_minam'),
+	    $options = array('fields'      =>  array('id','iddist','nombdist','nombprov','area_minam','ST_AsGeoJSON(geom) AS geometry'),
             	        'conditions'   =>  array('provincia_id' => $provincia_id, 'id' => $distrito_ids),
             	        'recursive'    =>  -1);
 	    
 	    $distritos = $this->Distrito->find('all',$options);
 	    
 	    foreach ($distritos as $i => $row){
+	        $distritos[$i]['type'] = 'Feature';
+	        $distritos[$i]['properties'] = $row['Distrito'];
 	        
-	        $options = array('fields'      =>  array('id','horizontal','vertical','orden'),
+	        if (!empty($row[0]['geometry'])){
+	            $distritos[$i]['geometry'] = $row[0]['geometry'];
+	        }else{
+	            $options = array('fields'      =>  array('id','horizontal','vertical','orden'),
             	            'conditions'   =>  array('DistPolygon.distrito_id' => $row['Distrito']['id']),
             	            'recursive'    =>  -1,
             	            'order'        =>  array('id DESC')
             	        );
 	        
-	        $polygon   =   $this->Distrito->DistPolygon->find('all',$options);	        
-	        $cordenada =   null;
-	        
-	        foreach ($polygon as $pol){
-	            $cordenada[] = '['.$pol['DistPolygon']['horizontal'].','.$pol['DistPolygon']['vertical'].']';
+    	        $polygon   =   $this->Distrito->DistPolygon->find('all',$options);	        
+    	        $cordenada =   null;
+    	        
+    	        foreach ($polygon as $pol){
+    	            $cordenada[] = '['.$pol['DistPolygon']['horizontal'].','.$pol['DistPolygon']['vertical'].']';
+    	        }
+    	        if (empty($cordenada)){
+    	            unset($distritos[$i]);
+    	            continue;
+    	        }
+    	        $distritos[$i]['geometry'] = array('type' => 'Polygon',"coordinates"=>array(array(implode($cordenada, ','))));
 	        }
-	        if (empty($cordenada)){
-	            unset($distritos[$i]);
-	            continue;
-	        }
 	        
-	        $distritos[$i]['type'] = 'Feature';
-	        $distritos[$i]['properties'] = $row['Distrito'];
 	        unset($distritos[$i]['Distrito']);
-	        $distritos[$i]['geometry'] = array('type' => 'Polygon',"coordinates"=>array(array(implode($cordenada, ','))));
+	        unset($distritos[$i][0]);
 
 	    }
 	    $distritos = array('type' => 'FeatureCollection','features'=>$distritos);
@@ -379,6 +371,10 @@ class DistritosController extends AppController {
 	    //pr($json);
 	    $json = str_replace('[["[', '[[[', $json);
 	    $json = str_replace(']"]]', ']]]', $json);
+	    
+	    $json = str_replace(':"{', ':{', $json);
+	    $json = str_replace('}"}', '}}', $json);
+	    $json = str_replace('\\', '', $json);
 	    //pr($json);exit;
 	    $this->response->body($json);
 	    
@@ -419,10 +415,8 @@ class DistritosController extends AppController {
 	        $cordenada =   null;
 	        
 	        foreach ($polygon as $pol){
-	            $cordenada[] = $pol['DistPolygon']['vertical'].' '.$pol['DistPolygon']['horizontal'];
+	            $cordenada[] = $pol['DistPolygon']['horizontal'].' '.$pol['DistPolygon']['vertical'];
 	        }
-	        
-	        
 	        
 	        if (empty($cordenada)){
 	            unset($distritos[$i]);

@@ -2,11 +2,12 @@
 	var provincia_id 	= $('#ReportesProvinciaId option:selected').val();
 	var distrito_id 	= $('#ReportesDistritoId option:selected').val();
 	var base  = $('base').attr('href');
-	var url   = base+'Distritos/geojson?departamento_id='+departamento_id+'&provincia_id=' + provincia_id + '&distrito_id='+ distrito_id;
+	var poligono = (distrito_id != '')?'Distritos':'Provincias';
+	var url   = base+poligono+'/geojson?departamento_id='+departamento_id+'&provincia_id=' + provincia_id + '&distrito_id='+ distrito_id;
 	var url2  = base+'Distritos/delitosgeojson?departamento_id='+departamento_id+'&provincia_id=' + provincia_id + '&distrito_id=' + distrito_id;
 	var url3  = base+'Distritos/institucionesgeojson?departamento_id='+departamento_id+'&provincia_id=' + provincia_id + '&distrito_id=' + distrito_id + '&reporte=criminologico';	
 	var url4  = base+'ZonaPolygons/panamericanosgeojson';
-	var url_c = (distrito_id != '')?url:base+'Provincias/geojson?departamento_id='+departamento_id+'&provincia_id=' + provincia_id;
+	var url_c = url; //base+poligono+'/geojson?departamento_id='+departamento_id+'&provincia_id=' + provincia_id;
 	/*********PUNTOS DELITOS*********/
 	var ftrCoordenadas 	= [];
 	var vectorSource;
