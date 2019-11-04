@@ -58,7 +58,7 @@
 												format 		: new ol.format.GeoJSON(),
 												url 		: url
 											});
-						//new ol.layer.Vector
+						//new ol.layer.Vector //ol.layer.Heatmap 
 						a_vectorLayerDelito[k] = new ol.layer.Heatmap({
 														source 	: vectorSource,
 														blur:15,
@@ -202,6 +202,11 @@
 			X = Extent[0] + (Extent[2] - Extent[0]) / 2;
 			Y = Extent[1] + (Extent[3] - Extent[1]) / 2;
 			coordenada = [ X, Y ];
+			
+			var string = vectorSourcePol[0].getGeometry().getExtent();
+			var thebox = ol.proj.transformExtent(string, 'EPSG:3857', 'EPSG:4326');;
+			//debugger;
+			console.info(thebox);
 		});		
 		
 	var view = new ol.View({

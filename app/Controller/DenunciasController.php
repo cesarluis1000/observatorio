@@ -39,7 +39,9 @@ class DenunciasController extends AppController {
 	    ini_set('memory_limit','1024M');
 	    
 	    $options = array(//'fields'=>array('id','nro_denuncia','ubicacion','horizontal','vertical'),,'Denuncia.distrito_id'=>'811'
-	        'conditions' => array('estado_google IS NULL'),
+	        'conditions' => array(//'Denuncia.nro_denuncia'=>'15382481',
+	            'estado_google IS NULL'
+	        ),
 	        //'recursive' => -1,
 	        //'order' => array('nombdist')
 	    );
@@ -54,12 +56,14 @@ class DenunciasController extends AppController {
 	        //pr($direccion);
 	        
 	        $direccion = str_replace(' ', '+', $direccion);        
-
+            //&components=country:PE
 	        //$url = "https://maps.googleapis.com/maps/api/geocode/json?address=1600+Amphitheatre+Parkway,+Mountain+View,+CA&key=YOUR_API_KEY";
-	        //$url = "https://maps.googleapis.com/maps/api/geocode/json?address=$direccion&key=AIzaSyC7e2Iboim4HC-CfX2PmJR6BkSI8aSKb1U"; // Cesar
-	        //$url = "https://maps.googleapis.com/maps/api/geocode/json?address=$direccion&key=AIzaSyB-Oeyt4yByMcCOc4rnCdw9_ml5XsIjOFc"; // Luis
-	        $url = "https://maps.googleapis.com/maps/api/geocode/json?address=$direccion&key=AIzaSyC6Hv9oFodbGJJ19gCy2XTj0mKCow7g-8Y"; // Kilder
-	        //pr($url);
+	        $url = "https://maps.googleapis.com/maps/api/geocode/json?address=$direccion&components=country:PE&key=AIzaSyC7e2Iboim4HC-CfX2PmJR6BkSI8aSKb1U"; // Cesar
+	        //$url = "https://maps.googleapis.com/maps/api/geocode/json?address=$direccion&components=country:PE&key=AIzaSyB-Oeyt4yByMcCOc4rnCdw9_ml5XsIjOFc"; // Luis	        
+	        //$url = "https://maps.googleapis.com/maps/api/geocode/json?address=$direccion&components=country:PE&key=AIzaSyC6Hv9oFodbGJJ19gCy2XTj0mKCow7g-8Y"; // Kilder
+	        //pr($url); 
+	        //exit;
+	        
 	        $geo = file_get_contents($url);
 	        
 	        $geo = json_decode($geo, true); // Convert the JSON to an array
@@ -68,6 +72,7 @@ class DenunciasController extends AppController {
 	            $denuncia['Denuncia']['vertical']          = $geo['results'][0]['geometry']['location']['lat']; // Latitude
 	            $denuncia['Denuncia']['horizontal']        = $geo['results'][0]['geometry']['location']['lng']; // Longitude
 	            $denuncia['Denuncia']['estado_google']     = $geo['status'];
+	            $denuncia['Denuncia']['geom']              = null;
 	            $denuncia['Denuncia']['ubicacion_google']  = $geo['results'][0]['formatted_address'];
 	        }else{
 	            $denuncia['Denuncia']['estado_google']    = 'KO';	            
