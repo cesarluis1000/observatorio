@@ -61,6 +61,8 @@
 						//new ol.layer.Vector
 						a_vectorLayerDelito[k] = new ol.layer.Heatmap({
 														source 	: vectorSource,
+														blur:15,
+														radius:7,
 														style 	: a_style[k]
 												});
 					});
