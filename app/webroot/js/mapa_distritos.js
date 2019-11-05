@@ -186,7 +186,7 @@
 	/*******Centrar el poligo en el mapa********/
 		var coordenada;
 		var vectorSourcePol;
-		
+		var viewbox;
 		$.ajax({
 			url : url_c,
 			dataType : 'json',
@@ -204,7 +204,7 @@
 			coordenada = [ X, Y ];
 			
 			/***********Cuadro de busqueda**********/
-			var thebox = ol.proj.transformExtent(Extent, 'EPSG:3857', 'EPSG:4326');
+			thebox = ol.proj.transformExtent(Extent, 'EPSG:3857', 'EPSG:4326');
 			x1 = thebox[0].toFixed(6);
 			y1 = thebox[3].toFixed(6);
 			x2 = thebox[2].toFixed(6);
@@ -213,6 +213,7 @@
 			$('#ReportesViewbox').val(viewbox);
 			
 		});		
+		
 		
 		
 		
@@ -298,11 +299,12 @@ var map = new ol.Map({
 			  					  feature.get('institucionUbicacion')+ '</div>';
 			  overlay.setPosition(coordinate);
 		}
-	});
-
-	/*****Redimencionar el zoom deacuerdo al poligono o marco de busqueda.****/	
-	ghostZoom = $('#ReportesGhostZoom').val();
-	centroZoom = $('#ReportesCentroZoom').val().split(',');
+	});	
+	
+	/*****Concervar el zoom y el centro del mapa en una busqueda****/	
+	ghostZoom 		= $('#ReportesGhostZoom').val();
+	centroZoom 		= $('#ReportesCentroZoom').val().split(',');	
+	
 	if (ghostZoom != '' && centroZoom != '') {
 		long = parseFloat(centroZoom[0]);
 		lat  = parseFloat(centroZoom[1]);
@@ -325,3 +327,22 @@ var map = new ol.Map({
         centroZoom[1] = centroZoom[1].toFixed(6);        
         $('#ReportesCentroZoom').val(centroZoom);        
     });
+    
+    reportesBuscar 	= $('#ReportesBuscar').val();
+    var urlopenstreetmap = 'https://nominatim.openstreetmap.org/?format=json&polygon_geojson=0&bounded=1&limit=1&viewbox='+viewbox+'&q='+reportesBuscar;
+	
+	if(reportesBuscar != ''){
+		console.info(viewbox);
+		console.info(reportesBuscar);
+		$.ajax({
+			url: urlopenstreetmap,
+			dataType: 'json',
+		    async: false,
+	        timeout: 90000,
+		}).done(function(data){
+			long = parseFloat(data[0].lon);
+			lat  = parseFloat(data[0].lat);
+			map.getView().setCenter(ol.proj.transform([long, lat], 'EPSG:4326', 'EPSG:3857'));
+			map.getView().setZoom(16);
+		});
+	}

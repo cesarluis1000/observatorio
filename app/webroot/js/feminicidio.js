@@ -6,7 +6,7 @@ $(function(){
     $(".icono").click(function () {
         $(".contenedor--menu").animate({width: "toggle"});
         event.preventDefault();
-        elem.slideToggle();
+        //elem.slideToggle();
     });
 	
 	var base = $('base').attr('href');
