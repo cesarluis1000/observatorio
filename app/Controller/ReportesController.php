@@ -454,7 +454,7 @@ class ReportesController extends AppController {
     
     public function mapaDelito() {
         
-        //pr($this->request->data);
+        //r($this->request->data);
         //pr($this->Auth->user());
         //pr($this->request->query);
         
@@ -544,21 +544,38 @@ class ReportesController extends AppController {
         if (isset($this->request->query['fecha_de'])){
             $this->request->data['Reportes']['fecha_de'] = $this->request->query['fecha_de'];
         }else{
-            $this->request->data['Reportes']['fecha_de'] = '2019-03-31';
-        }
-        
+            $this->request->data['Reportes']['fecha_de'] = '2019-09-01';
+        }        
         if (isset($this->request->query['hasta'])){
             $this->request->data['Reportes']['hasta'] = $this->request->query['hasta'];
         }else{
-            $this->request->data['Reportes']['hasta'] = '2019-03-31';
-        }
-        
+            $this->request->data['Reportes']['hasta'] = '2019-09-30';
+        }        
         if (isset($this->request->query['ghostZoom'])){
             $this->request->data['Reportes']['ghostZoom'] = $this->request->query['ghostZoom'];
-        }
-        
+        }        
         if (isset($this->request->query['centroZoom'])){
             $this->request->data['Reportes']['centroZoom'] = $this->request->query['centroZoom'];
+        }
+        if (isset($this->request->query['buscar'])){
+            $this->request->data['Reportes']['buscar'] = $this->request->query['buscar'];
+            /*
+            $url = "https://nominatim.openstreetmap.org/?format=json&q=Comisaria&polygon_geojson=0&viewbox=-77.066535,-11.960714,-77.027608,-12.017779&bounded=1&limit=100"; // Cesar
+            
+            $ch = curl_init();
+            curl_setopt($ch, CURLOPT_HEADER, 0);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1); //Set curl to return the data instead of printing it to the browser.
+            curl_setopt($ch, CURLOPT_URL, $url);
+            $geo = curl_exec($ch);
+            curl_close($ch);
+            
+            //$geo = file_get_contents($url);            
+            //$geo = json_decode($geo, true);
+            pr($geo); exit;
+            */
+        }
+        if (isset($this->request->query['viewbox'])){
+            $this->request->data['Reportes']['viewbox'] = $this->request->query['viewbox'];
         }
         
         if (isset($this->request->query['horas'])){
@@ -664,7 +681,7 @@ class ReportesController extends AppController {
         if (isset($this->request->query['delito'])){
             $this->request->data['Reportes']['delito'] = $this->request->query['delito'];
         }
-        
+        //pr($this->request->data); exit;
         //pr($tipoDenuncias);exit;
         
         $this->set(compact('departamentos','provincias','distritos','distrito', 'tipoDenuncias', 'denuncias','total','horas1','horas2'));

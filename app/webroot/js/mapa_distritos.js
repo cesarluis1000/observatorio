@@ -203,11 +203,18 @@
 			Y = Extent[1] + (Extent[3] - Extent[1]) / 2;
 			coordenada = [ X, Y ];
 			
-			var string = vectorSourcePol[0].getGeometry().getExtent();
-			var thebox = ol.proj.transformExtent(string, 'EPSG:3857', 'EPSG:4326');;
-			//debugger;
-			console.info(thebox);
+			/***********Cuadro de busqueda**********/
+			var thebox = ol.proj.transformExtent(Extent, 'EPSG:3857', 'EPSG:4326');
+			x1 = thebox[0].toFixed(6);
+			y1 = thebox[3].toFixed(6);
+			x2 = thebox[2].toFixed(6);
+			y2 = thebox[1].toFixed(6);
+			viewbox = x1.toString().concat(',',y1,',',x2,',',y2);
+			$('#ReportesViewbox').val(viewbox);
+			
 		});		
+		
+		
 		
 	var view = new ol.View({
 		center : coordenada
@@ -297,7 +304,9 @@ var map = new ol.Map({
 	ghostZoom = $('#ReportesGhostZoom').val();
 	centroZoom = $('#ReportesCentroZoom').val().split(',');
 	if (ghostZoom != '' && centroZoom != '') {
-		map.getView().setCenter([parseFloat(centroZoom[0]),parseFloat(centroZoom[1])]);
+		long = parseFloat(centroZoom[0]);
+		lat  = parseFloat(centroZoom[1]);
+		map.getView().setCenter(ol.proj.transform([long, lat], 'EPSG:4326', 'EPSG:3857'));		
 	    map.getView().setZoom(ghostZoom);
 	}else{
 		map.getView().fit(vectorSourcePol[0].getGeometry(), map.getSize())
@@ -310,6 +319,9 @@ var map = new ol.Map({
             ghostZoom = map.getView().getZoom();            
             $('#ReportesGhostZoom').val(ghostZoom);            
         }
-        centroZoom =map.getView().getCenter();
+        //centroZoom = map.getView().getCenter();
+        centroZoom = ol.proj.transform(map.getView().getCenter(), 'EPSG:3857', 'EPSG:4326');
+        centroZoom[0] = centroZoom[0].toFixed(6);
+        centroZoom[1] = centroZoom[1].toFixed(6);        
         $('#ReportesCentroZoom').val(centroZoom);        
     });
