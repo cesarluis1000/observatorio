@@ -49,7 +49,6 @@
                 <?php echo $this->Form->input('horas2',array('type' => 'hidden','value'=>$horas2)); ?>
 				<?php echo $this->Form->input('ghostZoom',array('type' => 'hidden')); ?>
 				<?php echo $this->Form->input('centroZoom',array('type' => 'hidden')); ?>
-				<?php echo $this->Form->input('viewbox',array('type' => 'hidden')); ?>
 				
                 <div id="slider-range"></div>
                 <br/>

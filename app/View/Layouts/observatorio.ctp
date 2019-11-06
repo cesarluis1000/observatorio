@@ -9,8 +9,8 @@
 	<title>
 		<?php echo "Observatorio del Delito y de la Criminalidad"; ?>
 	</title>	
-	<meta name="description" content="Compra por Internet en elmundotec.com de forma segura y fácil, encontrarás miles de productos y OFERTAS increíbles. Envíos a todo el PERÚ." />
-	<meta name="keywords" content="elmundotec, comprar online, elmundotec.com, comprar por internet, comprar en peru, comprar online en peru, comprar por internet en peru" />
+	<meta name="description" content="La unidad del Observatorio del delito y la criminalidad tiene como misión el registro, procesamiento, análisis e interpretación de información relacionada a las faltas y delitos, crimen organizado, conflictos sociales y aspectos socio policiales, de carácter descriptivo e interpretativo con un enfoque criminológico" />
+	<meta name="keywords" content="Observatorio, Observatorio del delito, análisis e interpretación, datos criminológicos, institución policial" />
 	
 	<?php
 		echo $this->Html->meta('icon');

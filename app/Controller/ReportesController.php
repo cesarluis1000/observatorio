@@ -559,23 +559,6 @@ class ReportesController extends AppController {
         }
         if (isset($this->request->query['buscar'])){
             $this->request->data['Reportes']['buscar'] = $this->request->query['buscar'];
-            /*
-            $url = "https://nominatim.openstreetmap.org/?format=json&q=Comisaria&polygon_geojson=0&viewbox=-77.066535,-11.960714,-77.027608,-12.017779&bounded=1&limit=100"; // Cesar
-            
-            $ch = curl_init();
-            curl_setopt($ch, CURLOPT_HEADER, 0);
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1); //Set curl to return the data instead of printing it to the browser.
-            curl_setopt($ch, CURLOPT_URL, $url);
-            $geo = curl_exec($ch);
-            curl_close($ch);
-            
-            //$geo = file_get_contents($url);            
-            //$geo = json_decode($geo, true);
-            pr($geo); exit;
-            */
-        }
-        if (isset($this->request->query['viewbox'])){
-            $this->request->data['Reportes']['viewbox'] = $this->request->query['viewbox'];
         }
         
         if (isset($this->request->query['horas'])){

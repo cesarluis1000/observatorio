@@ -62,7 +62,7 @@
 						a_vectorLayerDelito[k] = new ol.layer.Heatmap({
 														source 	: vectorSource,
 														blur:15,
-														radius:7,
+														radius:8,
 														style 	: a_style[k]
 												});
 					});
@@ -176,7 +176,7 @@
 	
 	var vectorLayer = new ol.layer.Vector({
 		source 	: source,
-		style 	: function(feature) {
+		style 	: function(feature) {						
 						style.getText().setText(feature.get('nombdist'));
 						return style;
 					}
@@ -196,7 +196,7 @@
 			vectorSourcePol = format.readFeatures(data, {
 								defaultDataProjection : ol.proj.get('EPSG:4326'),
 								featureProjection : 'EPSG:3857'
-							});
+							});	
 			Extent = vectorSourcePol[0].getGeometry().getExtent();
 		
 			X = Extent[0] + (Extent[2] - Extent[0]) / 2;
@@ -210,20 +210,79 @@
 			x2 = thebox[2].toFixed(6);
 			y2 = thebox[1].toFixed(6);
 			viewbox = x1.toString().concat(',',y1,',',x2,',',y2);
-			$('#ReportesViewbox').val(viewbox);
-			
-		});		
+		});
 		
-		
-		
-		
-	var view = new ol.View({
-		center : coordenada
-	});
+	
 	/**********************************************/	
 	
-				
 	var a_layers = [raster, vectorLayer];
+	
+	
+	/*******Poligo de lugar de busqueda********/
+	reportesBuscar 	= $('#ReportesBuscar').val();
+	
+	if(reportesBuscar != ''){
+		var urlopenstreetmap = 'https://nominatim.openstreetmap.org/?format=geojson&polygon_geojson=1&bounded=1&limit=1&viewbox='+viewbox+'&q='+reportesBuscar;
+		
+		var style2 = new ol.style.Style({
+			fill : new ol.style.Fill({
+				color : 'RGBA(0,0,255,0.07)' //color de backgrount de poligono
+			}),
+			stroke : new ol.style.Stroke({
+				color : '#0000FF',
+				width : 2 //Ancho de limite
+			}),
+			text : new ol.style.Text({
+				font : '10px Calibri,sans-serif',
+				fill : new ol.style.Fill({
+					color : '#ccc'
+				}),
+				stroke : new ol.style.Stroke({
+					color : '#fff',
+					width : 5
+				})
+			})
+		});
+		
+		var source2 = new ol.source.Vector({
+			format : new ol.format.GeoJSON(),
+			url : urlopenstreetmap
+		});	
+
+		var vectorLayer2 = new ol.layer.Vector({
+			source 	: source2,
+			style 	: function(feature) {						
+						display_name =feature.get('display_name').split(',');;
+						style2.getText().setText(display_name[0]);
+						return style2;
+					}
+		});
+				
+		a_layers.push(vectorLayer2);
+		
+		$.ajax({
+			url : urlopenstreetmap,
+			dataType : 'json',
+			async : false,
+		}).done(function(data) {
+			var format = new ol.format.GeoJSON();
+			vectorSourcePol = format.readFeatures(data, {
+								defaultDataProjection : ol.proj.get('EPSG:4326'),
+								featureProjection : 'EPSG:3857'
+							});	
+			Extent = vectorSourcePol[0].getGeometry().getExtent();
+		
+			X = Extent[0] + (Extent[2] - Extent[0]) / 2;
+			Y = Extent[1] + (Extent[3] - Extent[1]) / 2;
+			coordenada = [ X, Y ];
+		});
+	}
+	
+	/**********************************************/
+	
+	var view = new ol.View({
+		center : coordenada
+	});	
 	
 	for (var i = 0; i < a_vectorLayerDelito.length; i++) {
 		a_layers.push(a_vectorLayerDelito[i]);
@@ -305,13 +364,14 @@ var map = new ol.Map({
 	ghostZoom 		= $('#ReportesGhostZoom').val();
 	centroZoom 		= $('#ReportesCentroZoom').val().split(',');	
 	
-	if (ghostZoom != '' && centroZoom != '') {
+	if (ghostZoom != '' && centroZoom != '' && reportesBuscar == '') {
 		long = parseFloat(centroZoom[0]);
 		lat  = parseFloat(centroZoom[1]);
 		map.getView().setCenter(ol.proj.transform([long, lat], 'EPSG:4326', 'EPSG:3857'));		
 	    map.getView().setZoom(ghostZoom);
 	}else{
-		map.getView().fit(vectorSourcePol[0].getGeometry(), map.getSize())
+		//console.info(vectorSourcePol);
+		map.getView().fit(vectorSourcePol[0].getGeometry(), map.getSize());
 	} 
 
 	var ghostZoom = map.getView().getZoom();//
@@ -327,22 +387,3 @@ var map = new ol.Map({
         centroZoom[1] = centroZoom[1].toFixed(6);        
         $('#ReportesCentroZoom').val(centroZoom);        
     });
-    
-    reportesBuscar 	= $('#ReportesBuscar').val();
-    var urlopenstreetmap = 'https://nominatim.openstreetmap.org/?format=json&polygon_geojson=0&bounded=1&limit=1&viewbox='+viewbox+'&q='+reportesBuscar;
-	
-	if(reportesBuscar != ''){
-		console.info(viewbox);
-		console.info(reportesBuscar);
-		$.ajax({
-			url: urlopenstreetmap,
-			dataType: 'json',
-		    async: false,
-	        timeout: 90000,
-		}).done(function(data){
-			long = parseFloat(data[0].lon);
-			lat  = parseFloat(data[0].lat);
-			map.getView().setCenter(ol.proj.transform([long, lat], 'EPSG:4326', 'EPSG:3857'));
-			map.getView().setZoom(16);
-		});
-	}
