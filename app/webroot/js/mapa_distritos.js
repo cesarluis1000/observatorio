@@ -218,12 +218,15 @@
 	var a_layers = [raster, vectorLayer];
 	
 	
-	/*******Poligo de lugar de busqueda********/
-	reportesBuscar 	= $('#ReportesBuscar').val();
+	/*******Poligono de lugar de busqueda********/
 	
+	reportesBuscar 	= $('#ReportesBuscar').val();
+	//reportesBuscar = 'mall';
 	if(reportesBuscar != ''){
-		var urlopenstreetmap = 'https://nominatim.openstreetmap.org/?format=geojson&polygon_geojson=1&bounded=1&limit=1&viewbox='+viewbox+'&q='+reportesBuscar;
 		
+		var urlopenstreetmap = 'https://nominatim.openstreetmap.org/?format=geojson&polygon_geojson=1&bounded=1&limit=1000&viewbox='+viewbox+'&q='+reportesBuscar;
+		//console.info(urlopenstreetmap);
+		//var urlopenstreetmap = 'https://nominatim.openstreetmap.org/?format=geojson&q=mall&polygon_geojson=1&bounded=1&limit=100&viewbox=-77.066535,-11.960714,-77.027608,-12.017779';
 		var style2 = new ol.style.Style({
 			fill : new ol.style.Fill({
 				color : 'RGBA(0,0,255,0.07)' //color de backgrount de poligono
@@ -245,10 +248,10 @@
 		});
 		
 		var source2 = new ol.source.Vector({
-			format : new ol.format.GeoJSON(),
-			url : urlopenstreetmap
+			format 	: new ol.format.GeoJSON(),
+			url 	: urlopenstreetmap
 		});	
-
+		
 		var vectorLayer2 = new ol.layer.Vector({
 			source 	: source2,
 			style 	: function(feature) {						
@@ -259,7 +262,7 @@
 		});
 				
 		a_layers.push(vectorLayer2);
-		
+		/*
 		$.ajax({
 			url : urlopenstreetmap,
 			dataType : 'json',
@@ -275,7 +278,8 @@
 			X = Extent[0] + (Extent[2] - Extent[0]) / 2;
 			Y = Extent[1] + (Extent[3] - Extent[1]) / 2;
 			coordenada = [ X, Y ];
-		});
+		})
+		*/;
 	}
 	
 	/**********************************************/
