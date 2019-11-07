@@ -372,6 +372,14 @@ var map = new ol.Map({
 		var feature = seleccion[0];
 		var layer 	= seleccion[1];
 		
+		if (feature !== undefined && feature.get('display_name') !== undefined) {
+			  var coordinate 	= evt.coordinate;		
+			  content.innerHTML = '<p><b></b></p>' +			  					  	
+			  					  '<b>' + feature.get('type') + '</b></br>' + 
+			  					  feature.get('display_name');
+			  overlay.setPosition(coordinate);
+		}
+		
 		if (feature !== undefined && feature.get('tipoInstitucion') !== undefined) {
 			  var coordinate 	= evt.coordinate;		
 			  content.innerHTML = '<p><b>' + feature.get('tipoInstitucion') + '</b></p>' +			  					  	
