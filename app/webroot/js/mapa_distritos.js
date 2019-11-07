@@ -151,20 +151,20 @@
 	/*******Zonas DISTRITO********/
 		var style = new ol.style.Style({
 			fill : new ol.style.Fill({
-				color : 'RGBA(128,128,128,0.2)' //color de backgrount de poligono
+				color : 'RGBA(128,128,128,0.1)' //color de backgrount de poligono
 			}),
 			stroke : new ol.style.Stroke({
 				color : '#85B037',
 				width : 2 //Ancho de limite
 			}),
 			text : new ol.style.Text({
-				font : '10px Calibri,sans-serif',
+				font : '20px Calibri,sans-serif',
 				fill : new ol.style.Fill({
-					color : '#ccc'
+					color : '#0000FF'
 				}),
 				stroke : new ol.style.Stroke({
 					color : '#fff',
-					width : 5
+					width : 3
 				})
 			})
 		});
@@ -173,7 +173,7 @@
 									format : new ol.format.GeoJSON(),
 									url : url
 								});	
-	
+	//console.info(source);
 	var vectorLayer = new ol.layer.Vector({
 		source 	: source,
 		style 	: function(feature) {						
@@ -186,7 +186,8 @@
 	/*******Centrar el poligo en el mapa********/
 		var coordenada;
 		var vectorSourcePol;
-		var viewbox;
+		var Extent;
+		
 		$.ajax({
 			url : url_c,
 			dataType : 'json',
@@ -196,23 +197,11 @@
 			vectorSourcePol = format.readFeatures(data, {
 								defaultDataProjection : ol.proj.get('EPSG:4326'),
 								featureProjection : 'EPSG:3857'
-							});	
-			Extent = vectorSourcePol[0].getGeometry().getExtent();
-		
-			X = Extent[0] + (Extent[2] - Extent[0]) / 2;
-			Y = Extent[1] + (Extent[3] - Extent[1]) / 2;
-			coordenada = [ X, Y ];
-			
-			/***********Cuadro de busqueda**********/
-			thebox = ol.proj.transformExtent(Extent, 'EPSG:3857', 'EPSG:4326');
-			x1 = thebox[0].toFixed(6);
-			y1 = thebox[3].toFixed(6);
-			x2 = thebox[2].toFixed(6);
-			y2 = thebox[1].toFixed(6);
-			viewbox = x1.toString().concat(',',y1,',',x2,',',y2);
-		});
-		
-	
+							});
+
+			Extent = vectorSourcePol[0].getGeometry().getExtent();			
+			center = ol.extent.getCenter(Extent);
+		});	
 	/**********************************************/	
 	
 	var a_layers = [raster, vectorLayer];
@@ -224,9 +213,18 @@
 	//reportesBuscar = 'mall';
 	if(reportesBuscar != ''){
 		
-		var urlopenstreetmap = 'https://nominatim.openstreetmap.org/?format=geojson&polygon_geojson=1&bounded=1&limit=1000&viewbox='+viewbox+'&q='+reportesBuscar;
+		thebox = ol.proj.transformExtent(Extent, 'EPSG:3857', 'EPSG:4326');
+		x1 = thebox[0].toFixed(6);
+		y1 = thebox[3].toFixed(6);
+		x2 = thebox[2].toFixed(6);
+		y2 = thebox[1].toFixed(6);
+		viewbox = x1.toString().concat(',',y1,',',x2,',',y2);
+		
+		var urlopenstreetmap = 'https://nominatim.openstreetmap.org/?format=geojson&polygon_geojson=0&bounded=1&limit=100&viewbox='+viewbox+'&q='+reportesBuscar;
 		//console.info(urlopenstreetmap);
 		//var urlopenstreetmap = 'https://nominatim.openstreetmap.org/?format=geojson&q=mall&polygon_geojson=1&bounded=1&limit=100&viewbox=-77.066535,-11.960714,-77.027608,-12.017779';
+		//var urlopenstreetmap = 'https://nominatim.openstreetmap.org/?format=geojson&q=police&polygon_geojson=0&bounded=1&limit=100&viewbox=-77.066535,-11.960714,-77.027608,-12.017779';
+		
 		var style2 = new ol.style.Style({
 			fill : new ol.style.Fill({
 				color : 'RGBA(0,0,255,0.07)' //color de backgrount de poligono
@@ -238,7 +236,7 @@
 			text : new ol.style.Text({
 				font : '10px Calibri,sans-serif',
 				fill : new ol.style.Fill({
-					color : '#ccc'
+					color : '#85B037'
 				}),
 				stroke : new ol.style.Stroke({
 					color : '#fff',
@@ -247,6 +245,17 @@
 			})
 		});
 		
+		var baseTextStyle = {
+				font : '10px Calibri,sans-serif',
+				fill : new ol.style.Fill({
+					color : '#0000FF'
+				}),
+				stroke : new ol.style.Stroke({
+					color : '#fff',
+					width : 5
+				})
+		    };
+		
 		var source2 = new ol.source.Vector({
 			format 	: new ol.format.GeoJSON(),
 			url 	: urlopenstreetmap
@@ -254,13 +263,34 @@
 		
 		var vectorLayer2 = new ol.layer.Vector({
 			source 	: source2,
-			style 	: function(feature) {						
-						display_name =feature.get('display_name').split(',');;
-						style2.getText().setText(display_name[0]);
-						return style2;
-					}
+			style 	: styleFunction
 		});
-				
+		
+		function styleFunction(feature, resolution) {			
+			var styleSearch;
+	        var geom = feature.getGeometry();
+	        if (geom.getType() == 'Point') {	        
+	        	var iconName = feature.get("icon") || "img/map/homicidio_20px.png";
+			    var display_name =feature.get('display_name').split(',');
+			    baseTextStyle.text = display_name[0];
+			    
+			    styleSearch = new ol.style.Style({
+						        image: new ol.style.Icon(({
+						        	anchor		: [0.3, 30],
+						        	scale		: 1.5,
+						            anchorXUnits: 'fraction',
+						            anchorYUnits: 'pixels',
+						            src			: iconName
+						        })),
+						        text: new ol.style.Text(baseTextStyle),
+						        zIndex: 2
+						    });	        	
+	        }else{
+	        	styleSearch = style2;
+	        }		   
+			return [styleSearch];
+		}
+	
 		a_layers.push(vectorLayer2);
 		/*
 		$.ajax({
@@ -274,18 +304,15 @@
 								featureProjection : 'EPSG:3857'
 							});	
 			Extent = vectorSourcePol[0].getGeometry().getExtent();
-		
-			X = Extent[0] + (Extent[2] - Extent[0]) / 2;
-			Y = Extent[1] + (Extent[3] - Extent[1]) / 2;
-			coordenada = [ X, Y ];
+			center = ol.extent.getCenter(Extent);
 		})
-		*/;
+		*/
 	}
 	
 	/**********************************************/
 	
 	var view = new ol.View({
-		center : coordenada
+		center : center
 	});	
 	
 	for (var i = 0; i < a_vectorLayerDelito.length; i++) {
@@ -373,8 +400,7 @@ var map = new ol.Map({
 		lat  = parseFloat(centroZoom[1]);
 		map.getView().setCenter(ol.proj.transform([long, lat], 'EPSG:4326', 'EPSG:3857'));		
 	    map.getView().setZoom(ghostZoom);
-	}else{
-		//console.info(vectorSourcePol);
+	}else{		
 		map.getView().fit(vectorSourcePol[0].getGeometry(), map.getSize());
 	} 
 
