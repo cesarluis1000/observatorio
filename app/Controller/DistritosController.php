@@ -330,10 +330,10 @@ class DistritosController extends AppController {
 	            $distritos[$i]['geometry'] = $row[0]['geometry'];
 	        }else{
 	            $options = array('fields'      =>  array('id','horizontal','vertical','orden'),
-            	            'conditions'   =>  array('DistPolygon.distrito_id' => $row['Distrito']['id']),
-            	            'recursive'    =>  -1,
-            	            'order'        =>  array('id DESC')
-            	        );
+                	            'conditions'   =>  array('DistPolygon.distrito_id' => $row['Distrito']['id']),
+                	            'recursive'    =>  -1,
+                	            'order'        =>  array('id DESC')
+                	        );
 	        
     	        $polygon   =   $this->Distrito->DistPolygon->find('all',$options);	        
     	        $cordenada =   null;    	        

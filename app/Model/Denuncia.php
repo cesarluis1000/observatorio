@@ -7,6 +7,9 @@ App::uses('AppModel', 'Model');
  */
 class Denuncia extends AppModel {
 
+    public $virtualFields = array(
+        'geojson' => "ST_AsGeoJSON(Denuncia.geom)"
+    );
 /**
  * Validation rules
  *

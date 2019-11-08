@@ -4,136 +4,10 @@
 	var base  = $('base').attr('href');
 	var poligono = (distrito_id != '')?'Distritos':'Provincias';
 	var url   = base+poligono+'/geojson?departamento_id='+departamento_id+'&provincia_id=' + provincia_id + '&distrito_id='+ distrito_id;
-	var url2  = base+'Distritos/delitosgeojson?departamento_id='+departamento_id+'&provincia_id=' + provincia_id + '&distrito_id=' + distrito_id;
 	var url3  = base+'Distritos/institucionesgeojson?departamento_id='+departamento_id+'&provincia_id=' + provincia_id + '&distrito_id=' + distrito_id + '&reporte=criminologico';	
 	var url4  = base+'ZonaPolygons/panamericanosgeojson';
 	var url_c = url; //base+poligono+'/geojson?departamento_id='+departamento_id+'&provincia_id=' + provincia_id;
-	/*********PUNTOS DELITOS*********/
-	var ftrCoordenadas 	= [];
-	var vectorSource;
-	var a_vectorLayerDelito 	= [];
-	var a_style 		= [];
 	
-	if($('.form-check input:checked').serialize()==''){
-		$("form input:checkbox").attr( "checked" , true );
-	}
-	
-	$.ajax({
-		url : url2,
-		dataType : 'json',
-		async : false,
-		method: 'get',
-		data: $('.form-check input:checked, input[type=text], input[type=hidden]').serialize(),
-		success : function(json1) {
-			$.each(json1, function(key, data) {
-				if (key == 'features') {
-					$.each(data, function(k, v) {
-						ftrCoordenadas = [];
-						if (v.type == 'Feature') {
-							if (v.geometry.coordinates[0].length >= 1) {
-								$.each(v.geometry.coordinates[0], function(i, c) {
-									ftrCoordenadas[i] = new ol.Feature({
-										geometry 	: new ol.geom.Point(ol.proj.transform(c, 'EPSG:4326','EPSG:3857')),
-										name 		: c
-									});
-	
-								});
-	
-							}
-						}
-						
-						a_style[k] 			= new ol.style.Style({	
-												image : new ol.style.Icon(
-												({
-													anchor 			: [ 0.5, 30 ],
-													anchorXUnits 	: 'fraction',
-													anchorYUnits 	: 'pixels',
-													scale			: 0.6,
-													src 			: './img/map/'+v.delito //Icono del hurto
-												}))
-											});
-						
-						vectorSource 		= new ol.source.Vector({
-												features 	: ftrCoordenadas,
-												format 		: new ol.format.GeoJSON(),
-												url 		: url
-											});
-						//new ol.layer.Vector //ol.layer.Heatmap 
-						a_vectorLayerDelito[k] = new ol.layer.Vector({
-														source 	: vectorSource,
-														blur:15,
-														radius:8,
-														style 	: a_style[k]
-												});
-					});
-				}
-			});
-		}
-	});
-	/******************************/
-	
-	/*********PUNTOS INSTITUTOS*********/
-	var ftrCoordenadasInst = [];
-	var vectorSourceInst;
-	var a_vectorLayerInst = [];
-	var a_styleInst = [];
-	var institucion;
-	$.ajax({
-		url : url3,
-		dataType : 'json',
-		async : false,
-		method: 'get',
-		success : function(json1) {
-			$.each(json1, function(key, data) {
-				if (key == 'features') {
-					$.each(data, function(k, v) {
-						ftrCoordenadasInst = [];
-						if (v.type == 'Feature') {
-							institucion = v;
-							if (v.geometry.coordinates[0].length >= 1) {
-								$.each(v.geometry.coordinates[0], function(i, c) {
-									ftrCoordenadasInst[i] = new ol.Feature({
-										geometry 				: new ol.geom.Point(ol.proj.transform(c, 'EPSG:4326','EPSG:3857')),
-										name 					: c,
-										tipoInstitucion 		: institucion.tipoInstitucion,
-										institucionId 			: institucion.institucionId,
-										institucionNombre		: institucion.institucionNombre,
-										institucionUbicacion	: institucion.institucionUbicacion,
-									});
-	
-								});
-	
-							}
-						}
-						
-						a_styleInst[k] 		= new ol.style.Style({	
-													image : new ol.style.Icon(
-													({
-														anchor 			: [ 0.5, 30 ],
-														anchorXUnits 	: 'fraction',
-														anchorYUnits 	: 'pixels',
-														scale			: 0.25,
-														src 			: './img/map/'+v.institucion
-													}))
-												});
-						
-						vectorSourceInst 	= new ol.source.Vector({
-												features 	: ftrCoordenadasInst,
-												format 		: new ol.format.GeoJSON(),
-												url 		: url
-											});
-						
-						a_vectorLayerInst[k] = new ol.layer.Vector({
-													source 	: vectorSourceInst,
-													style 	: a_styleInst[k]
-											});
-						
-					});
-				}
-			});
-		}
-	});
-	/******************************/
 	
 	/*******Dibuja el mapa ********/		
 	var raster = new ol.layer.Tile({
@@ -206,21 +80,142 @@
 	
 	var a_layers = [raster, vectorLayer];
 	
+	/*********PUNTOS DELITOS*********/		
+	var params 		 = $('.form-check input:checked, input[type=text], input[type=hidden]').serialize();		
+	var urldenuncias = base+'denuncias/denunciasgeojson?departamento_id='+departamento_id+'&provincia_id=' + provincia_id + '&distrito_id=' + distrito_id + params;
 	
-	/*******Poligono de lugar de busqueda********/
+	var baseTextStyle = {
+			font : '10px Calibri,sans-serif',
+			fill : new ol.style.Fill({
+				color : '#0000FF'
+			}),
+			stroke : new ol.style.Stroke({
+				color : '#fff',
+				width : 5
+			})
+	    };
 	
-	reportesBuscar 	= $('#ReportesBuscar').val();
-	//reportesBuscar = 'mall';
-	if(reportesBuscar != ''){
+	var styleSearchPoly = new ol.style.Style({
+		fill : new ol.style.Fill({
+			color : 'RGBA(0,0,255,0.07)' //color de backgrount de poligono
+		}),
+		stroke : new ol.style.Stroke({
+			color : '#0000FF',
+			width : 2 //Ancho de limite
+		}),
+		text : new ol.style.Text(baseTextStyle)
+	});
+	
+	var sourceDenuncias = new ol.source.Vector({
+		format 	: new ol.format.GeoJSON(),
+		url 	: urldenuncias
+	});	
+	//new ol.layer.Vector //ol.layer.Heatmap 
+	var vectorLayerDenuncias = new ol.layer.Heatmap({
+		source 	: sourceDenuncias,
+		style 	: styleFunctionDenuncias
+	});
+	
+	function styleFunctionDenuncias(feature, resolution) {			
+		var styleSearch;        
+        	var iconName = "img/map/"+feature.get("icon");		    
+		    baseTextStyle.text = feature.get('denuncia');
+		    
+		    styleSearch = new ol.style.Style({
+					        image: new ol.style.Icon(({
+					        	anchor		: [0.3, 30],
+					        	scale		: 1,
+					            anchorXUnits: 'fraction',
+					            anchorYUnits: 'pixels',
+					            src			: iconName
+					        })),
+					        text: new ol.style.Text(baseTextStyle),
+					        zIndex: 2
+					    });	        	
+       		   
+		return [styleSearch];
+	}
+
+	a_layers.push(vectorLayerDenuncias);	
+	/******************************/
+	
+	/*********PUNTOS INSTITUTOS*********/
+	/*
+	var ftrCoordenadasInst = [];
+	var vectorSourceInst;
+	var a_vectorLayerInst = [];
+	var a_styleInst = [];
+	var institucion;
+	$.ajax({
+		url : url3,
+		dataType : 'json',
+		async : false,
+		method: 'get',
+		success : function(json1) {
+			$.each(json1, function(key, data) {
+				if (key == 'features') {
+					$.each(data, function(k, v) {
+						ftrCoordenadasInst = [];
+						if (v.type == 'Feature') {
+							institucion = v;
+							if (v.geometry.coordinates[0].length >= 1) {
+								$.each(v.geometry.coordinates[0], function(i, c) {
+									ftrCoordenadasInst[i] = new ol.Feature({
+										geometry 				: new ol.geom.Point(ol.proj.transform(c, 'EPSG:4326','EPSG:3857')),
+										name 					: c,
+										tipoInstitucion 		: institucion.tipoInstitucion,
+										institucionId 			: institucion.institucionId,
+										institucionNombre		: institucion.institucionNombre,
+										institucionUbicacion	: institucion.institucionUbicacion,
+									});
+	
+								});
+	
+							}
+						}
+						
+						a_styleInst[k] 		= new ol.style.Style({	
+													image : new ol.style.Icon(
+													({
+														anchor 			: [ 0.5, 30 ],
+														anchorXUnits 	: 'fraction',
+														anchorYUnits 	: 'pixels',
+														scale			: 0.25,
+														src 			: './img/map/'+v.institucion
+													}))
+												});
+						
+						vectorSourceInst 	= new ol.source.Vector({
+												features 	: ftrCoordenadasInst,
+												format 		: new ol.format.GeoJSON(),
+												url 		: url
+											});
+						
+						a_vectorLayerInst[k] = new ol.layer.Vector({
+													source 	: vectorSourceInst,
+													style 	: a_styleInst[k]
+											});
+						
+					});
+				}
+			});
+		}
+	});
+	*/
+	/******************************/
 		
-		thebox = ol.proj.transformExtent(Extent, 'EPSG:3857', 'EPSG:4326');
-		x1 = thebox[0].toFixed(6);
-		y1 = thebox[3].toFixed(6);
-		x2 = thebox[2].toFixed(6);
-		y2 = thebox[1].toFixed(6);
-		viewbox = x1.toString().concat(',',y1,',',x2,',',y2);
-		
-		var urlopenstreetmap = 'https://nominatim.openstreetmap.org/?format=geojson&q='+reportesBuscar+'&polygon_geojson=0&bounded=1&limit=100&viewbox='+viewbox;
+	thebox = ol.proj.transformExtent(Extent, 'EPSG:3857', 'EPSG:4326');
+	x1 = thebox[0].toFixed(6);
+	y1 = thebox[3].toFixed(6);
+	x2 = thebox[2].toFixed(6);
+	y2 = thebox[1].toFixed(6);
+	viewbox = x1.toString().concat(',',y1,',',x2,',',y2);
+	
+	/*********PUNTOS INSTITUTOS*********/
+	var instituciones = ['hospital', 'policia','bomberos'];
+	
+	instituciones.forEach(function (elemento, indice, array) {
+		var urlopenstreetmap = 'https://nominatim.openstreetmap.org/?format=geojson&q='+elemento+'&polygon_geojson=0&bounded=1&limit=100&viewbox='+viewbox;
 		
 		var baseTextStyle = {
 				font : '10px Calibri,sans-serif',
@@ -254,7 +249,7 @@
 			style 	: styleFunctionSearch
 		});
 		
-		function styleFunctionSearch(feature, resolution) {			
+		function styleFunctionSearch(feature, resolution) {
 			var styleSearch;
 	        var geom = feature.getGeometry();
 	        if (geom.getType() == 'Point') {	        
@@ -270,7 +265,7 @@
 						            anchorYUnits: 'pixels',
 						            src			: iconName
 						        })),
-						        text: new ol.style.Text(baseTextStyle),
+						        //ext: new ol.style.Text(baseTextStyle),
 						        zIndex: 2
 						    });	        	
 	        }else{
@@ -280,7 +275,78 @@
 		}
 	
 		a_layers.push(vectorLayerSearch);
-		/*
+	});
+	/******************************/
+	
+	/*******Poligono de lugar de busqueda********/	
+	reportesBuscar 	= $('#ReportesBuscar').val();
+	//reportesBuscar = 'mall';
+	if(reportesBuscar != ''){
+				
+		var urlopenstreetmap = 'https://nominatim.openstreetmap.org/?format=geojson&q='+reportesBuscar+'&polygon_geojson=1&bounded=1&limit=1&viewbox='+viewbox;
+		
+		var baseTextStyle = {
+				font : '10px Calibri,sans-serif',
+				fill : new ol.style.Fill({
+					color : '#0000FF'
+				}),
+				stroke : new ol.style.Stroke({
+					color : '#fff',
+					width : 5
+				})
+		    };
+		
+		var styleSearchPoly = new ol.style.Style({
+			fill : new ol.style.Fill({
+				color : 'RGBA(0,0,255,0.07)' //color de backgrount de poligono
+			}),
+			stroke : new ol.style.Stroke({
+				color : '#0000FF',
+				width : 2 //Ancho de limite
+			}),
+			text : new ol.style.Text(baseTextStyle)
+		});
+		
+		var sourceSearch = new ol.source.Vector({
+			format 	: new ol.format.GeoJSON(),
+			url 	: urlopenstreetmap
+		});	
+		
+		var vectorLayerSearch = new ol.layer.Vector({
+			source 	: sourceSearch,
+			style 	: styleFunctionSearch
+		});
+		
+		function styleFunctionSearch(feature, resolution) {
+			var styleSearch;
+			
+			var display_name =feature.get('display_name').split(',');			    
+		    baseTextStyle.text = display_name[0];
+		    
+	        var geom = feature.getGeometry();
+	        if (geom.getType() == 'Point') {	        
+	        	var iconName = feature.get("icon") || "img/map/homicidio_20px.png";
+			    			    
+			    styleSearch = new ol.style.Style({
+						        image: new ol.style.Icon(({
+						        	anchor		: [0.3, 30],
+						        	scale		: 1,
+						            anchorXUnits: 'fraction',
+						            anchorYUnits: 'pixels',
+						            src			: iconName
+						        })),
+						        text: new ol.style.Text(baseTextStyle),
+						        zIndex: 2
+						    });	        	
+	        }else{
+	        	styleSearch = styleSearchPoly;
+	        	styleSearch.getText().setText(display_name[0]);
+	        }		   
+			return [styleSearch];
+		}
+	
+		a_layers.push(vectorLayerSearch);
+		
 		$.ajax({
 			url : urlopenstreetmap,
 			dataType : 'json',
@@ -294,7 +360,7 @@
 			Extent = vectorSourcePol[0].getGeometry().getExtent();
 			center = ol.extent.getCenter(Extent);
 		})
-		*/
+		
 	}
 	
 	/**********************************************/
@@ -302,14 +368,11 @@
 	var view = new ol.View({
 		center : center
 	});	
-	
-	for (var i = 0; i < a_vectorLayerDelito.length; i++) {
-		a_layers.push(a_vectorLayerDelito[i]);
-	}
+	/*
 	for (var i = 0; i < a_vectorLayerInst.length; i++) {				
 		a_layers.push(a_vectorLayerInst[i]);
 	}
-	
+	*/
 	/*******Visualización de las coordenadas con el mouse********/		
 		var mousePositionControl = new ol.control.MousePosition({
 			coordinateFormat : ol.coordinate.createStringXY(12),
@@ -361,15 +424,28 @@ var map = new ol.Map({
 		var layer 	= seleccion[1];
 		
 		if (feature !== undefined && feature.get('display_name') !== undefined) {
-			  var coordinate 	= evt.coordinate;		
+			  var coordinate 	= evt.coordinate;
+			  
+			  var tipo = feature.get('type');
+			  switch (tipo) {
+			    case 'bank':
+			    	tipo = 'Banco';
+			      break;
+			    case 'fire_station':
+			    	tipo = 'Bombero';
+			      break;  
+			    default:
+			      console.log('default');
+			  }
+			  
 			  content.innerHTML = '<p><b></b></p>' +			  					  	
-			  					  '<b>' + feature.get('type') + '</b></br>' + 
+			  					  '<b>' + tipo.toUpperCase() + '</b></br>' + 
 			  					  feature.get('display_name');
 			  overlay.setPosition(coordinate);
 		}
-		
+		/*
 		if (feature !== undefined && feature.get('tipoInstitucion') !== undefined) {
-			  var coordinate 	= evt.coordinate;		
+			  var coordinate 	= evt.coordinate;
 			  content.innerHTML = '<p><b>' + feature.get('tipoInstitucion') + '</b></p>' +			  					  	
 			  					  '<b>' + feature.get('institucionNombre') + '</b></br>' + 
 			  					  feature.get('institucionUbicacion');
@@ -385,6 +461,7 @@ var map = new ol.Map({
 			  					  feature.get('institucionUbicacion')+ '</div>';
 			  overlay.setPosition(coordinate);
 		}
+		*/
 	});	
 	
 	/*****Concervar el zoom y el centro del mapa en una busqueda****/	

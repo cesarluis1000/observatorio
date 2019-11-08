@@ -35,9 +35,109 @@ class DenunciasController extends AppController {
 	}
 
 	
-	public function denunciasjson(){
+	public function denunciasgeojson(){
 	    $this->autoRender = false;
 	    $this->response->type('json');
+	    $this->loadModel('Distrito');
+	    //Obtenemos el departamento o departamento del PERU
+	    if (isset($this->request->query['departamento_id'])){
+	        $departamento_id = $this->request->query['departamento_id'];
+	    }else{
+	        $departamento_id = 0;
+	    }
+	    
+	    //Obtenemos la provincia o provincias de los DEPARTAMENTO
+	    if (isset($this->request->query['provincia_id'])){
+	        $provincia_ids     = $this->request->query['provincia_id'];
+	    }else{
+	        $options           = array('fields'     => array('id'),
+	            'conditions'   =>  array('departamento_id' => $departamento_id),
+	            'recursive'  => -1);
+	        $provincias_act    = $this->Distrito->Provincia->find('all',$options);
+	        $provincia_ids     = Hash::extract($provincias_act, '{n}.Provincia.id');
+	    }
+	    
+	    //Obtenemos el distrito o distritos si es por PROVINCIA
+	    if (isset($this->request->query['distrito_id']) && !empty($this->request->query['distrito_id'])){
+	        $distrito_ids      = $this->request->query['distrito_id'];
+	    }else{
+	        $options           = array('fields'     =>  array('id'),
+	            'conditions' =>  array('provincia_id' => $provincia_ids),
+	            'recursive'  =>  -1);
+	        $polygon_activo    = $this->Distrito->find('all',$options);
+	        $distrito_ids      = Hash::extract($polygon_activo, '{n}.Distrito.id');
+	    }
+	    
+	    $options = array(  'fields'       =>  array('id','iddist','nombdist','nombprov','area_minam'),
+	        'conditions'   =>  array('provincia_id' => $provincia_ids, 'Distrito.id' => $distrito_ids),
+	        'recursive'    =>  -1);
+	    
+	    //Quitamos la relaccion del perimetro del distritos
+	    $this->Distrito->unbindModel(array('hasMany'=>array('DistPolygon')));
+	    
+	    $distritos = $this->Distrito->find('all',$options);
+	    //pr($distritos);exit;
+	    $delitos       = null;
+	    $conditions    = array();
+	    
+	    //Si exite la categoria del delito los asiginamos
+	    if (isset($this->request->query['delito'])){
+	        $delito = $this->request->query['delito'];
+	        $a_delito = array_keys($delito);
+	        $conditions = array_merge($conditions,array("replace(categoria,' ','_')" => $a_delito));
+	    }
+	    
+	    if (isset($this->request->query['fecha_de'])){
+	        $fecha_de = $this->request->query['fecha_de'];
+	        $conditions = array_merge($conditions,array("fecha_hecho >=" => $fecha_de));
+	    }
+	    
+	    if (isset($this->request->query['hasta'])){
+	        $fecha_hasta = $this->request->query['hasta'];
+	        $conditions = array_merge($conditions,array("fecha_hecho <=" => $fecha_hasta));
+	    }
+	    
+	    if (isset($this->request->query['horas'])){
+	        $horas1 = $this->request->data['Reportes']['horas1'] = $this->request->query['horas1'];
+	        $horas2 = $this->request->data['Reportes']['horas2'] = $this->request->query['horas2'];
+	        
+	        $conditions = array_merge($conditions,array("HOUR(fecha_hecho) >=" => $horas1));
+	        $conditions = array_merge($conditions,array("HOUR(fecha_hecho) <=" => $horas2));
+	    }
+	    
+	    $conditions = array_merge($conditions,array('Denuncia.distrito_id' => $distrito_ids,// $distrito['Distrito']['id'],
+	        'Denuncia.estado_google' => 'OK',
+	        //'ST_Distance(Distrito.geom, Point(ST_X(Denuncia.geom), ST_Y(Denuncia.geom)))*110 <= 1',
+	        'Denuncia.geom IS NOT NULL'
+	    ));
+	    //pr($conditions); //exit;
+	    
+	    $options = array('fields'=>array('id','TipoDenuncia.nombre', 'geojson'),
+            	        'conditions'=> $conditions,
+            	        //'recursive' => -1,
+            	        'order' => array('categoria DESC'),
+            	    );
+	    
+	    $denuncias = $this->Distrito->Denuncia->find('all',$options);
+	    
+	    $geojson = null;
+	    foreach ($denuncias as $i  => $row){
+	        $geojson[$i]['type']       = 'Feature';
+	        $geojson[$i]['properties'] = array('denuncia' => $row['TipoDenuncia']['nombre'],
+                                               'icon' => strtolower(str_replace(' ', '_', $row['TipoDenuncia']['nombre'])).'_20px.png'
+	                                           );
+	        $geojson[$i]['geometry']   = $row['Denuncia']['geojson'];
+	    }
+	    
+	    $geojson = array('type' => 'FeatureCollection','features'=>$geojson);
+	    //pr($geojson); //exit;
+	    
+	    $geojson = json_encode($geojson);
+	    $geojson = str_replace(':"{', ':{', $geojson);
+	    $geojson = str_replace('}"}', '}}', $geojson);
+	    $geojson = str_replace('\\', '', $geojson);
+	    //pr($geojson);
+	    $this->response->body($geojson);
 	}
 	
 	public function coordenadasjson(){	    
