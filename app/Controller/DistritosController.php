@@ -193,7 +193,6 @@ class DistritosController extends AppController {
 	    $json = str_replace(']"]]', ']]]', $json);
 	    $this->response->body($json);;
 	}
-
 	
 	public function delitosgeojson() {
 	    //$this->layout = false;

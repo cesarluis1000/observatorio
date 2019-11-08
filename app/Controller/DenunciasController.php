@@ -34,6 +34,12 @@ class DenunciasController extends AppController {
 		$this->set('denuncias', $this->Paginator->paginate());
 	}
 
+	
+	public function denunciasjson(){
+	    $this->autoRender = false;
+	    $this->response->type('json');
+	}
+	
 	public function coordenadasjson(){	    
 	    set_time_limit(108000);
 	    ini_set('memory_limit','1024M');

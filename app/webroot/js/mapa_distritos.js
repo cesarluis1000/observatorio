@@ -59,7 +59,7 @@
 												url 		: url
 											});
 						//new ol.layer.Vector //ol.layer.Heatmap 
-						a_vectorLayerDelito[k] = new ol.layer.Heatmap({
+						a_vectorLayerDelito[k] = new ol.layer.Vector({
 														source 	: vectorSource,
 														blur:15,
 														radius:8,
@@ -220,30 +220,7 @@
 		y2 = thebox[1].toFixed(6);
 		viewbox = x1.toString().concat(',',y1,',',x2,',',y2);
 		
-		var urlopenstreetmap = 'https://nominatim.openstreetmap.org/?format=geojson&polygon_geojson=0&bounded=1&limit=100&viewbox='+viewbox+'&q='+reportesBuscar;
-		//console.info(urlopenstreetmap);
-		//var urlopenstreetmap = 'https://nominatim.openstreetmap.org/?format=geojson&q=mall&polygon_geojson=1&bounded=1&limit=100&viewbox=-77.066535,-11.960714,-77.027608,-12.017779';
-		//var urlopenstreetmap = 'https://nominatim.openstreetmap.org/?format=geojson&q=police&polygon_geojson=0&bounded=1&limit=100&viewbox=-77.066535,-11.960714,-77.027608,-12.017779';
-		
-		var style2 = new ol.style.Style({
-			fill : new ol.style.Fill({
-				color : 'RGBA(0,0,255,0.07)' //color de backgrount de poligono
-			}),
-			stroke : new ol.style.Stroke({
-				color : '#0000FF',
-				width : 2 //Ancho de limite
-			}),
-			text : new ol.style.Text({
-				font : '10px Calibri,sans-serif',
-				fill : new ol.style.Fill({
-					color : '#85B037'
-				}),
-				stroke : new ol.style.Stroke({
-					color : '#fff',
-					width : 5
-				})
-			})
-		});
+		var urlopenstreetmap = 'https://nominatim.openstreetmap.org/?format=geojson&q='+reportesBuscar+'&polygon_geojson=0&bounded=1&limit=100&viewbox='+viewbox;
 		
 		var baseTextStyle = {
 				font : '10px Calibri,sans-serif',
@@ -256,17 +233,28 @@
 				})
 		    };
 		
-		var source2 = new ol.source.Vector({
+		var styleSearchPoly = new ol.style.Style({
+			fill : new ol.style.Fill({
+				color : 'RGBA(0,0,255,0.07)' //color de backgrount de poligono
+			}),
+			stroke : new ol.style.Stroke({
+				color : '#0000FF',
+				width : 2 //Ancho de limite
+			}),
+			text : new ol.style.Text(baseTextStyle)
+		});
+		
+		var sourceSearch = new ol.source.Vector({
 			format 	: new ol.format.GeoJSON(),
 			url 	: urlopenstreetmap
 		});	
 		
-		var vectorLayer2 = new ol.layer.Vector({
-			source 	: source2,
-			style 	: styleFunction
+		var vectorLayerSearch = new ol.layer.Vector({
+			source 	: sourceSearch,
+			style 	: styleFunctionSearch
 		});
 		
-		function styleFunction(feature, resolution) {			
+		function styleFunctionSearch(feature, resolution) {			
 			var styleSearch;
 	        var geom = feature.getGeometry();
 	        if (geom.getType() == 'Point') {	        
@@ -277,7 +265,7 @@
 			    styleSearch = new ol.style.Style({
 						        image: new ol.style.Icon(({
 						        	anchor		: [0.3, 30],
-						        	scale		: 1.5,
+						        	scale		: 1,
 						            anchorXUnits: 'fraction',
 						            anchorYUnits: 'pixels',
 						            src			: iconName
@@ -286,12 +274,12 @@
 						        zIndex: 2
 						    });	        	
 	        }else{
-	        	styleSearch = style2;
+	        	styleSearch = styleSearchPoly;
 	        }		   
 			return [styleSearch];
 		}
 	
-		a_layers.push(vectorLayer2);
+		a_layers.push(vectorLayerSearch);
 		/*
 		$.ajax({
 			url : urlopenstreetmap,
