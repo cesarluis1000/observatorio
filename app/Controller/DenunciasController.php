@@ -36,8 +36,9 @@ class DenunciasController extends AppController {
 
 	
 	public function denunciasgeojson(){
+	    $this->layout = false;
 	    $this->autoRender = false;
-	    $this->response->type('json');
+	    //$this->response->type('json');
 	    $this->loadModel('Distrito');
 	    //Obtenemos el departamento o departamento del PERU
 	    if (isset($this->request->query['departamento_id'])){
@@ -68,7 +69,7 @@ class DenunciasController extends AppController {
 	        $distrito_ids      = Hash::extract($polygon_activo, '{n}.Distrito.id');
 	    }
 	    
-	    $options = array(  'fields'       =>  array('id','iddist','nombdist','nombprov','area_minam'),
+	    $options = array(  'fields'       =>  array('id'),
 	        'conditions'   =>  array('provincia_id' => $provincia_ids, 'Distrito.id' => $distrito_ids),
 	        'recursive'    =>  -1);
 	    
@@ -105,10 +106,10 @@ class DenunciasController extends AppController {
 	        $conditions = array_merge($conditions,array("HOUR(fecha_hecho) <=" => $horas2));
 	    }
 	    
-	    $conditions = array_merge($conditions,array('Denuncia.distrito_id' => $distrito_ids,// $distrito['Distrito']['id'],
-	        'Denuncia.estado_google' => 'OK',
-	        //'ST_Distance(Distrito.geom, Point(ST_X(Denuncia.geom), ST_Y(Denuncia.geom)))*110 <= 1',
-	        'Denuncia.geom IS NOT NULL'
+	    $conditions = array_merge($conditions,array('Denuncia.distrito_id'  => $distrito_ids,
+	                                               'Denuncia.estado_google' => 'OK',
+                                        	        //'ST_Distance(Distrito.geom, Point(ST_X(Denuncia.geom), ST_Y(Denuncia.geom)))*110 <= 1',
+                                        	        'Denuncia.geom IS NOT NULL'
 	    ));
 	    //pr($conditions); //exit;
 	    
