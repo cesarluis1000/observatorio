@@ -5,7 +5,6 @@
 	var poligono 	 = (distrito_id != '')?'Distritos':'Provincias';			
 	var url4  		 = base+'ZonaPolygons/panamericanosgeojson';	
 	
-	
 	/**********Google Map**********/		
 	var raster = new ol.layer.Tile({
 						source: new ol.source.OSM({
@@ -41,13 +40,13 @@
 						})
 					});
 	
-		var sourceVector = new ol.source.Vector({
+		var vectorSource = new ol.source.Vector({
 						format : new ol.format.GeoJSON(),
 						url : urlPrincipal
 					});	
-
+	
 	var vectorLayer = new ol.layer.Vector({
-		source 	: sourceVector,
+		source 	: vectorSource,
 		style 	: function(feature) {						
 						stylePrincial.getText().setText(feature.get('nombdist'));
 						return stylePrincial;
@@ -56,36 +55,8 @@
 	/*************************************/
 	
 	var a_layers = [raster, vectorLayer];
-	
-	/*******Centrar el poligo en el mapa********/
-		var coordenada;
-		var vectorSourcePol;
-		var Extent;
-		
-		$.ajax({
-			url : urlPrincipal,
-			dataType : 'json',
-			async : false,
-		}).done(function(data) {
-			var format = new ol.format.GeoJSON();
-			vectorSourcePol = format.readFeatures(data, {
-								defaultDataProjection : ol.proj.get('EPSG:4326'),
-								featureProjection : 'EPSG:3857'
-							});
 
-			Extent = vectorSourcePol[0].getGeometry().getExtent();			
-			center = ol.extent.getCenter(Extent);
-		});	
-		
-		thebox = ol.proj.transformExtent(Extent, 'EPSG:3857', 'EPSG:4326');
-		x1 = thebox[0].toFixed(6);
-		y1 = thebox[3].toFixed(6);
-		x2 = thebox[2].toFixed(6);
-		y2 = thebox[1].toFixed(6);
-		viewbox = x1.toString().concat(',',y1,',',x2,',',y2);
-	/**********************************************/
-
-	/*********Stylo Denuncias Instituciones********/
+	/*********Style Denuncias Instituciones********/
 		var baseTextStyle = {
 						font : '10px Calibri,sans-serif',
 						fill : new ol.style.Fill({
@@ -122,14 +93,12 @@
 			return [styleDenuncia];
 		}
 
-
 		var sourceDenuncias = new ol.source.Vector({
 			format 	: new ol.format.GeoJSON(),
 			url 	: urldenuncias
 		});	
 		
-	//new ol.layer.Vector //ol.layer.Heatmap
-		
+	//new ol.layer.Vector //ol.layer.Heatmap		
 	var vectorLayerDenuncias = new ol.layer.Heatmap({
 		source 	: sourceDenuncias,
 		style 	: styleDenuncias
@@ -138,140 +107,11 @@
 	a_layers.push(vectorLayerDenuncias);
 	
 	/******************************/
-	
-	/*********Points INSTITUTOS*********/	
-		function styleInstituciones(feature, resolution) {
-			var styleSearch;
-	        	        
-	    	var iconName = feature.get("icon") || "img/map/homicidio_20px.png";
-		    //var display_name =feature.get('display_name').split(',');
-		    //baseTextStyle.text = display_name[0];
-		    
-		    styleInstitucion = new ol.style.Style({
-					        image: new ol.style.Icon(({
-					        	anchor		: [0.3, 30],
-					        	scale		: 1,
-					            anchorXUnits: 'fraction',
-					            anchorYUnits: 'pixels',
-					            src			: iconName
-					        })),
-					        //ext: new ol.style.Text(baseTextStyle),
-					        zIndex: 2
-					    });	        	
-	       		   
-			return [styleInstitucion];
-		}
-	
-	var instituciones = ['hospital', 'police','bomberos'];	
-	//var instituciones = ['bomberos'];
-	
-	instituciones.forEach(function (elemento, indice, array) {
-		var urlInstitucion = 'https://nominatim.openstreetmap.org/?format=geojson&q='+elemento+'&polygon_geojson=0&bounded=1&limit=1000&viewbox='+viewbox;
-				
-		var sourceInstitucion = new ol.source.Vector({
-			format 	: new ol.format.GeoJSON(),
-			url 	: urlInstitucion
-		});	
 		
-		var vectorLayerInstitucion = new ol.layer.Vector({
-			source 	: sourceInstitucion,
-			style 	: styleInstituciones
-		});
-		
-		a_layers.push(vectorLayerInstitucion);
-	});
-	/**/
-	/******************************/
-	
-	/*******Poligono de lugar de busqueda********/	
-	reportesBuscar 	= $('#ReportesBuscar').val();
-	
-	if(reportesBuscar != ''){
-				
-			var urlopenstreetmap = 'https://nominatim.openstreetmap.org/?format=geojson&q='+reportesBuscar+'&polygon_geojson=1&bounded=1&limit=1&viewbox='+viewbox;
-			
-			var baseTextStyle = {
-					font : '12px Calibri,sans-serif',
-					fill : new ol.style.Fill({
-						color : '#0000FF'
-					}),
-					stroke : new ol.style.Stroke({
-						color : '#fff',
-						width : 5
-					})
-			    };
-			
-			var styleSearchPoly = new ol.style.Style({
-				fill : new ol.style.Fill({
-					color : 'RGBA(0,0,255,0.07)' //color de backgrount de poligono
-				}),
-				stroke : new ol.style.Stroke({
-					color : '#0000FF',
-					width : 2 //Ancho de limite
-				}),
-				text : new ol.style.Text(baseTextStyle)
-			});
-			
-			function styleSearch(feature, resolution) {
-				var styleSearch;
-				
-				var display_name =feature.get('display_name').split(',');			    
-			    baseTextStyle.text = display_name[0].toUpperCase();
-			    
-		        var geom = feature.getGeometry();
-		        if (geom.getType() == 'Point') {	        
-		        	var iconName = feature.get("icon") || "img/map/homicidio_20px.png";
-				    			    
-				    styleSearch = new ol.style.Style({
-							        image: new ol.style.Icon(({
-							        	anchor		: [0.3, 30],
-							        	scale		: 1,
-							            anchorXUnits: 'fraction',
-							            anchorYUnits: 'pixels',
-							            src			: iconName
-							        })),
-							        text: new ol.style.Text(baseTextStyle),
-							        zIndex: 2
-							    });	        	
-		        }else{
-		        	styleSearch = styleSearchPoly;
-		        	styleSearch.getText().setText(baseTextStyle.text);
-		        }		   
-				return [styleSearch];
-			}
-			
-			var sourceSearch = new ol.source.Vector({
-				format 	: new ol.format.GeoJSON(),
-				url 	: urlopenstreetmap
-			});	
-		
-		var vectorLayerSearch = new ol.layer.Vector({
-			source 	: sourceSearch,
-			style 	: styleSearch
-		});
-	
-		a_layers.push(vectorLayerSearch);
-		
-			$.ajax({
-				url : urlopenstreetmap,
-				dataType : 'json',
-				async : false,
-			}).done(function(data) {
-				var format = new ol.format.GeoJSON();
-				vectorSourcePol = format.readFeatures(data, {
-									defaultDataProjection : ol.proj.get('EPSG:4326'),
-									featureProjection : 'EPSG:3857'
-								});	
-				Extent = vectorSourcePol[0].getGeometry().getExtent();
-				center = ol.extent.getCenter(Extent);
-			})		
-	}
-	
-	/**********************************************/
-	
 	var view = new ol.View({
-		center : center
-	});	
+        center: [0, 0],
+        zoom: 1
+      });
 	
 	/*******Visualización de las coordenadas con el mouse********/		
 		var mousePositionControl = new ol.control.MousePosition({
@@ -317,68 +157,216 @@
 	/*******ACCION Popup detalle*******/
 	map.on('singleclick', function(evt) {
 		var seleccion = map.forEachFeatureAtPixel(evt.pixel,function(feature, layer) {
-						//return feature;
 						return [feature, layer];
 					});
-		var feature = seleccion[0];
-		var layer 	= seleccion[1];
-		
-		if (feature !== undefined && feature.get('display_name') !== undefined) {
-			  var coordinate 	= evt.coordinate;
+				
+		if (seleccion !== undefined) {
+			var feature = seleccion[0];
+			var layer 	= seleccion[1];
+			var coordinate 	= evt.coordinate;
 			  
-			  var tipo = feature.get('type');
-			  switch (tipo) {
-			    case 'bank':
-			    	tipo = 'Banco';
-			      break;
-			    case 'fire_station':
-			    	tipo = 'Bombero';
-			      break;  
-			    default:
-			      console.log('default');
-			  }
-			  
-			  content.innerHTML = '<p><b></b></p>' +			  					  	
-			  					  '<b>' + tipo.toUpperCase() + '</b></br>' + 
-			  					  feature.get('display_name');
-			  overlay.setPosition(coordinate);
-		}
-		
-		if (feature !== undefined && feature.get('institucionImg') !== undefined) {
-			  var coordinate 	= evt.coordinate;
-			  imagen 			= '<img src="' + base + 'img/panamericanos/' + feature.get('institucionImg') + '.jpg" style="width: 300px;" alt="Sede">';
-			  content.innerHTML = imagen + '</br></br>' + 
-			  					  '<div class="sede">' + 	
-			  					  '<b>' + feature.get('institucionNombre') + '</b></br>' + 
-			  					  feature.get('institucionUbicacion')+ '</div>';
-			  overlay.setPosition(coordinate);
+			var tipo = feature.get('type');
+			
+			if(feature.get('type')!==undefined){
+				switch (tipo) {
+				case 'police':
+			    	tipo = 'Policia';
+			    	break;
+				case 'fire_station':
+			    	tipo = 'Bombero';	
+			    	break;
+				}
+	  
+				content.innerHTML = '<p><b></b></p>' +			  					  	
+									'<b>' + tipo.toUpperCase() + '</b></br>' + 
+									feature.get('display_name');
+				overlay.setPosition(coordinate);	
+			}			
 		}
 		
 	});	
 	
 	/*****Concervar el zoom y el centro del mapa en una busqueda****/	
-	ghostZoom 		= $('#ReportesGhostZoom').val();
-	centroZoom 		= $('#ReportesCentroZoom').val().split(',');	
 	
-	if (ghostZoom != '' && centroZoom != '' && reportesBuscar == '') {
-		long = parseFloat(centroZoom[0]);
-		lat  = parseFloat(centroZoom[1]);
-		map.getView().setCenter(ol.proj.transform([long, lat], 'EPSG:4326', 'EPSG:3857'));		
-	    map.getView().setZoom(ghostZoom);
-	}else{		
-		map.getView().fit(vectorSourcePol[0].getGeometry(), map.getSize());
-	} 
+	vectorSource.once('change',function(e){
+		//Cargo el vectorSource Princial que es el poligo del Distrito o Provincia
+	    if(vectorSource.getState() === 'ready') {
+	    		    	
+	    	Extent = vectorSource.getExtent();	               		        
+	        thebox = ol.proj.transformExtent(Extent, 'EPSG:3857', 'EPSG:4326');
+			x1 = thebox[0].toFixed(6);
+			y1 = thebox[3].toFixed(6);
+			x2 = thebox[2].toFixed(6);
+			y2 = thebox[1].toFixed(6);
+			viewbox = x1.toString().concat(',',y1,',',x2,',',y2);
+			
+			functionInstituciones(viewbox)
+						
+			reportesBuscar 	= $('#ReportesBuscar').val();
+			var sourceSearch;
+			if(reportesBuscar != ''){
+				sourceSearch = functionBusqueda(reportesBuscar, viewbox);
+			}
+			
+			ghostZoom 		= $('#ReportesGhostZoom').val();
+			centroZoom 		= $('#ReportesCentroZoom').val().split(',');			
+			if (ghostZoom != 1 && centroZoom != '' && reportesBuscar == '') {
+				//Si se ha movido algo y sin busqueda
+				long = parseFloat(centroZoom[0]);
+				lat  = parseFloat(centroZoom[1]);
+				map.getView().setCenter(ol.proj.transform([long, lat], 'EPSG:4326', 'EPSG:3857'));		
+			    map.getView().setZoom(ghostZoom);
+			}else{
+				// Centra al polygono del distrito o provincia
+				map.getView().fit(Extent, map.getSize());
+				if(sourceSearch !== undefined){
+					sourceSearch.once('change',function(e){
+						if(sourceSearch.getState() === 'ready'){
+							map.getView().fit(sourceSearch.getExtent(), map.getSize());
+						}		
+					});	
+				}				
+			}
+	    }
+	});
+	
+	var baseTextStyleSearch = {
+			font : '12px Calibri,sans-serif',
+			fill : new ol.style.Fill({
+				color : '#0000FF'
+			}),
+			stroke : new ol.style.Stroke({
+				color : '#fff',
+				width : 5
+			})
+	    };
+	
+	var styleSearchPoly = new ol.style.Style({
+		fill : new ol.style.Fill({
+			color : 'RGBA(0,0,255,0.07)' //color de backgrount de poligono
+		}),
+		stroke : new ol.style.Stroke({
+			color : '#0000FF',
+			width : 2 //Ancho de limite
+		}),
+		text : new ol.style.Text(baseTextStyleSearch)
+	});
+	
+	/*******Poligono de lugar de busqueda********/
+	function styleBuscador(feature, resolution) {
+				
+		display_name =feature.get('display_name').split(',');			    
+		baseTextStyleSearch.text = display_name[0].toUpperCase();
+	    
+        geom = feature.getGeometry();
+        if (geom.getType() == 'Point') {	        
+        	var iconName = feature.get("icon") || "img/map/homicidio_20px.png";
+		    			    
+		    styleSearch = new ol.style.Style({
+					        image: new ol.style.Icon(({
+					        	anchor		: [0.3, 30],
+					        	scale		: 1,
+					            anchorXUnits: 'fraction',
+					            anchorYUnits: 'pixels',
+					            src			: iconName
+					        })),
+					        text: new ol.style.Text(baseTextStyleSearch),
+					        zIndex: 2
+					    });	        	
+        }else{
+        	styleSearch = styleSearchPoly;
+        	styleSearch.getText().setText(baseTextStyleSearch.text);
+        }		   
+		return [styleSearch];
+	}
+	
+	function functionBusqueda(reportesBuscar, viewbox){
+		
+		urlSearch = 'https://nominatim.openstreetmap.org/?format=geojson&q='+reportesBuscar+'&polygon_geojson=1&bounded=1&limit=1&viewbox='+viewbox;
+		
+		sourceSearch = new ol.source.Vector({
+			format 	: new ol.format.GeoJSON(),
+			url 	: urlSearch
+		});	
+	
+		vectorLayerSearch = new ol.layer.Vector({
+			source 	: sourceSearch,
+			style 	: styleBuscador
+		});
+	
+		map.addLayer(vectorLayerSearch);
+		
+		return sourceSearch;
+	}
+	
+	/*********Points INSTITUTOS*********/	
+	function styleInstituciones(feature, resolution) {
+    	
+    	if(feature.get('type')!==undefined){
+    		tipo = feature.get('type');
+			switch (tipo) {			
+			case 'hospital':
+				iconName = "img/map/Hospital60px.png";
+		    	break;	
+			case 'police':
+				iconName = "img/map/Policia60px.png";
+		    	break;
+			case 'fire_station':
+				iconName = "img/map/Bomberos60px.png";
+		    	break;	
+			default:
+				iconName = "img/map/homicidio_20px.png";
+			}
+    	}	
+	    //display_name =feature.get('display_name').split(',');
+	    //baseTextStyle.text = display_name[0];		    
+	    styleInstitucion = new ol.style.Style({
+				        image: new ol.style.Icon(({
+				        	anchor		: [0.3, 30],
+				        	scale		: 0.25,
+				            anchorXUnits: 'fraction',
+				            anchorYUnits: 'pixels',
+				            src			: iconName
+				        })),
+				        //text: new ol.style.Text(baseTextStyle),
+				        zIndex: 2
+				    });	        	
+       		   
+		return [styleInstitucion];
+	}
 
-	var ghostZoom = map.getView().getZoom();//
+	function functionInstituciones(viewbox){
+		instituciones = ['hospital', 'police','bomberos'];
+		
+		instituciones.forEach(function (elemento, indice, array) {
+			urlInstitucion = 'https://nominatim.openstreetmap.org/?format=geojson&q='+elemento+'&polygon_geojson=0&bounded=1&limit=1000&viewbox='+viewbox;
+					
+			sourceInstitucion = new ol.source.Vector({
+				format 	: new ol.format.GeoJSON(),
+				url 	: urlInstitucion
+			});	
+			
+			vectorLayerInstitucion = new ol.layer.Vector({
+				source 	: sourceInstitucion,
+				style 	: styleInstituciones
+			});
+			
+			map.addLayer(vectorLayerInstitucion);
+		});
+	}
+	/******************************/
+	
     map.on('moveend', function(evt) {
-    	//console.info(map.getView().getZoom());
-        if (ghostZoom != map.getView().getZoom()) {
-            ghostZoom = map.getView().getZoom();            
-            $('#ReportesGhostZoom').val(ghostZoom);            
+        ghostZoom = map.getView().getZoom();        
+        if(ghostZoom != 1){
+        	$('#ReportesGhostZoom').val(ghostZoom);
+        }        
+        coordenadas = map.getView().getCenter();        
+        if(coordenadas[0] != 0){
+        	centroZoom = ol.proj.transform(coordenadas, 'EPSG:3857', 'EPSG:4326');
+            centroZoom[0] = centroZoom[0].toFixed(6);
+            centroZoom[1] = centroZoom[1].toFixed(6);        
+            $('#ReportesCentroZoom').val(centroZoom);	
         }
-        //centroZoom = map.getView().getCenter();
-        centroZoom = ol.proj.transform(map.getView().getCenter(), 'EPSG:3857', 'EPSG:4326');
-        centroZoom[0] = centroZoom[0].toFixed(6);
-        centroZoom[1] = centroZoom[1].toFixed(6);        
-        $('#ReportesCentroZoom').val(centroZoom);        
+                
     });

@@ -350,16 +350,14 @@ class DistritosController extends AppController {
 	    }
 	    $distritos = array('type' => 'FeatureCollection','features'=>$distritos);
 	    
-	    //pr($distritos);exit;
-	    $json = json_encode($distritos);
-	    //pr($json);
+	    $json = json_encode($distritos, JSON_UNESCAPED_UNICODE);	    
 	    $json = str_replace('[["[', '[[[', $json);
 	    $json = str_replace(']"]]', ']]]', $json);
 	    
 	    $json = str_replace(':"{', ':{', $json);
 	    $json = str_replace('}"}', '}}', $json);
 	    $json = str_replace('\\', '', $json);
-	    //pr($json);exit;
+	    
 	    $this->response->body($json);
 	    
 	}

@@ -465,7 +465,7 @@ class ReportesController extends AppController {
             (
                 'departamento_id' => 15,
                 'provincia_id' => 112,
-                'distrito_id' => 860,
+                'distrito_id' => 829,
                 'fecha_de' => '2019-09-01',
                 'hasta' => '2019-09-30',
                 'horas' => '12:00 AM - 11:59 PM',
