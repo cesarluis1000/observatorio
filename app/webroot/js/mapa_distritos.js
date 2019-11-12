@@ -101,7 +101,9 @@
 	//new ol.layer.Vector //ol.layer.Heatmap		
 	var vectorLayerDenuncias = new ol.layer.Heatmap({
 		source 	: sourceDenuncias,
-		style 	: styleDenuncias
+		style 	: styleDenuncias,
+		blur	: 15,
+        radius	: 8
 	});
 	
 	a_layers.push(vectorLayerDenuncias);
@@ -216,9 +218,11 @@
 				lat  = parseFloat(centroZoom[1]);
 				map.getView().setCenter(ol.proj.transform([long, lat], 'EPSG:4326', 'EPSG:3857'));		
 			    map.getView().setZoom(ghostZoom);
+				//map.getView().setZoom(13);
 			}else{
 				// Centra al polygono del distrito o provincia
 				map.getView().fit(Extent, map.getSize());
+				//map.getView().setZoom(13);
 				if(sourceSearch !== undefined){
 					sourceSearch.once('change',function(e){
 						if(sourceSearch.getState() === 'ready'){
@@ -337,7 +341,7 @@
 
 	function functionInstituciones(viewbox){
 		instituciones = ['hospital', 'police','bomberos'];
-		
+		instituciones = ['police'];
 		instituciones.forEach(function (elemento, indice, array) {
 			urlInstitucion = 'https://nominatim.openstreetmap.org/?format=geojson&q='+elemento+'&polygon_geojson=0&bounded=1&limit=1000&viewbox='+viewbox;
 					

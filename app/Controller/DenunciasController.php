@@ -38,6 +38,7 @@ class DenunciasController extends AppController {
 	public function denunciasgeojson(){
 	    $this->layout = false;
 	    $this->autoRender = false;
+	    
 	    //$this->response->type('json');
 	    $this->loadModel('Distrito');
 	    //Obtenemos el departamento o departamento del PERU
@@ -61,6 +62,10 @@ class DenunciasController extends AppController {
 	    //Obtenemos el distrito o distritos si es por PROVINCIA
 	    if (isset($this->request->query['distrito_id']) && !empty($this->request->query['distrito_id'])){
 	        $distrito_ids      = $this->request->query['distrito_id'];
+	        /*$distrito_ids      = array(860,880,872,867,933,902,947,911);
+	        $distrito_ids      = array(889,824,844,852,830,846,848,885,859);
+	        $distrito_ids      = array(842,829,850,832,802,821,819,825,794,815,814,811,805,816,812,791);
+	        $distrito_ids      = array(797,784,796,827,787,785,779,750,740,739);*/
 	    }else{
 	        $options           = array('fields'     =>  array('id'),
 	            'conditions' =>  array('provincia_id' => $provincia_ids),
@@ -72,7 +77,7 @@ class DenunciasController extends AppController {
 	    $options = array(  'fields'       =>  array('id'),
 	        'conditions'   =>  array('provincia_id' => $provincia_ids, 'Distrito.id' => $distrito_ids),
 	        'recursive'    =>  -1);
-	    
+	    //pr($options); exit;
 	    //Quitamos la relaccion del perimetro del distritos
 	    $this->Distrito->unbindModel(array('hasMany'=>array('DistPolygon')));
 	    

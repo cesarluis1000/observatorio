@@ -465,7 +465,7 @@ class ReportesController extends AppController {
             (
                 'departamento_id' => 15,
                 'provincia_id' => 112,
-                'distrito_id' => 829,
+                'distrito_id' => 860,
                 'fecha_de' => '2019-09-01',
                 'hasta' => '2019-09-30',
                 'horas' => '12:00 AM - 11:59 PM',
@@ -522,7 +522,10 @@ class ReportesController extends AppController {
         if (isset($this->request->query['distrito_id']) && !empty($this->request->query['distrito_id'])){
             
             $distrito_id = $distrito_ids = $this->request->data['Reportes']['distrito_id'] = $this->request->query['distrito_id'];           
-                        
+/*$distrito_ids = array(860,880,872,867,933,902,947,911);     //Norte
+$distrito_ids = array(889,824,844,852,830,846,848,885,859); //Este
+$distrito_ids = array(842,829,850,832,802,821,819,825,794,815,814,811,805,816,812,791);//centro
+$distrito_ids = array(797,784,796,827,787,785,779,750,740,739);//Sur*/
             $options = array('conditions' => array('Distrito.id' => $distrito_id),
                 'order' =>array('Distrito.nombdist' => 'asc'),
                 'recursive' => -1
@@ -627,7 +630,7 @@ class ReportesController extends AppController {
         $conditions = array_merge($conditions,array("fecha_hecho <=" => $this->request->data['Reportes']['hasta']));
         $conditions = array_merge($conditions,array("HOUR(fecha_hecho) >=" => $horas1));
         $conditions = array_merge($conditions,array("HOUR(fecha_hecho) <=" => $horas2));
-        //pr($conditions);
+        //pr($conditions); exit;
         
         $options = array('fields' => array('Denuncia.id'),
             'conditions'=> $conditions

@@ -318,6 +318,10 @@ class DistritosController extends AppController {
 	    
 	    if (isset($this->request->query['distrito_id']) && !empty($this->request->query['distrito_id'])){	        
 	        $options['conditions']['id'] = $this->request->query['distrito_id'];
+	        /*$options['conditions']['id'] = array(860,880,872,867,933,902,947,911);
+	        $options['conditions']['id'] = array(889,824,844,852,830,846,848,885,859);
+	        $options['conditions']['id'] = array(842,829,850,832,802,821,819,825,794,815,814,811,805,816,812,791);
+	        $options['conditions']['id'] = array(797,784,796,827,787,785,779,750,740,739);*/
 	    }
 	    
 	    $distritos = $this->Distrito->find('all',$options);

@@ -52,7 +52,7 @@
 				
                 <div id="slider-range"></div>
                 <br/>
-                <?php if (isset($distrito) && !empty($distrito)){ ?>                    
+                <?php if (false && isset($distrito) && !empty($distrito)){ ?>                    
                 <fieldset>
                 	<legend class="maplegend"><?php echo $distrito['Distrito']['nombdist'] ?></legend>
                 	<ul>
