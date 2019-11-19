@@ -115,7 +115,7 @@ class DenunciasController extends AppController {
 	                                               'Denuncia.estado_google' => 'OK',
                                         	        //'ST_Distance(Distrito.geom, Point(ST_X(Denuncia.geom), ST_Y(Denuncia.geom)))*110 <= 1',
                                         	        'Denuncia.geom IS NOT NULL'
-	    ));
+	                               ));
 	    //pr($conditions); //exit;
 	    
 	    $options = array('fields'=>array('id','TipoDenuncia.nombre', 'geojson'),

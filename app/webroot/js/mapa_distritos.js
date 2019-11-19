@@ -96,21 +96,45 @@
 
 	geolocation.setTracking(true);
 	
+	var vectorSource2 = new ol.source.Vector();
+	
 	function changePosition(){
-		var coordinates = geolocation.getPosition();
-		datajson = JSON.stringify(coordinates);
-		console.info(datajson);	
+		var coordenadas 	= geolocation.getPosition();
+		geolocalizacion 	= ol.proj.transform(coordenadas, 'EPSG:3857', 'EPSG:4326');
+		geolocalizacion[0] 	= geolocalizacion[0].toFixed(6);
+		geolocalizacion[1] 	= geolocalizacion[1].toFixed(6);			
 		$.ajax({
-			url: base+'Distritos/stcontains',
+			url: base+'Distritos/contenido?geolocalizacion='+geolocalizacion,
 		    dataType: 'json',
 		    async: false,
 		    method: 'get',
-		    data: datajson,
 		    success : function(data) {
-		    	console.info(data);
+		    	if(data.success){
+		    		distrito_id = data.Distrito.id;
+		    	}	
+	    		console.info(distrito_id);
+	    		
+	    		urlPrincipal2 = base+poligono+'/geojson?departamento_id='+departamento_id+'&provincia_id=' + provincia_id + '&distrito_id='+ distrito_id;
+	    		
+	    		vectorSource2 = new ol.source.Vector({
+		    						format : new ol.format.GeoJSON(),
+		    						url : urlPrincipal2
+		    					});	
+	    		functionPoligono(vectorSource2);
+	    		
+	    		params2 		 = $('.form-check input:checked, input[type=text], input[type=hidden]').serialize();		
+	    		urldenuncias2 = base+'denuncias/denunciasgeojson?departamento_id='+departamento_id+'&provincia_id=' + provincia_id + '&distrito_id=' + distrito_id + '&' + params2;
+	    		sourceDenuncias = new ol.source.Vector({
+	    			format 	: new ol.format.GeoJSON(),
+	    			url 	: urldenuncias2
+	    		});	
+	    		functionDenuncias(sourceDenuncias);
+	    		
+	    		vectorSource2.once('change',vectorSourceChange);
+		    			    	
 		    }
 		});
-		positionFeature.setGeometry(coordinates ? new ol.geom.Point(coordinates) : null);
+		positionFeature.setGeometry(coordenadas ? new ol.geom.Point(coordenadas) : null);
 	}
 	
 	geolocation.on('change:position', changePosition);
@@ -121,9 +145,7 @@
 	
 	geolocation.on('error', geoError);
 		
-	map.addLayer(vectorLayerGeo);
-	
-	
+	map.addLayer(vectorLayerGeo);	
 	/**********************************/
 	
 	/*********STYLE DENUNCIA INSTITUCION********/
@@ -140,7 +162,8 @@
 	/*********************************/
 	
 	/*******POLIGONO DISTRITO, PROVINCIA o DEPARTAMENTO********/
-	var urlPrincipal = base+poligono+'/geojson?departamento_id='+departamento_id+'&provincia_id=' + provincia_id + '&distrito_id='+ distrito_id;
+	//var vectorSource = new ol.source.Vector();
+	
 
 	var stylePrincial = new ol.style.Style({
 					fill : new ol.style.Fill({
@@ -161,12 +184,28 @@
 						})
 					})
 				});
-
+	
+	var urlPrincipal = base+poligono+'/geojson?departamento_id='+departamento_id+'&provincia_id=' + provincia_id + '&distrito_id='+ distrito_id;
+	
 	var vectorSource = new ol.source.Vector({
 					format : new ol.format.GeoJSON(),
 					url : urlPrincipal
 				});	
-
+	
+	function functionPoligono(vectorSource2){		
+		vectorLayer2 = new ol.layer.Vector({
+			source 	: vectorSource2,
+			style 	: function(feature) {						
+							stylePrincial.getText().setText(feature.get('nombdist'));
+							return stylePrincial;
+						}
+		});
+		
+		map.addLayer(vectorLayer2);
+	}
+		
+	//functionPoligono(vectorSource);
+	/*
 	var vectorLayer = new ol.layer.Vector({
 		source 	: vectorSource,
 		style 	: function(feature) {						
@@ -176,6 +215,7 @@
 	});
 	
 	map.addLayer(vectorLayer);
+	*/
 	/*************************************/
 		
 	/*********POINT DENUNCIAS*********/		
@@ -206,7 +246,21 @@
 			format 	: new ol.format.GeoJSON(),
 			url 	: urldenuncias
 		});	
+	
+	function functionDenuncias(vectorSource2){	
+		//new ol.layer.Vector //ol.layer.Heatmap	
+		vectorLayerDenuncias = new ol.layer.Heatmap({
+			source 	: sourceDenuncias,
+			style 	: styleDenuncias,
+			blur	: 15,
+		    radius	: 8
+		});
 		
+		map.addLayer(vectorLayerDenuncias);	
+	}
+		
+	//functionDenuncias(sourceDenuncias);
+	/*
 	//new ol.layer.Vector //ol.layer.Heatmap		
 	var vectorLayerDenuncias = new ol.layer.Heatmap({
 		source 	: sourceDenuncias,
@@ -215,15 +269,16 @@
 	    radius	: 8
 	});
 	
-	map.addLayer(vectorLayerDenuncias);	
+	map.addLayer(vectorLayerDenuncias);
+	*/	
 	/******************************/	
 	
 	/*****Concervar el zoom y el centro del mapa en una busqueda****/	
 	function vectorSourceChange(evt){
 		//Cargo el vectorSource Princial que es el poligo del Distrito o Provincia
-	    if(vectorSource.getState() === 'ready') {
+	    if(vectorSource2.getState() === 'ready') {
 	    		    	
-	    	Extent = vectorSource.getExtent();	               		        
+	    	Extent = vectorSource2.getExtent();	               		        
 	        thebox = ol.proj.transformExtent(Extent, 'EPSG:3857', 'EPSG:4326');
 			x1 = thebox[0].toFixed(6);
 			y1 = thebox[3].toFixed(6);
@@ -231,7 +286,7 @@
 			y2 = thebox[1].toFixed(6);
 			viewbox = x1.toString().concat(',',y1,',',x2,',',y2);
 			
-			functionInstituciones(viewbox)
+			functionInstituciones(viewbox);
 						
 			reportesBuscar 	= $('#ReportesBuscar').val();
 			var sourceSearch;
@@ -263,7 +318,7 @@
 	    }
 	}
 	
-	vectorSource.once('change',vectorSourceChange);
+	//vectorSource2.once('change',vectorSourceChange);
 	
 	/*********POINT INSTITUTOS*********/	
 	function styleInstituciones(feature, resolution) {

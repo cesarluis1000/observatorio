@@ -306,9 +306,8 @@ class DistritosController extends AppController {
 	}
 		
 	public function geojson() {
-	    
+	    $this->layout = false;
 	    $this->autoRender = false;
-	    $this->response->type('json');
 	    
 	    $provincia_id = $this->request->query['provincia_id'];
 	    
@@ -354,7 +353,7 @@ class DistritosController extends AppController {
 	    }
 	    $distritos = array('type' => 'FeatureCollection','features'=>$distritos);
 	    
-	    $json = json_encode($distritos, JSON_UNESCAPED_UNICODE);	    
+	    $json = json_encode($distritos, JSON_UNESCAPED_UNICODE);
 	    $json = str_replace('[["[', '[[[', $json);
 	    $json = str_replace(']"]]', ']]]', $json);
 	    
@@ -567,6 +566,29 @@ class DistritosController extends AppController {
 	    $this->response->body($json);
 	}
 	
+	public function contenido() {
+	    $this->layout = false;
+	    $this->autoRender = false;
+	    	    
+	    $rpta = array('success' => false);
+	    if (isset($this->request->query['geolocalizacion'])){
+	        $geolocalizacion   = $this->request->query['geolocalizacion'];
+	        $coordenadas       = explode(',', $geolocalizacion);
+	        
+	        $conditions        = array('ST_CONTAINS(Distrito.geom, Point('.$coordenadas[0].' , '.$coordenadas[1].'))');
+	        $options           = array( 'fields' => array('id','nombdist'),
+                        	            'conditions'=> $conditions,
+                        	            'recursive' => -1,
+                        	        );
+	        
+	        $distrito          = $this->Distrito->find('first',$options);	        
+	        if (isset($distrito) && !empty($distrito)){
+	            $rpta = array_merge(array('success' => true),$distrito); 
+	        }
+	    }
+	    $json = json_encode($rpta, JSON_UNESCAPED_UNICODE);
+	    $this->response->body($json);	    
+	}
 	/**
 	 * addjson method
 	 *
