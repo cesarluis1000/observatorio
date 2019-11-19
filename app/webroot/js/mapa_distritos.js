@@ -98,8 +98,19 @@
 	
 	function changePosition(){
 		var coordinates = geolocation.getPosition();
-		  console.info(coordinates);
-		  positionFeature.setGeometry(coordinates ? new ol.geom.Point(coordinates) : null);
+		datajson = JSON.stringify(coordinates);
+		console.info(datajson);	
+		$.ajax({
+			url: base+'Distritos/stcontains',
+		    dataType: 'json',
+		    async: false,
+		    method: 'get',
+		    data: datajson,
+		    success : function(data) {
+		    	console.info(data);
+		    }
+		});
+		positionFeature.setGeometry(coordinates ? new ol.geom.Point(coordinates) : null);
 	}
 	
 	geolocation.on('change:position', changePosition);
@@ -112,53 +123,6 @@
 		
 	map.addLayer(vectorLayerGeo);
 	
-	//var vectorSource2 = new ol.source.Vector();	
-	
-	function vectorSourceGeoChange(evt){
-		if(vectorSourceGeo.getState() === 'ready') {
-			distrito_id2 = 867;
-			urlPrincipal2 = base+poligono+'/geojson?departamento_id='+departamento_id+'&provincia_id=' + provincia_id + '&distrito_id='+ distrito_id2;
-
-			stylePrincial2 = new ol.style.Style({
-							fill : new ol.style.Fill({
-								color : 'RGBA(128,128,128,0.1)' //color de backgrount de poligono
-							}),
-							stroke : new ol.style.Stroke({
-								color : '#85B037',
-								width : 2 //Ancho de limite
-							}),
-							text : new ol.style.Text({
-								font : '20px Calibri,sans-serif',
-								fill : new ol.style.Fill({
-									color : '#0000FF'
-								}),
-								stroke : new ol.style.Stroke({
-									color : '#fff',
-									width : 3
-								})
-							})
-						});
-
-			var vectorSource2 = new ol.source.Vector({
-							format : new ol.format.GeoJSON(),
-							url : urlPrincipal2
-						});	
-
-			vectorLayer2 = new ol.layer.Vector({
-				source 	: vectorSource2,
-				style 	: function(feature) {						
-								stylePrincial2.getText().setText(feature.get('nombdist'));
-								return stylePrincial2;
-							}
-			});
-			
-			map.addLayer(vectorLayer2);
-			
-			//vectorSource2.once('change',vectorSourceChange);
-		}
-	}
-	
-	vectorSourceGeo.once('change',vectorSourceGeoChange);
 	
 	/**********************************/
 	
