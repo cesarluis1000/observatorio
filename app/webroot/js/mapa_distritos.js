@@ -306,7 +306,7 @@
 			}else{
 				// Centra al polygono del distrito o provincia
 				map.getView().fit(Extent, map.getSize());
-				map.getView().setZoom(14);
+				//map.getView().setZoom(14);
 				if(sourceSearch !== undefined){
 					sourceSearch.once('change',function(e){
 						if(sourceSearch.getState() === 'ready'){
