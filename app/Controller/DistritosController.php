@@ -576,7 +576,7 @@ class DistritosController extends AppController {
 	        $coordenadas       = explode(',', $geolocalizacion);
 	        
 	        $conditions        = array('ST_CONTAINS(Distrito.geom, Point('.$coordenadas[0].' , '.$coordenadas[1].'))');
-	        $options           = array( 'fields' => array('id','nombdist'),
+	        $options           = array( 'fields' => array('id','nombdist','provincia_id'),
                         	            'conditions'=> $conditions,
                         	            'recursive' => -1,
                         	        );
