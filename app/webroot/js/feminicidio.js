@@ -1,7 +1,7 @@
 $(function(){
 	
     
-    $(".contenedor--menu").hide();
+    //$(".contenedor--menu").hide();
 
     $(".icono").click(function () {
         $(".contenedor--menu").animate({width: "toggle"});

@@ -37,7 +37,13 @@
                                     )
                                 )
                             ));
-                            ?>
+                            ?>               
+                <div class="form-group">
+                	<label for="ReportesBuscar" class="control-label col-sm-4">Ubicacion</label>
+                    <div class="col-sm-8">
+                    <input name="ubicacion" class="form-check-input" type="checkbox" id="ReportesUbicacion">
+                    </div>
+                </div>
                 <?php echo $this->Form->input('departamento_id',array('label'=>array('class'=>'control-label col-sm-4'),'options'=> $departamentos,'empty' => 'Seleccionar')); ?>
                 <?php echo $this->Form->input('provincia_id',array('label'=>array('class'=>'control-label col-sm-4'),'options'=> $provincias,'empty' => 'Seleccionar')); ?>
                 <?php echo $this->Form->input('distrito_id',array('label'=>array('class'=>'control-label col-sm-4'),'options'=> $distritos,'empty' => 'Seleccionar')); ?>
@@ -84,7 +90,9 @@
                                     	<input type="checkbox" class="form-check-input" name="delito[<?php echo $denuncia['Denuncia']['id'] ?>]" id="<?php echo $denuncia['Denuncia']['id'] ?>" <?php echo $denuncia['Denuncia']['checked'] ?>>                        
                                     	<label class="form-check-label" for="<?php echo $denuncia['Denuncia']['id'] ?>"><?php echo $denuncia['TipoDenuncia']['nombre'] ?> (<?php echo $denuncia['Denuncia']['subTotal'] ?>)</label>
                                     	<img alt="" src="<?php echo $denuncia['Denuncia']['img'] ?>" style="width: 20px">
-                                	<span style="width: <?php echo  $total==0?0:$denuncia['Denuncia']['subTotal']*100/$total ?>%;" ></span><span class="skills"></span></p>                              
+                                		<span style="width: <?php echo  $total==0?0:$denuncia['Denuncia']['subTotal']*100/$total ?>%;" ></span>
+                                		<span class="skills"></span>
+                                	</p>                              
                                 </div>
                             <?php } ?>
                             

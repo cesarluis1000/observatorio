@@ -151,7 +151,7 @@ class DenunciasController extends AppController {
 	    ini_set('memory_limit','1024M');
 	    
 	    $options = array(//'fields'=>array('id','nro_denuncia','ubicacion','horizontal','vertical'),,'Denuncia.distrito_id'=>'811'
-	        'conditions' => array(//'Denuncia.nro_denuncia'=>'15382481',
+	        'conditions' => array(//'Denuncia.nro_denuncia'=>'10354410',
 	            'estado_google IS NULL'
 	        ),
 	        //'recursive' => -1,
@@ -179,18 +179,18 @@ class DenunciasController extends AppController {
 	        $geo = file_get_contents($url);
 	        
 	        $geo = json_decode($geo, true); // Convert the JSON to an array
-	        
+	        //pr($geo);
 	        if (isset($geo['status']) && ($geo['status'] == 'OK')) {	            
-	            $denuncia['Denuncia']['vertical']          = $geo['results'][0]['geometry']['location']['lat']; // Latitude
-	            $denuncia['Denuncia']['horizontal']        = $geo['results'][0]['geometry']['location']['lng']; // Longitude
+	            $denuncia['Denuncia']['vertical']          = $latitud  = number_format($geo['results'][0]['geometry']['location']['lat'],6,'.',''); // Latitude
+	            $denuncia['Denuncia']['horizontal']        = $longitud = number_format($geo['results'][0]['geometry']['location']['lng'],6,'.',''); // Longitude
 	            $denuncia['Denuncia']['estado_google']     = $geo['status'];
+	            //$denuncia['Denuncia']['geom']              = "ST_GeomFromText('Point($latitud $longitud)')";
 	            $denuncia['Denuncia']['geom']              = null;
 	            $denuncia['Denuncia']['ubicacion_google']  = $geo['results'][0]['formatted_address'];
 	        }else{
 	            $denuncia['Denuncia']['estado_google']    = 'KO';	            
 	        }
-	        //pr($denuncia['Denuncia']);
-	        
+	        //pr($denuncia['Denuncia']); //exit; 
 	        if(!$this->Denuncia->save($denuncia['Denuncia'])){
 	            $transaccion = false;
 	            break;
