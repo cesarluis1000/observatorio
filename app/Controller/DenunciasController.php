@@ -152,7 +152,8 @@ class DenunciasController extends AppController {
 	    
 	    $options = array(//'fields'=>array('id','nro_denuncia','ubicacion','horizontal','vertical'),,'Denuncia.distrito_id'=>'811'
 	        'conditions' => array(//'Denuncia.nro_denuncia'=>'10354410',
-	            'estado_google IS NULL'
+	            'estado_google IS NULL',
+	            //'tipo_denuncia_id !=' => '9'
 	        ),
 	        //'recursive' => -1,
 	        //'order' => array('nombdist')
@@ -190,11 +191,12 @@ class DenunciasController extends AppController {
 	        }else{
 	            $denuncia['Denuncia']['estado_google']    = 'KO';	            
 	        }
-	        //pr($denuncia['Denuncia']); //exit; 
+	        
 	        if(!$this->Denuncia->save($denuncia['Denuncia'])){
 	            $transaccion = false;
 	            break;
-	        }	        
+	        }
+	        //pr($denuncia['Denuncia']); exit; 
 	    }	    
 	    
 	    if ($transaccion){
