@@ -152,7 +152,8 @@ class DenunciasController extends AppController {
 	    
 	    $options = array(//'fields'=>array('id','nro_denuncia','ubicacion','horizontal','vertical'),,'Denuncia.distrito_id'=>'811'
 	        'conditions' => array(//'Denuncia.nro_denuncia'=>'10354410',
-	            'estado_google IS NULL'
+	            'estado_google IS NULL',
+	            //'tipo_denuncia_id !=' => '9'
 	        ),
 	        //'recursive' => -1,
 	        //'order' => array('nombdist')
@@ -170,9 +171,9 @@ class DenunciasController extends AppController {
 	        $direccion = str_replace(' ', '+', $direccion);        
             //&components=country:PE
 	        //$url = "https://maps.googleapis.com/maps/api/geocode/json?address=1600+Amphitheatre+Parkway,+Mountain+View,+CA&key=YOUR_API_KEY";
-	        //$url = "https://maps.googleapis.com/maps/api/geocode/json?address=$direccion&components=country:PE&key=AIzaSyC7e2Iboim4HC-CfX2PmJR6BkSI8aSKb1U"; // Cesar
+	        $url = "https://maps.googleapis.com/maps/api/geocode/json?address=$direccion&components=country:PE&key=AIzaSyC7e2Iboim4HC-CfX2PmJR6BkSI8aSKb1U"; // Cesar
 	        //$url = "https://maps.googleapis.com/maps/api/geocode/json?address=$direccion&components=country:PE&key=AIzaSyB-Oeyt4yByMcCOc4rnCdw9_ml5XsIjOFc"; // Luis	        
-	        $url = "https://maps.googleapis.com/maps/api/geocode/json?address=$direccion&components=country:PE&key=AIzaSyC6Hv9oFodbGJJ19gCy2XTj0mKCow7g-8Y"; // Kilder
+	        //$url = "https://maps.googleapis.com/maps/api/geocode/json?address=$direccion&components=country:PE&key=AIzaSyC6Hv9oFodbGJJ19gCy2XTj0mKCow7g-8Y"; // Kilder
 	        //pr($url); 
 	        //exit;
 	        
@@ -190,11 +191,12 @@ class DenunciasController extends AppController {
 	        }else{
 	            $denuncia['Denuncia']['estado_google']    = 'KO';	            
 	        }
-	        //pr($denuncia['Denuncia']); //exit; 
+	        
 	        if(!$this->Denuncia->save($denuncia['Denuncia'])){
 	            $transaccion = false;
 	            break;
-	        }	        
+	        }
+	        //pr($denuncia['Denuncia']); exit; 
 	    }	    
 	    
 	    if ($transaccion){
