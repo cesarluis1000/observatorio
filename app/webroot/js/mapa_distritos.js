@@ -93,8 +93,8 @@
 			source 	: vectorSourceGeo,
 			style	: styleGeoLocation
 		});
-
-	geolocation.setTracking(true);
+	/**Activacion de gps**/
+	//geolocation.setTracking(true);
 	
 	var vectorSource2 = new ol.source.Vector();
 	
@@ -206,7 +206,7 @@
 		map.addLayer(vectorLayer);
 	}
 		
-	//functionPoligono(vectorSource);
+	functionPoligono(vectorSource);
 		
 	/*********POINT DENUNCIAS*********/		
 	var params 		 = $('.form-check input:checked, input[type=text], input[type=hidden]').serialize();		
@@ -249,7 +249,7 @@
 		map.addLayer(vectorLayerDenuncias);	
 	}
 		
-	//functionDenuncias(sourceDenuncias);	
+	functionDenuncias(sourceDenuncias);	
 	
 	/*****Concervar el zoom y el centro del mapa en una busqueda****/	
 	function vectorSourceChange(evt){
@@ -297,7 +297,7 @@
 	    }
 	}
 	
-	//vectorSource.once('change',vectorSourceChange);
+	vectorSource.once('change',vectorSourceChange);
 	
 	/*********POINT INSTITUTOS*********/	
 	function styleInstituciones(feature, resolution) {

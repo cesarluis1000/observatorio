@@ -37,13 +37,15 @@
                                     )
                                 )
                             ));
-                            ?>               
+                            ?>
+                <!--                      
                 <div class="form-group">
                 	<label for="ReportesBuscar" class="control-label col-sm-4">Ubicacion</label>
                     <div class="col-sm-8">
                     <input name="ubicacion" class="form-check-input" type="checkbox" id="ReportesUbicacion">
                     </div>
                 </div>
+                 -->
                 <?php echo $this->Form->input('departamento_id',array('label'=>array('class'=>'control-label col-sm-4'),'options'=> $departamentos,'empty' => 'Seleccionar')); ?>
                 <?php echo $this->Form->input('provincia_id',array('label'=>array('class'=>'control-label col-sm-4'),'options'=> $provincias,'empty' => 'Seleccionar')); ?>
                 <?php echo $this->Form->input('distrito_id',array('label'=>array('class'=>'control-label col-sm-4'),'options'=> $distritos,'empty' => 'Seleccionar')); ?>
