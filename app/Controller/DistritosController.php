@@ -448,15 +448,41 @@ class DistritosController extends AppController {
 	    
 	    $datasets = array();
 	    
-	    $backgroundColor   = array('RGBA(215, 222, 7, 0.2)','RGBA(79, 207, 219, 0.2)','RGBA(255, 0, 0, 0.2)','RGBA(216, 123, 219, 0.2)','RGBA(0, 0, 255, 0.2)','RGBA(0, 255, 0, 0.2)','RGBA(100, 50, 0, 0.2)','RGBA(50, 0, 50, 0.2)');
-	    $borderColor       = array('RGBA(215, 222, 7, 0.8)','RGBA(79, 207, 219, 0.8)','RGBA(255, 0, 0, 0.8)','RGBA(216, 123, 219, 0.8)','RGBA(0, 0, 255, 0.8)','RGBA(0, 255, 0, 0.8)','RGBA(100, 50, 0, 0.8)','RGBA(50, 0, 50, 0.8)');
+	    $backgroundColor   = array(
+	        'RGBA(255,  255,   0, 0.2)', //YELLOW
+	        'RGBA(255,    0, 255, 0.2)', //FUCHSIA
+	        'RGBA(  0,  255, 255, 0.2)', //AQUA
+	        'RGBA(  0,  128,   0, 0.2)', //GREEN
+	        'RGBA(255,    0,   0, 0.2)', //RED
+	        'RGBA(  0,    0, 255, 0.2)', //BLUE
+	        'RGBA(128,    0,   0, 0.2)', //MAROON
+	        'RGBA(128,    0, 128, 0.2)', //PURPLE
+	        'RGBA(  0,    0,   0, 0.2)', //BLACK
+	        'RGBA(  0,    0, 128, 0.2)', //NAVY
+	        'RGBA(  0,  128, 128, 0.2)'); //TEAL
 	    
-	    //pr($denuncias);
-	    //pr($backgroundColor);
+	    $borderColor       = array(
+	        'RGBA(255, 255,    0, 0.8)', //YELLOW
+	        'RGBA(255,   0,  255, 0.8)', //FUCHSIA
+	        'RGBA(  0,  255, 255, 0.8)', //AQUA
+	        'RGBA(  0,  128,   0, 0.8)', //GREEN
+	        'RGBA(255,    0,   0, 0.8)', //RED
+	        'RGBA(  0,    0, 255, 0.8)', //BLUE
+	        'RGBA(128,    0,   0, 0.8)', //MAROON
+	        'RGBA(128,    0, 128, 0.8)', //PURPLE
+	        'RGBA(  0,    0,   0, 0.8)', //BLACK
+	        'RGBA(  0,    0, 128, 0.8)', //NAVY
+	        'RGBA(  0,  128, 128, 0.8)'); //TEAL
+	    
+	    
+	    /*pr($backgroundColor);
+	    pr($borderColor);
+	    pr($denuncias);
+	    exit;*/
 	    foreach ($denuncias as $i => $row){	        
 	        
 	        $conditions    = array('Denuncia.categoria'    => $row['TipoDenuncia']['nombre'],
-	                               'Denuncia.fecha_hecho BETWEEN ? AND ?'  => array('2019-01-01','2019-09-31'),
+	                               'Denuncia.fecha_hecho BETWEEN ? AND ?'  => array('2019-01-01','2019-11-30'),
 	                               'Denuncia.distrito_id'  => $distrito_ids,
 	                               'Denuncia.estado_google'  => 'OK',
 	                               //'MONTH(fecha_hecho)' => 1
@@ -536,7 +562,7 @@ class DistritosController extends AppController {
         */	    
 	    //pr($delitos);
 	    $delitos2 = array(  'type'      => 'line',
-	        'data'      =>  array(  'labels' => array('Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Augusto', 'Septiembre'),
+	        'data'      =>  array(  'labels' => array('Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Augusto', 'Septiembre', 'Octubre', 'Noviembre'),
 	            'datasets'  =>  $datasets
 	        ),
 	        'options'   =>  array(  'responsive'    => true,
