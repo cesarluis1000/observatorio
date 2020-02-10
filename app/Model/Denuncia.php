@@ -15,6 +15,7 @@ class Denuncia extends AppModel {
  *
  * @var array
  */
+	/*
 	public $validate = array(
 		'nro_denuncia' => array(
 			'notBlank' => array(
@@ -47,7 +48,7 @@ class Denuncia extends AppModel {
 			),
 		),
 	);
-
+*/
 	// The Associations below have been created with all possible keys, those that are not needed can be removed
 
 /**

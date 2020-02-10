@@ -161,13 +161,13 @@ class DenunciasController extends AppController {
 	    );
 	    
 	    $denuncias = $this->Denuncia->find('all',$options);
-	    
+	    //pr($denuncias);exit;
 	    
 	    $transaccion = true;
 	    foreach ($denuncias as $denuncia){
-	        //pr($denuncia['Denuncia']);
+	        //pr($denuncia['Denuncia']);exit;
 	        $direccion = $denuncia['Denuncia']['ubicacion'].' '.$denuncia['Distrito']['nombdist'].' '.$denuncia['Distrito']['nombprov'];
-	        //pr($direccion);
+	        //pr($direccion);exit;
 	        
 	        $direccion = str_replace(' ', '+', $direccion);        
             //&components=country:PE
@@ -181,7 +181,7 @@ class DenunciasController extends AppController {
 	        $geo = file_get_contents($url);
 	        
 	        $geo = json_decode($geo, true); // Convert the JSON to an array
-	        //pr($geo);
+	        //pr($geo); exit;
 	        if (isset($geo['status']) && ($geo['status'] == 'OK')) {	            
 	            $denuncia['Denuncia']['vertical']          = $latitud  = number_format($geo['results'][0]['geometry']['location']['lat'],6,'.',''); // Latitude
 	            $denuncia['Denuncia']['horizontal']        = $longitud = number_format($geo['results'][0]['geometry']['location']['lng'],6,'.',''); // Longitude
@@ -194,6 +194,7 @@ class DenunciasController extends AppController {
 	        }
 	        
 	        if(!$this->Denuncia->save($denuncia['Denuncia'])){
+	            //pr($this->Denuncia->validationErrors); exit;
 	            $transaccion = false;
 	            break;
 	        }
