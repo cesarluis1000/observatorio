@@ -433,16 +433,16 @@ class DistritosController extends AppController {
 	         $distrito_ids      = Hash::extract($polygon_activo, '{n}.DistPolygon.distrito_id');
 	         */
 	        $options       = array('fields'=>array('id'),
-	            'conditions'   =>  array('estado'=>'A', 'provincia_id' => $provincia_id),
-	            'recursive'    =>  -1);
+                    	            'conditions'   =>  array('estado'=>'A', 'provincia_id' => $provincia_id),
+                    	            'recursive'    =>  -1);
 	        $distritos_act = $this->Distrito->find('all',$options);
 	        $distrito_ids  = Hash::extract($distritos_act, '{n}.Distrito.id');
 	        
 	    }
 	    
 	    //No se esta conciderando OTROS y vIOLENCIA FAMILIAR
-	    $denuncias = $this->TipoDenuncia->find('all', array('fields'       => array('TipoDenuncia.nombre'),
-                                                	        'conditions'   => array('TipoDenuncia.id !=' => array(8,9)),
+	    $denuncias = $this->TipoDenuncia->find('all', array('fields'       => array('TipoDenuncia.id','TipoDenuncia.nombre'),
+                                                	        'conditions'   => array('TipoDenuncia.id' => array(1,2,3,4,5,6,7,10)),
 	                                                         'recursive'   => -1
                                                 	    ));
 	    
@@ -474,7 +474,7 @@ class DistritosController extends AppController {
 	        'RGBA(  0,    0, 128, 0.8)', //NAVY
 	        'RGBA(  0,  128, 128, 0.8)'); //TEAL
 	    
-	    
+	    //pr($denuncias); exit;
 	    /*pr($backgroundColor);
 	    pr($borderColor);
 	    pr($denuncias);
@@ -482,7 +482,7 @@ class DistritosController extends AppController {
 	    foreach ($denuncias as $i => $row){	        
 	        
 	        $conditions    = array('Denuncia.categoria'    => $row['TipoDenuncia']['nombre'],
-	                               'Denuncia.fecha_hecho BETWEEN ? AND ?'  => array('2019-01-01','2019-11-30'),
+	                               'Denuncia.fecha_hecho BETWEEN ? AND ?'  => array('2019-01-01','2019-12-31'),
 	                               'Denuncia.distrito_id'  => $distrito_ids,
 	                               'Denuncia.estado_google'  => 'OK',
 	                               //'MONTH(fecha_hecho)' => 1
@@ -516,53 +516,14 @@ class DistritosController extends AppController {
                     	            'fill'              =>  false,
 	                                'backgroundColor'   =>  $backgroundColor[$i],
 	                                'borderColor'       =>  $borderColor[$i],
+	                                'hidden'            =>  ( in_array($row['TipoDenuncia']['id'], array(1,5)))?false:true,
 	                                'data'              =>  $data//array(881,734,786,670,761,780,669,885,415),
                     	        );
 	    }
-	    
-	    //pr($datasets);
-	    //exit;
-	    /*
-	    $delitos = array(  'type'      => 'line',
-	                       'data'      =>  array(  'labels' => array('Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Augusto', 'Septiembre'),
-	                                               'datasets'  =>  array(  array(  'label'             =>  'HURTO',
-	                                                                               'fill'              =>  false,
-	                                                                               'backgroundColor'   =>  'RGBA(255, 0, 0, 0.2)',
-	                                                                               'borderColor'       =>  'RGBA(255, 0, 0, 0.8)',
-	                                                                               'data'              =>  array(881,734,786,670,761,780,669,885,415),
-	                                                                           ),
-                    	                                                   array(  'label'             =>  'ROBO',
-                        	                                                       'fill'              =>  false,
-                        	                                                       'backgroundColor'   =>  'RGBA(0, 255, 0, 0.2)',
-                        	                                                       'borderColor'       =>  'RGBA(0, 255, 0, 0.8)',
-                        	                                                       'data'              =>  array(500,800,600,761,780,669,885,415,900),
-                    	                                                       )
-	                                                                   )
-                                                ),
-            	           'options'   =>  array(  'responsive'    => true,
-            	                                   'title'         => array(   'display'   =>  true,
-            	                                                               'text'      =>  'Distrito Lima'),
-            	                                   'tooltips'      => array(   'mode'      =>  'index',
-            	                                                               'intersect' =>  false),            	               
-            	                                   'hover'         => array(   'mode'      =>  'nearest',
-            	                                                               'intersect' =>  true),
-            	                                   'scales'        =>  array(  'xAxes'     => array(array( 'display'       =>  true,
-            	                                                                                           'scaleLabel'    =>  array(  'display'       =>  true,
-            	                                                                                                                       'labelString'   =>  'Meses')
-            	                                                                                       )
-            	                                                                                   ),
-            	                                                               'yAxes'     => array(array( 'display'       =>  true,
-                                    	                                                                   'scaleLabel'    =>  array(  'display'       =>  true,
-                                    	                                                                                               'labelString'   =>  'Valor')
-                                    	                                                               )
-                                    	                                                           )
-                            	                                           )
-                            	               )
-	                   );
-        */	    
-	    //pr($delitos);
+    
+
 	    $delitos2 = array(  'type'      => 'line',
-	        'data'      =>  array(  'labels' => array('Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Augusto', 'Septiembre', 'Octubre', 'Noviembre'),
+	        'data'      =>  array(  'labels' => array('Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Augusto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'),
 	            'datasets'  =>  $datasets
 	        ),
 	        'options'   =>  array(  'responsive'    => true,
@@ -586,7 +547,7 @@ class DistritosController extends AppController {
 	        )
 	    );
 	    //pr($delitos2);
-	    //pr($delitos);exit;
+	    //pr($delitos2);exit;
 	    //$json = json_encode($delitos);
 	    $json = json_encode($delitos2);
 	    $this->response->body($json);

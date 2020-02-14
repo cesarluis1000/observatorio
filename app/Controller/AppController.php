@@ -67,7 +67,7 @@ class AppController extends Controller {
 		$this->Auth->authError=__('You are not authorized to access that location.');		
 		$this->Auth->allow('login','logout','display','index','mapaDelito','denunciasgeojson',
 		    'delitosgeojson','delitosgeojson','institucionesgeojson','geojson','listjson',
-		    'panamericanosgeojson','panamericanos','contenido'
+		    'panamericanosgeojson','panamericanos','contenido','delitoschartjs'
 		    );
 		
 		$this->__checkAuth();

@@ -4,6 +4,10 @@
 		'inputDefaults'=>array('div' => array('class' => 'form-group'),'between' => '<div class="col-sm-6">','after' => '</div>','class'=>'form-control input-xs','error' => array('attributes' => array('wrap' => 'span', 'class' => 'help-inline'))))); ?>
 		<?php
 		echo $this->Form->input('id',array('label'=>array('class'=>'control-label col-sm-2')));
+		echo $this->Form->input('nombres',array('label'=>array('class'=>'control-label col-sm-2')));
+		echo $this->Form->input('app',array('label'=>array('class'=>'control-label col-sm-2')));
+		echo $this->Form->input('apm',array('label'=>array('class'=>'control-label col-sm-2')));
+		echo $this->Form->input('correo',array('label'=>array('class'=>'control-label col-sm-2')));
 		echo $this->Form->input('username',array('label'=>array('class'=>'control-label col-sm-2')));
 		echo $this->Form->input('password',array('label'=>array('class'=>'control-label col-sm-2')));
 		echo $this->Form->input('group_id',array('label'=>array('class'=>'control-label col-sm-2')));
