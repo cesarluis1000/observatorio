@@ -187,7 +187,7 @@ table .btn-xs{
      transition: all 0.5s ease;
  }
  a {
-     color: white;
+     /** color: white; **/
  }
  a:hover {
      color: hsl(0, 0%, 67%);

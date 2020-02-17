@@ -35,17 +35,16 @@ class AppController extends Controller {
         'Acl','RequestHandler',//'DebugKit.Toolbar',
         'Auth' => array(
             'loginAction' => array(
-                'controller' => 'users',
-                'action' => 'login'
+                'controller' => 'Pages', 'action' => 'home'
             ),
             'logoutRedirect' => array(
-                'controller' => 'users',
-                'action' => 'login'
+                'controller' => 'users', 'action' => 'login'
             ),
 			//Ruta de logeo
             'loginRedirect' => array(
-                'controller' => 'Reportes',
-                'action' => 'mapaDelito'
+                //'controller' => 'Reportes', 'action' => 'mapaDelito'
+                //'controller' => 'users', 'action' => 'index'
+                'controller' => 'Pages', 'action' => 'home'
             ),
             'authorize' => array(
                 'Actions' => array('actionPath' => 'controllers')
@@ -65,9 +64,9 @@ class AppController extends Controller {
 		
 		$this->Auth->unauthorizedRedirect=FALSE ;
 		$this->Auth->authError=__('You are not authorized to access that location.');		
-		$this->Auth->allow('login','logout','display','index','mapaDelito','denunciasgeojson',
+		$this->Auth->allow('login','logout','display','index','denunciasgeojson',
 		    'delitosgeojson','delitosgeojson','institucionesgeojson','geojson','listjson',
-		    'panamericanosgeojson','panamericanos','contenido','delitoschartjs'
+		    'panamericanosgeojson','panamericanos','contenido','delitoschartjs','mapaDelito','home'
 		    );
 		
 		$this->__checkAuth();

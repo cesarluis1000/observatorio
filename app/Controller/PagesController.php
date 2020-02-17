@@ -36,7 +36,10 @@ class PagesController extends AppController {
  * @var array
  */
 	public $uses = array();
-
+	
+	public function home() {
+	    
+	}
 /**
  * Displays a view
  *

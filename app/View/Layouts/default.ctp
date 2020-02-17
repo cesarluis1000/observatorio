@@ -34,7 +34,7 @@
 			<h1 id="titulo" class="banner">
 			<?php    	
         	echo $this->Html->link(
-        	    $this->Html->image('dircri_banner.png', ['alt' => 'observatorio']),
+        	    $this->Html->image('observatorio_banner.png', ['alt' => 'observatorio']),
         	    '/?n='.time(),['escapeTitle' => false, 'title' =>'observatorio']
         	    );
         	?>
