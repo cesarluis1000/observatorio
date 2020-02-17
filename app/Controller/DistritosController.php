@@ -71,6 +71,7 @@ class DistritosController extends AppController {
 	public function listjson(){
 	    $this->autoRender = false;
 	    $this->response->type('json');
+	    $this->loadModel('Parametro');
 	    
 	    $provincia_id = $this->request->query['provincia_id'];
 	   	    
@@ -80,6 +81,18 @@ class DistritosController extends AppController {
 	        'order' => array('nombdist')
 	    );
 	    
+	    /*****Distrito del Gerente de seguridad******/
+	    $currentUser = $this->Auth->user();
+	    $options2 = array('conditions' => array('variable' => $currentUser['username'],
+	        'modulo' => 'municipalidad'));
+	    $param = $this->Parametro->find('first',$options2);
+	    
+	    if (isset($param['Parametro']['valor']) && !empty($param['Parametro']['valor'])){
+	        $options['conditions']['id'] = $param['Parametro']['valor'];
+	        $this->request->query['distrito_id'] = $param['Parametro']['valor'];
+	    }
+	    /***********/
+	    	    
 	    if (isset($this->request->query['distrito_id'])){
 	        $distrito_id = $this->request->query['distrito_id'];
 	        $options['conditions']['id'] = $distrito_id;

@@ -477,13 +477,13 @@ class ReportesController extends AppController {
         }
         
         /********Filtros momentaneos para Perla y Iquitos*******/
-        
-        
+                
         $this->loadModel('Departamento');
         $this->loadModel('Provincia');
         $this->loadModel('Distrito');
         $this->loadModel('Denuncia');
         $this->loadModel('TipoDenuncia');
+        $this->loadModel('Parametro');
         
         $options = array('recursive'=>-1);
         $departamentos = $this->Departamento->find('list',$options);
@@ -509,6 +509,19 @@ class ReportesController extends AppController {
                              'order' =>array('Distrito.nombdist' => 'asc'),
                              'recursive' => -1
                         );
+            
+            /*****Distrito del Gerente de seguridad******/
+            $currentUser = $this->Auth->user();
+            $options2 = array('conditions' => array('variable' => $currentUser['username'],
+                'modulo' => 'municipalidad'));
+            $param = $this->Parametro->find('first',$options2);
+            
+            if (isset($param['Parametro']['valor']) && !empty($param['Parametro']['valor'])){
+                $options['conditions']['id'] = $param['Parametro']['valor'];
+                $this->request->query['distrito_id'] = $param['Parametro']['valor'];
+            }
+            /***********/ 
+            
             $distritos = $this->Distrito->find('list',$options);         
             
         }else{
@@ -529,9 +542,11 @@ $distrito_ids = array(797,784,796,827,787,785,779,750,740,739);//Sur*/
             $options = array('conditions' => array('Distrito.id' => $distrito_id),
                 'order' =>array('Distrito.nombdist' => 'asc'),
                 'recursive' => -1
-            );
+            );         
             
             $distrito = $this->Distrito->find('first',$options);
+            //pr($distrito);
+            
             $distrito['Distrito']['nombdist'] = ucwords(strtolower($distrito['Distrito']['nombdist']));
         }else{
             $options           = array( 'fields'     =>  array('DISTINCT id'),
@@ -687,7 +702,7 @@ $distrito_ids = array(797,784,796,827,787,785,779,750,740,739);//Sur*/
             (
                 'departamento_id' => 15,
                 'provincia_id' => 112,
-                'distrito_id' => 842,
+                'distrito_id' => 830,
                 'fecha_de' => '2019-09-01',
                 'hasta' => '2019-09-15',
                 'horas' => '12:00 AM - 11:59 PM',
@@ -705,6 +720,7 @@ $distrito_ids = array(797,784,796,827,787,785,779,750,740,739);//Sur*/
         $this->loadModel('Provincia');
         $this->loadModel('Distrito');
         $this->loadModel('Denuncia');
+        $this->loadModel('Parametro');
         
         $options = array('recursive'=>-1);
         $departamentos = $this->Departamento->find('list',$options);
@@ -726,11 +742,26 @@ $distrito_ids = array(797,784,796,827,787,785,779,750,740,739);//Sur*/
         $a_distrito_id = null;
         if (isset($this->request->query['provincia_id']) && !empty($this->request->query['provincia_id'])){
             $provincia_id = $provincia_ids = $this->request->data['Reportes']['provincia_id'] = $this->request->query['provincia_id'];
+                                   
+            
             $options = array('conditions' => array('provincia_id' => $provincia_id),
-                'order' =>array('Distrito.nombdist' => 'asc'),
-                'recursive' => -1
-            );
-            $distritos = $this->Distrito->find('list',$options);
+                             'order' =>array('Distrito.nombdist' => 'asc'),
+                             'recursive' => -1
+                            );
+            
+            /*****Distrito del Gerente de seguridad******/
+            $currentUser = $this->Auth->user();
+            $options2 = array('conditions' => array('variable' => $currentUser['username'],
+                                                    'modulo' => 'municipalidad'));
+            $param = $this->Parametro->find('first',$options2);           
+            
+            if (isset($param['Parametro']['valor']) && !empty($param['Parametro']['valor'])){
+                $options['conditions']['id'] = $param['Parametro']['valor'];
+                $this->request->query['distrito_id'] = $param['Parametro']['valor'];
+            }            
+            /***********/
+            $distritos = $this->Distrito->find('list',$options);            
+            
             
         }else{
             $options           = array('fields'     => array('DISTINCT id'),

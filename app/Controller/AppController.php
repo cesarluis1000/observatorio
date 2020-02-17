@@ -35,7 +35,7 @@ class AppController extends Controller {
         'Acl','RequestHandler',//'DebugKit.Toolbar',
         'Auth' => array(
             'loginAction' => array(
-                'controller' => 'Pages', 'action' => 'home'
+                'controller' => 'users', 'action' => 'login'
             ),
             'logoutRedirect' => array(
                 'controller' => 'users', 'action' => 'login'
