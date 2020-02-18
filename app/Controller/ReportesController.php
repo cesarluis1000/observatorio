@@ -702,7 +702,7 @@ $distrito_ids = array(797,784,796,827,787,785,779,750,740,739);//Sur*/
             (
                 'departamento_id' => 15,
                 'provincia_id' => 112,
-                'distrito_id' => 830,
+                'distrito_id' => 842,
                 'fecha_de' => '2019-09-01',
                 'hasta' => '2019-09-15',
                 'horas' => '12:00 AM - 11:59 PM',
