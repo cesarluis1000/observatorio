@@ -34,7 +34,7 @@
 			<h1 id="titulo" class="banner">
 			<?php    	
         	echo $this->Html->link(
-        	    $this->Html->image('observatorio_banner.png', ['alt' => 'observatorio']),
+        	    $this->Html->image('ODC_LOGO-v7.2_web2.png', ['alt' => 'observatorio']),
         	    '/?n='.time(),['escapeTitle' => false, 'title' =>'observatorio']
         	    );
         	?>
