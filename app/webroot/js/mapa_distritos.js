@@ -253,7 +253,6 @@
 	
 	/*****Concervar el zoom y el centro del mapa en una busqueda****/	
 	function vectorSourceChange(evt){
-		console.info(evt);
 		//Cargo el vectorSource Princial que es el poligo del Distrito o Provincia
 	    if(vectorSource.getState() === 'ready') {
 	    		    	
@@ -337,7 +336,7 @@
 
 	function functionInstituciones(viewbox){
 		instituciones = ['hospital', 'police','bomberos'];
-		instituciones = ['police'];
+		//instituciones = ['police'];
 		instituciones.forEach(function (elemento, indice, array) {
 			urlInstitucion = 'https://nominatim.openstreetmap.org/?format=geojson&q='+elemento+'&polygon_geojson=0&bounded=1&limit=1000&viewbox='+viewbox;
 					
