@@ -172,9 +172,9 @@ class DenunciasController extends AppController {
 	        $direccion = str_replace(' ', '+', $direccion);        
             //&components=country:PE
 	        //$url = "https://maps.googleapis.com/maps/api/geocode/json?address=1600+Amphitheatre+Parkway,+Mountain+View,+CA&key=YOUR_API_KEY";
-	        //$url = "https://maps.googleapis.com/maps/api/geocode/json?address=$direccion&components=country:PE&key=AIzaSyC7e2Iboim4HC-CfX2PmJR6BkSI8aSKb1U"; // Cesar
+	        $url = "https://maps.googleapis.com/maps/api/geocode/json?address=$direccion&components=country:PE&key=AIzaSyC7e2Iboim4HC-CfX2PmJR6BkSI8aSKb1U"; // Cesar
 	        //$url = "https://maps.googleapis.com/maps/api/geocode/json?address=$direccion&components=country:PE&key=AIzaSyCuTvwg-QiTAvdnff1U8VT74q_iUAsyL2g"; // Emma
-	        $url = "https://maps.googleapis.com/maps/api/geocode/json?address=$direccion&components=country:PE&key=AIzaSyAHt7TwBL4nlTAjoN9-jQdqyaN-fj3u41g"; // Luis	        
+	        //$url = "https://maps.googleapis.com/maps/api/geocode/json?address=$direccion&components=country:PE&key=AIzaSyAHt7TwBL4nlTAjoN9-jQdqyaN-fj3u41g"; // Luis	        
 	        //$url = "https://maps.googleapis.com/maps/api/geocode/json?address=$direccion&components=country:PE&key=AIzaSyC6Hv9oFodbGJJ19gCy2XTj0mKCow7g-8Y"; // Kilder
 	        //pr($url); 
 	        //exit;
