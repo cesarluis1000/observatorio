@@ -152,7 +152,7 @@ class DenunciasController extends AppController {
 	    
 	    $options = array(//'fields'=>array('id','nro_denuncia','ubicacion','horizontal','vertical'),,'Denuncia.distrito_id'=>'811'
 	        'conditions' => array(//'Denuncia.nro_denuncia'=>'10354410',
-	            //'Denuncia.id'=>'245747',
+	            //'Denuncia.id'=>'482616',
 	            'estado_google IS NULL',
 	            //'tipo_denuncia_id !=' => '9'
 	        ),
@@ -172,10 +172,10 @@ class DenunciasController extends AppController {
 	        $direccion = str_replace(' ', '+', $direccion);        
             //&components=country:PE
 	        //$url = "https://maps.googleapis.com/maps/api/geocode/json?address=1600+Amphitheatre+Parkway,+Mountain+View,+CA&key=YOUR_API_KEY";
-	        //$url = "https://maps.googleapis.com/maps/api/geocode/json?address=$direccion&components=country:PE&key=AIzaSyC7e2Iboim4HC-CfX2PmJR6BkSI8aSKb1U"; // Cesar
+	        $url = "https://maps.googleapis.com/maps/api/geocode/json?address=$direccion&components=country:PE&key=AIzaSyC7e2Iboim4HC-CfX2PmJR6BkSI8aSKb1U"; // Cesar
 	        //$url = "https://maps.googleapis.com/maps/api/geocode/json?address=$direccion&components=country:PE&key=AIzaSyCuTvwg-QiTAvdnff1U8VT74q_iUAsyL2g"; // Emma
 	        //$url = "https://maps.googleapis.com/maps/api/geocode/json?address=$direccion&components=country:PE&key=AIzaSyAHt7TwBL4nlTAjoN9-jQdqyaN-fj3u41g"; // Luis	        
-	        $url = "https://maps.googleapis.com/maps/api/geocode/json?address=$direccion&components=country:PE&key=AIzaSyCGmE5ncruwjisHFKR-iMeV9ceiDk0FuPg"; // Henry
+	        //$url = "https://maps.googleapis.com/maps/api/geocode/json?address=$direccion&components=country:PE&key=AIzaSyCGmE5ncruwjisHFKR-iMeV9ceiDk0FuPg"; // Henry
 	        //pr($url); 
 	        //exit;
 	        
@@ -189,7 +189,7 @@ class DenunciasController extends AppController {
 	            $denuncia['Denuncia']['estado_google']     = $geo['status'];
 	            //$denuncia['Denuncia']['geom']              = "ST_GeomFromText('Point($latitud $longitud)')";
 	            $denuncia['Denuncia']['geom']              = null;
-	            $denuncia['Denuncia']['ubicacion_google']  = $geo['results'][0]['formatted_address'];
+	            $denuncia['Denuncia']['ubicacion_google']  = substr($geo['results'][0]['formatted_address'],0,500);
 	        }else{
 	            $denuncia['Denuncia']['estado_google']    = 'KO';	            
 	        }
