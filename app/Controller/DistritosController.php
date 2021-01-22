@@ -536,7 +536,7 @@ class DistritosController extends AppController {
     
 
 	    $delitos2 = array(  'type'      => 'line',
-	        'data'      =>  array(  'labels' => array('Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Augusto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'),
+	        'data'      =>  array(  'labels' => array('Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Setiembre', 'Octubre', 'Noviembre', 'Diciembre'),
 	            'datasets'  =>  $datasets
 	        ),
 	        'options'   =>  array(  'responsive'    => true,
