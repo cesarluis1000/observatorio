@@ -466,12 +466,12 @@ class ReportesController extends AppController {
                 'departamento_id' => 15,
                 'provincia_id' => 112,
                 'distrito_id' => 842,
-                'fecha_de' => '2020-11-01',
-                'hasta' => '2020-11-30',
+                'fecha_de' => '2020-01-01',
+                'hasta' => '2021-12-31',
                 'horas' => '12:00 AM - 11:59 PM',
                 'horas1' => 0,
                 'horas2' => 24,
-                'delito'=> array('hurto'=>'on','robo'=>'on')
+                'delito'=> array('robo_de_celular'=>'on')
                 );
             $this->request->query = $filtros;
         }
@@ -623,7 +623,8 @@ $distrito_ids = array(797,784,796,827,787,785,779,750,740,739);//Sur*/
         //pr($horas1);
         //pr($horas2);
         $tipoDenuncias = $this->TipoDenuncia->find('all', array('fields'       => array('TipoDenuncia.id','TipoDenuncia.nombre'),
-                                                                'conditions'   => array('TipoDenuncia.id' => array(1,2,3,4,5,6,7,9,10,11),'TipoDenuncia.estado' => 'A'),
+                                                                'conditions'   => array('TipoDenuncia.id' => array(13),'TipoDenuncia.estado' => 'A'),
+                                                                /*'conditions'   => array('TipoDenuncia.id' => array(1,2,3,4,5,6,7,9,10,11),'TipoDenuncia.estado' => 'A'),*/
                                                 'recursive'   => -1
                                             ));
         //pr($tipoDenuncias); exit;
@@ -703,12 +704,12 @@ $distrito_ids = array(797,784,796,827,787,785,779,750,740,739);//Sur*/
                 'departamento_id' => 15,
                 'provincia_id' => 112,
                 'distrito_id' => 842,
-                'fecha_de' => '2019-09-01',
-                'hasta' => '2019-09-15',
+                'fecha_de' => '2020-01-01',
+                'hasta' => '2021-12-31',
                 'horas' => '12:00 AM - 11:59 PM',
                 'horas1' => 0,
                 'horas2' => 24,
-                'delito'=> array('hurto'=>'on','robo'=>'on')
+                'delito'=> array('robo_de_celular'=>'on')
                 );
             $this->request->query = $filtros;
         }

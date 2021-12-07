@@ -428,7 +428,7 @@ class DistritosController extends AppController {
 	    $this->response->body();
 	    
 	}
-
+    /*Para cambiar la configuracion del cuadro de delito*/
 	public function delitoschartjs(){
 	    $this->layout = false;
 	    $this->autoRender = false;
@@ -455,7 +455,7 @@ class DistritosController extends AppController {
 	    
 	    //No se esta conciderando OTROS y vIOLENCIA FAMILIAR
 	    $denuncias = $this->TipoDenuncia->find('all', array('fields'       => array('TipoDenuncia.id','TipoDenuncia.nombre'),
-                                                	        'conditions'   => array('TipoDenuncia.id' => array(1,2,3,4,5,6,7,10)),
+                                                	        'conditions'   => array('TipoDenuncia.id' => array(13)),
 	                                                         'recursive'   => -1
                                                 	    ));
 	    
@@ -495,7 +495,7 @@ class DistritosController extends AppController {
 	    foreach ($denuncias as $i => $row){	        
 	        
 	        $conditions    = array('Denuncia.categoria'    => $row['TipoDenuncia']['nombre'],
-	                               'Denuncia.fecha_hecho BETWEEN ? AND ?'  => array('2019-01-01','2019-12-31'),
+	                               'Denuncia.fecha_hecho BETWEEN ? AND ?'  => array('2020-01-01','2021-12-31'),
 	                               'Denuncia.distrito_id'  => $distrito_ids,
 	                               'Denuncia.estado_google'  => 'OK',
 	                               //'MONTH(fecha_hecho)' => 1
@@ -529,7 +529,7 @@ class DistritosController extends AppController {
                     	            'fill'              =>  false,
 	                                'backgroundColor'   =>  $backgroundColor[$i],
 	                                'borderColor'       =>  $borderColor[$i],
-	                                'hidden'            =>  ( in_array($row['TipoDenuncia']['id'], array(1,5)))?false:true,
+	                                'hidden'            =>  ( in_array($row['TipoDenuncia']['id'], array(13)))?false:true,
 	                                'data'              =>  $data//array(881,734,786,670,761,780,669,885,415),
                     	        );
 	    }
