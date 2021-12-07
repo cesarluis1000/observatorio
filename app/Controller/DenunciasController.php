@@ -25,7 +25,7 @@ class DenunciasController extends AppController {
 		//Si se busca campo displayField del modelo
 		$campo = !empty($this->Denuncia->displayField)?$this->Denuncia->displayField:'id';
 		$this->set('campo',$campo);
-		if (!empty($this->request->query[$campo])){	    
+		if (!empty($this->request->query[$campo])){
 		    $nombre = $this->request->query[$campo];
 			$this->request->data['Denuncia'][$campo] = $nombre ;
 			$conditions = array('conditions' => array('Denuncia.'.$campo.' LIKE' => '%'.$nombre.'%'));
@@ -34,11 +34,11 @@ class DenunciasController extends AppController {
 		$this->set('denuncias', $this->Paginator->paginate());
 	}
 
-	
+	//denuncias json
 	public function denunciasgeojson(){
 	    $this->layout = false;
 	    $this->autoRender = false;
-	    
+
 	    //$this->response->type('json');
 	    $this->loadModel('Distrito');
 	    //Obtenemos el departamento o departamento del PERU
@@ -47,7 +47,7 @@ class DenunciasController extends AppController {
 	    }else{
 	        $departamento_id = 0;
 	    }
-	    
+
 	    //Obtenemos la provincia o provincias de los DEPARTAMENTO
 	    if (isset($this->request->query['provincia_id'])){
 	        $provincia_ids     = $this->request->query['provincia_id'];
@@ -58,7 +58,7 @@ class DenunciasController extends AppController {
 	        $provincias_act    = $this->Distrito->Provincia->find('all',$options);
 	        $provincia_ids     = Hash::extract($provincias_act, '{n}.Provincia.id');
 	    }
-	    
+
 	    //Obtenemos el distrito o distritos si es por PROVINCIA
 	    if (isset($this->request->query['distrito_id']) && !empty($this->request->query['distrito_id'])){
 	        $distrito_ids      = $this->request->query['distrito_id'];
@@ -73,59 +73,59 @@ class DenunciasController extends AppController {
 	        $polygon_activo    = $this->Distrito->find('all',$options);
 	        $distrito_ids      = Hash::extract($polygon_activo, '{n}.Distrito.id');
 	    }
-	    
+
 	    $options = array(  'fields'       =>  array('id'),
 	        'conditions'   =>  array('provincia_id' => $provincia_ids, 'Distrito.id' => $distrito_ids),
 	        'recursive'    =>  -1);
 	    //pr($options); exit;
 	    //Quitamos la relaccion del perimetro del distritos
 	    $this->Distrito->unbindModel(array('hasMany'=>array('DistPolygon')));
-	    
+
 	    $distritos = $this->Distrito->find('all',$options);
 	    //pr($distritos);exit;
 	    $delitos       = null;
 	    $conditions    = array();
-	    
+
 	    //Si exite la categoria del delito los asiginamos
 	    if (isset($this->request->query['delito'])){
 	        $delito = $this->request->query['delito'];
 	        $a_delito = array_keys($delito);
 	        $conditions = array_merge($conditions,array("replace(categoria,' ','_')" => $a_delito));
 	    }
-	    
+
 	    if (isset($this->request->query['fecha_de'])){
 	        $fecha_de = $this->request->query['fecha_de'];
 	        $conditions = array_merge($conditions,array("fecha_hecho >=" => $fecha_de));
 	    }
-	    
+
 	    if (isset($this->request->query['hasta'])){
 	        $fecha_hasta = $this->request->query['hasta'];
 	        $conditions = array_merge($conditions,array("fecha_hecho <=" => $fecha_hasta));
 	    }
-	    
+
 	    if (isset($this->request->query['horas'])){
 	        $horas1 = $this->request->data['Reportes']['horas1'] = $this->request->query['horas1'];
 	        $horas2 = $this->request->data['Reportes']['horas2'] = $this->request->query['horas2'];
-	        
+
 	        $conditions = array_merge($conditions,array("HOUR(fecha_hecho) >=" => $horas1));
 	        $conditions = array_merge($conditions,array("HOUR(fecha_hecho) <=" => $horas2));
 	    }
-	    
+
 	    $conditions = array_merge($conditions,array('Denuncia.distrito_id'  => $distrito_ids,
 	                                               'Denuncia.estado_google' => 'OK',
                                         	        //'ST_Distance(Distrito.geom, Point(ST_X(Denuncia.geom), ST_Y(Denuncia.geom)))*110 <= 1',
                                         	        'Denuncia.geom IS NOT NULL'
 	                               ));
 	    //pr($conditions); //exit;
-	    
+
 	    $options = array('fields'=>array('id','TipoDenuncia.nombre', 'geojson'),
             	        'conditions'=> $conditions,
             	        //'recursive' => -1,
             	        'order' => array('categoria DESC'),
             	    );
-	    
+
 	    $denuncias = $this->Distrito->Denuncia->find('all',$options);
-	    
+
 	    $geojson = null;
 	    foreach ($denuncias as $i  => $row){
 	        $geojson[$i]['type']       = 'Feature';
@@ -134,10 +134,10 @@ class DenunciasController extends AppController {
 	                                           );
 	        $geojson[$i]['geometry']   = $row['Denuncia']['geojson'];
 	    }
-	    
+
 	    $geojson = array('type' => 'FeatureCollection','features'=>$geojson);
 	    //pr($geojson); //exit;
-	    
+
 	    $geojson = json_encode($geojson);
 	    $geojson = str_replace(':"{', ':{', $geojson);
 	    $geojson = str_replace('}"}', '}}', $geojson);
@@ -145,11 +145,11 @@ class DenunciasController extends AppController {
 	    //pr($geojson);
 	    $this->response->body($geojson);
 	}
-	
-	public function coordenadasjson(){	    
+
+	public function coordenadasjson(){
 	    set_time_limit(108000);
 	    ini_set('memory_limit','1024M');
-	    
+
 	    $options = array(//'fields'=>array('id','nro_denuncia','ubicacion','horizontal','vertical'),,'Denuncia.distrito_id'=>'811'
 	        'conditions' => array(//'Denuncia.nro_denuncia'=>'10354410',
 	            //'Denuncia.id'=>'482616',
@@ -159,31 +159,31 @@ class DenunciasController extends AppController {
 	        //'recursive' => -1,
 	        //'order' => array('nombdist')
 	    );
-	    
+
 	    $denuncias = $this->Denuncia->find('all',$options);
 	    //pr($denuncias);exit;
-	    
+
 	    $transaccion = true;
 	    foreach ($denuncias as $denuncia){
 	        //pr($denuncia['Denuncia']);exit;
 	        $direccion = $denuncia['Denuncia']['ubicacion'].' '.$denuncia['Distrito']['nombdist'].' '.$denuncia['Distrito']['nombprov'];
 	        //pr($direccion);exit;
-	        
-	        $direccion = str_replace(' ', '+', $direccion);        
+
+	        $direccion = str_replace(' ', '+', $direccion);
             //&components=country:PE
 	        //$url = "https://maps.googleapis.com/maps/api/geocode/json?address=1600+Amphitheatre+Parkway,+Mountain+View,+CA&key=YOUR_API_KEY";
 	        //$url = "https://maps.googleapis.com/maps/api/geocode/json?address=$direccion&components=country:PE&key=AIzaSyC7e2Iboim4HC-CfX2PmJR6BkSI8aSKb1U"; // Cesar
 	        $url = "https://maps.googleapis.com/maps/api/geocode/json?address=$direccion&components=country:PE&key=AIzaSyCuTvwg-QiTAvdnff1U8VT74q_iUAsyL2g"; // Emma
-	        //$url = "https://maps.googleapis.com/maps/api/geocode/json?address=$direccion&components=country:PE&key=AIzaSyAHt7TwBL4nlTAjoN9-jQdqyaN-fj3u41g"; // Luis	        
+	        //$url = "https://maps.googleapis.com/maps/api/geocode/json?address=$direccion&components=country:PE&key=AIzaSyAHt7TwBL4nlTAjoN9-jQdqyaN-fj3u41g"; // Luis
 	        //$url = "https://maps.googleapis.com/maps/api/geocode/json?address=$direccion&components=country:PE&key=AIzaSyCGmE5ncruwjisHFKR-iMeV9ceiDk0FuPg"; // Henry
-	        //pr($url); 
+	        //pr($url);
 	        //exit;
-	        
+
 	        $geo = file_get_contents($url);
-	        
+
 	        $geo = json_decode($geo, true); // Convert the JSON to an array
 	        //pr($geo); exit;
-	        if (isset($geo['status']) && ($geo['status'] == 'OK')) {	            
+	        if (isset($geo['status']) && ($geo['status'] == 'OK')) {
 	            $denuncia['Denuncia']['vertical']          = $latitud  = number_format($geo['results'][0]['geometry']['location']['lat'],6,'.',''); // Latitude
 	            $denuncia['Denuncia']['horizontal']        = $longitud = number_format($geo['results'][0]['geometry']['location']['lng'],6,'.',''); // Longitude
 	            $denuncia['Denuncia']['estado_google']     = $geo['status'];
@@ -191,23 +191,23 @@ class DenunciasController extends AppController {
 	            $denuncia['Denuncia']['geom']              = null;
 	            $denuncia['Denuncia']['ubicacion_google']  = substr($geo['results'][0]['formatted_address'],0,500);
 	        }else{
-	            $denuncia['Denuncia']['estado_google']    = 'KO';	            
+	            $denuncia['Denuncia']['estado_google']    = 'KO';
 	        }
-	        
+
 	        if(!$this->Denuncia->save($denuncia['Denuncia'])){
 	            //pr($this->Denuncia->validationErrors); exit;
 	            $transaccion = false;
 	            break;
 	        }
-	        //pr($denuncia['Denuncia']); exit; 
-	    }	    
-	    
+	        //pr($denuncia['Denuncia']); exit;
+	    }
+
 	    if ($transaccion){
 	        $this->Flash->success(__('Las coordenadas de las denuncias se ha guardado.'));
 	    }else{
 	        $this->Flash->error(__('No se pudo guardar la denuncia. Por favor, inténtelo de nuevo.'));
 	    }
-	    
+
 	}
 /**
  * view method
