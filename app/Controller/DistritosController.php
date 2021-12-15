@@ -455,7 +455,7 @@ class DistritosController extends AppController {
 	    
 	    //No se esta conciderando OTROS y vIOLENCIA FAMILIAR
 	    $denuncias = $this->TipoDenuncia->find('all', array('fields'       => array('TipoDenuncia.id','TipoDenuncia.nombre'),
-                                                	        'conditions'   => array('TipoDenuncia.id' => array(13)),
+                                                	        'conditions'   => array('TipoDenuncia.id' => array(13,14)),
 	                                                         'recursive'   => -1
                                                 	    ));
 	    
@@ -529,7 +529,7 @@ class DistritosController extends AppController {
                     	            'fill'              =>  false,
 	                                'backgroundColor'   =>  $backgroundColor[$i],
 	                                'borderColor'       =>  $borderColor[$i],
-	                                'hidden'            =>  ( in_array($row['TipoDenuncia']['id'], array(13)))?false:true,
+	                                'hidden'            =>  ( in_array($row['TipoDenuncia']['id'], array(13,14)))?false:true,
 	                                'data'              =>  $data//array(881,734,786,670,761,780,669,885,415),
                     	        );
 	    }

@@ -471,7 +471,7 @@ class ReportesController extends AppController {
                 'horas' => '12:00 AM - 11:59 PM',
                 'horas1' => 0,
                 'horas2' => 24,
-                'delito'=> array('robo_de_celular'=>'on')
+                'delito'=> array('robo_de_celular'=>'on','sicariato')
                 );
             $this->request->query = $filtros;
         }
@@ -623,7 +623,7 @@ $distrito_ids = array(797,784,796,827,787,785,779,750,740,739);//Sur*/
         //pr($horas1);
         //pr($horas2);
         $tipoDenuncias = $this->TipoDenuncia->find('all', array('fields'       => array('TipoDenuncia.id','TipoDenuncia.nombre'),
-                                                                'conditions'   => array('TipoDenuncia.id' => array(13),'TipoDenuncia.estado' => 'A'),
+                                                                'conditions'   => array('TipoDenuncia.id' => array(13,14),'TipoDenuncia.estado' => 'A'),
                                                                 /*'conditions'   => array('TipoDenuncia.id' => array(1,2,3,4,5,6,7,9,10,11),'TipoDenuncia.estado' => 'A'),*/
                                                 'recursive'   => -1
                                             ));
@@ -709,7 +709,7 @@ $distrito_ids = array(797,784,796,827,787,785,779,750,740,739);//Sur*/
                 'horas' => '12:00 AM - 11:59 PM',
                 'horas1' => 0,
                 'horas2' => 24,
-                'delito'=> array('robo_de_celular'=>'on')
+                'delito'=> array('robo_de_celular'=>'on','sicariato')
                 );
             $this->request->query = $filtros;
         }
