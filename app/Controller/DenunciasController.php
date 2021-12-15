@@ -35,6 +35,7 @@ class DenunciasController extends AppController {
 	}
 
 	//denuncias json
+	//denuncias comentarios json listo
 	public function denunciasgeojson(){
 	    $this->layout = false;
 	    $this->autoRender = false;
