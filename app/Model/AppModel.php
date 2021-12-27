@@ -41,16 +41,18 @@ class AppModel extends Model {
     public function beforeSave($options = array()) {
         
         //Editar
-        if (isset($this->data[$this->alias]['id']) && $this->data[$this->alias]['id'] > 0 && isset($this->data[$this->alias]['modificador']) && isset($this->data[$this->alias]['modificado'])){
-            $user = $this->getCurrentUser();           
+        //if (isset($this->data[$this->alias]['id']) && $this->data[$this->alias]['id'] > 0 && isset($this->data[$this->alias]['modificador']) && isset($this->data[$this->alias]['modificado'])){
+        if (isset($this->data[$this->alias]['id']) && $this->data[$this->alias]['id'] > 0){
+            $user = $this->getCurrentUser();
             $this->data[$this->alias]['modificador'] = $user['username'];
             $this->data[$this->alias]['modificado'] = date("Y-m-d H:i:s");
         }//Agregar
-        if (!isset($this->data[$this->alias]['id']) && isset($this->data[$this->alias]['creador']) && isset($this->data[$this->alias]['creado'])){
+        //if (!isset($this->data[$this->alias]['id']) && isset($this->data[$this->alias]['creador']) && isset($this->data[$this->alias]['creado'])){
+        if (!isset($this->data[$this->alias]['id'])){
             $user = $this->getCurrentUser();
             $this->data[$this->alias]['creador'] = $user['username'];
             $this->data[$this->alias]['creado'] = date("Y-m-d H:i:s");
         }
-       return true;
+        return true;
     }
 }

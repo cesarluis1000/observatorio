@@ -38,6 +38,12 @@
  */
 	CakePlugin::routes();
 
+	Router::resourceMap( array(
+	    array( 'action' => 'index2', 'method' => 'GET', 'id' => false ),
+	    array( 'action' => 'view2', 'method' => 'GET', 'id' => true ),
+	) );
+	Router::mapResources(array('noticias'), array('prefix'=>'api'));
+	Router::parseExtensions();
 /**
  * Load the CakePHP default routes. Only remove this if you do not want to use
  * the built-in default routes.

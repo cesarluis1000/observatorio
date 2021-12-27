@@ -59,12 +59,14 @@ class AppController extends Controller {
         ini_set('max_execution_time', 300);
         ini_set('precision',16);
         $this->paginate = array('limit'=>200);
-		$this->a_estados = array('A'=>'Activo','D'=>'Desactivo');
+        $this->a_estados = array('A'=>'Activo','D'=>'Desactivo');
+        $this->uploadFolder = WWW_ROOT. 'img'. DS .'noticias';
+        $this->set('webFolder',"img/noticias/");
 		$this->set('a_estados',$this->a_estados);
 		
 		$this->Auth->unauthorizedRedirect=FALSE ;
 		$this->Auth->authError=__('You are not authorized to access that location.');		
-		$this->Auth->allow('login','logout','display','index','denunciasgeojson',
+		$this->Auth->allow('login','logout','display','index2','view2','denunciasgeojson',
 		    'delitosgeojson','delitosgeojson','institucionesgeojson','geojson','listjson',
 		    'panamericanosgeojson','panamericanos','contenido','delitoschartjs','mapaDelito','home'
 		    );
