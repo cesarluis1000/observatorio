@@ -53,7 +53,7 @@ class NoticiasController extends AppController {
 	        'limit'=> $limit,
 	        'recursive' => 1);
 	    
-	    $noticias  = $this->Noticia->find('all',$options);
+	    $results  = $this->Noticia->find('all',$options);
 	    //pr($this->Message->getLastQuery());
 	    $optionsCount  = array('conditions'=> $conditions,
 	        'order' => array('fecha DESC'),
@@ -67,10 +67,10 @@ class NoticiasController extends AppController {
 	    $offsetPrev    = $offset - $limit;
 	    $previous      = ($offsetPrev < 0) ? null : Router::url('/', true).'api/noticias.json?&offset='.$offsetPrev.'&limit='.$limit;
 	    
-	    $this->set(compact('count', 'next', 'previous', 'noticias'));
+	    $this->set(compact('count', 'next', 'previous', 'results'));
 	    
 	    $this->set(array(
-	        '_serialize' => array('count', 'next', 'previous', 'noticias')
+	        '_serialize' => array('count', 'next', 'previous', 'results')
 	    ));
 	}
 /**
