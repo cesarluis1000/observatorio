@@ -35,6 +35,7 @@
 <table class="table table-hover table-condensed">
 	<thead>
 	<tr>
+			<th><?php echo $this->Paginator->sort('id'); ?></th>
 			<th><?php echo $this->Paginator->sort('titulo'); ?></th>
 			<th><?php echo $this->Paginator->sort('fecha'); ?></th>
 			<th><?php echo $this->Paginator->sort('estado'); ?></th>
@@ -46,6 +47,7 @@
 	<tbody>
 	<?php foreach ($noticias as $noticia): ?>
 	<tr>
+		<td><?php echo h($noticia['Noticia']['id']); ?>&nbsp;</td>
 		<td><?php echo h($noticia['Noticia']['titulo']); ?>&nbsp;</td>
 		<td><?php echo h($noticia['Noticia']['fecha']); ?>&nbsp;</td>
 		<td><?php echo h($a_estados[$noticia['Noticia']['estado']]); ?>&nbsp;</td>
