@@ -54,6 +54,7 @@ class NoticiasController extends AppController {
 	        'recursive' => 1);
 	    
 	    $results  = $this->Noticia->find('all',$options);
+	    $results = Hash::extract($results, '{n}.Noticia');
 	    //pr($this->Message->getLastQuery());
 	    $optionsCount  = array('conditions'=> $conditions,
 	        'order' => array('fecha DESC'),
