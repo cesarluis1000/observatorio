@@ -1,7 +1,7 @@
     <div class="row">
 
     	<div class="col-md-2">
-				 <legend><?php echo __('Cuadro de Delito'); ?></legend>
+				 <legend><?php echo __('Cuadro de Delitos'); ?></legend>
                  <?php
 
                     echo $this->Form->create('Reportes', array(
