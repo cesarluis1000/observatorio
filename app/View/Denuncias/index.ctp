@@ -3,14 +3,16 @@
 <!-- Buscador -->
 <div class="row">
 	<div class="col-md-10">
-			<?php echo $this->Form->create('Denuncia', array('type' => 'get','url' => 'index','class' => 'form-inline','inputDefaults'=>array('div' => array('class' => 'form-group'),'class'=>'form-control input-xs'))); ?>	
+			<?php echo $this->Form->create('Denuncia', array('type' => 'get','url' => 'index','class' => 'form-inline','inputDefaults'=>array('div' => array('class' => 'form-group'),'class'=>'form-control input-xs'))); ?>
 			<?php echo $this->Form->input($campo,array('required' => false,'label'=>false)); ?>
 			<?php echo $this->Form->button('Buscar', array('type' => 'submit','class'=>'btn btn-primary btn-xs'));  ?>
-			<?php echo $this->Form->button('Limpiar', array('type' => 'reset','class'=>'btn btn-primary btn-xs'));  ?>		
-			<?php echo $this->Form->end(); ?>	
+			<?php echo $this->Form->button('Limpiar', array('type' => 'reset','class'=>'btn btn-primary btn-xs'));  ?>
+			<?php echo $this->Form->end(); ?>
      </div>
      <div class="col-md-2 text-right">
     		<?php echo $this->Html->link($this->Html->tag('span','', array('class' => 'glyphicon glyphicon-file')).__(' Nuevo'),array('action' => 'add'),array('class' => 'btn btn-success btn-xs','escape'=>false)); ?>
+			<?php echo $this->Html->link($this->Html->tag('span','', array('class' => 'glyphicon glyphicon-th-list')).__(' Nuevo'),
+        		    array('controller' => 'Denuncias', 'action' => 'add_list',$denuncia['Denuncia']['id']),array('class' => 'btn btn-default btn-xs','escape'=>false)); ?>
     </div>
 </div>
 
@@ -27,7 +29,7 @@
 				?>
             </ul>
         </nav>
-    </div>        
+    </div>
 </div>
 
 <!-- Contenido de los registros y las acciones -->
@@ -73,5 +75,5 @@
 	</tr>
 <?php endforeach; ?>
 	</tbody>
-	</table>	
+	</table>
 </div>

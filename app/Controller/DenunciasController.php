@@ -243,6 +243,35 @@ class DenunciasController extends AppController {
 		$this->set(compact('distritos'));
 	}
 
+	//agregar denuncias por bloques 
+	public function add_list() {
+	    if ($this->request->is('post')) {
+	        $lineSplit = preg_split('/[\r\n]+/', $this->request->data['Denuncia']['denuncias'], -1, PREG_SPLIT_NO_EMPTY);
+	        unset($this->request->data['Denuncia']);
+	        foreach ($lineSplit as $line) {
+	            $splitArr = explode("\t", $line);
+	            $this->request->data[] = array('nro_denuncia' => $splitArr[0],
+					'distrito_id'     	=> $splitArr[1],
+					'categoria'      	=> $splitArr[2],
+	                'ubicacion'      	=> $splitArr[3],
+	                'fecha_hecho'     	=> $splitArr[4],
+	                'fecha_registro'   	=> $splitArr[5],
+	                'comiseria' 		=> $splitArr[6],
+	                'longitud'  		=> $splitArr[7],
+					'latitud'   		=> $splitArr[8],
+	            );
+	        }
+	        //pr($this->request->data);
+	        $this->Denuncia->create();
+	        if ($this->Denuncia->saveMany($this->request->data)) {
+	            $this->Flash->success(__('Las denuncias se han guardado.'));
+	            return $this->redirect(array('controller' => 'Denuncias', 'action' => 'index'));
+	        } else {
+	            $this->Flash->error(__('The denuncias could not be saved. Please, try again.'));
+	        }
+	    }
+	}
+
 /**
  * edit method
  *
