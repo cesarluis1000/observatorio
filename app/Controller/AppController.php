@@ -55,35 +55,40 @@ class AppController extends Controller {
     public $helpers = array('Html', 'Form', 'Session');
 
 	public $a_estados;
+	public $a_sexos;
+	public $sit_juridi;
     function beforeFilter(){
         ini_set('max_execution_time', 300);
         ini_set('precision',16);
         $this->paginate = array('limit'=>200);
         $this->a_estados = array('A'=>'Activo','D'=>'Desactivo');
+		$this->a_sexos = array('M'=>'Masculino','F'=>'Femenino');
+		$this->sit_juridi = array('Procesado'=>'Procesado','Sentenciado'=>'Sentenciado');
         $this->uploadFolder = WWW_ROOT. 'img'. DS .'noticias';
         $this->set('webFolder',"img/noticias/");
 		$this->set('a_estados',$this->a_estados);
-		
+	    $this->set('a_sexos', $this->a_sexos);
+		$this->set('sit_juridi', $this->sit_juridi);
+
 		$this->Auth->unauthorizedRedirect=FALSE ;
-		$this->Auth->authError=__('You are not authorized to access that location.');		
+		$this->Auth->authError=__('You are not authorized to access that location.');
 		$this->Auth->allow('login','logout','display','index2','view2','denunciasgeojson',
 		    'delitosgeojson','delitosgeojson','institucionesgeojson','geojson','listjson',
 		    'panamericanosgeojson','panamericanos','contenido','delitoschartjs','mapaDelito','home'
-		    );
-		
+		);
 		$this->__checkAuth();
 		$this->__observatorio();
     }
 
     private function __observatorio(){
         //Acciones que utilizarar el layout observatorio
-        
+
         $this->acciones_ecommerce = array('mapaDelito');
         if (in_array($this->action, $this->acciones_ecommerce)){
             $this->layout = 'observatorio';
-        }    
+        }
     }
-    
+
     private function __checkAuth() {
         $currentUser = $this->Auth->user();
         //pr($currentUser);
@@ -97,18 +102,18 @@ class AppController extends Controller {
            $params1 = array('conditions' => array('Menu.aro_id' => $aro['Aro']['id'],'Menu.parent_id' => ''),'order' => 'Menu.lft');
            $a_menu = $this->Menu->find('all',$params1);
            foreach ($a_menu as $id => $item){
-               
+
                $this->Menu->unbindModel(array('belongsTo' => array('ParentMenu')));
                $this->Menu->unbindModel(array('hasMany' => array('ChildMenu')));
                $params2 = array('conditions' => array('Menu.parent_id' => $item['Menu']['id']),'order' => 'Menu.lft');
                $a_menu1 = $this->Menu->find('all',$params2);
-               
+
                foreach ($a_menu1 as $id1 => $item1){
                   $params3 = array('conditions' => array('Aco.id' => $item1['Aco']['parent_id']),'recursive' => 0);
                   $a_aco_controlador = $this->Acl->Aco->find('first',$params3);
                   $a_menu1[$id1]['Controlador'] = $a_aco_controlador['Aco'];
                }
-               
+
                $a_menu[$id]['Acciones'] = $a_menu1;
            }
         }
