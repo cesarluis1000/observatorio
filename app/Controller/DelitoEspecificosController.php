@@ -27,7 +27,7 @@ class DelitoEspecificosController extends AppController {
 		//Si se busca campo displayField del modelo
 		$campo = !empty($this->DelitoEspecifico->displayField)?$this->DelitoEspecifico->displayField:'id';
 		$this->set('campo',$campo);
-		if (!empty($this->request->query[$campo])){	    
+		if (!empty($this->request->query[$campo])){
 		    $nombre = $this->request->query[$campo];
 			$this->request->data['DelitoEspecifico'][$campo] = $nombre ;
 			$conditions = array('conditions' => array('DelitoEspecifico.'.$campo.' LIKE' => '%'.$nombre.'%'));
@@ -69,6 +69,174 @@ class DelitoEspecificosController extends AppController {
 		$delitoGenericos = $this->DelitoEspecifico->DelitoGenerico->find('list');
 		$this->set(compact('delitoGenericos'));
 	}
+
+	public function listjson(){
+	    $this->autoRender = false;
+	    $this->response->type('json');
+
+	    $delito_generico_id = $this->request->query['delito_generico_id'];
+
+	    $options = array('fields'=>array('id','nombre'),
+	        'conditions' => array(
+				'delito_generico_id' => $delito_generico_id
+			),
+	        'recursive' => -1,
+	        'order' => array('nombre')
+		);
+
+	    /*if (isset($this->request->query['delito_especifico_id'])){
+	        $delito_especifico_id = $this->request->query['delito_especifico_id'];
+	        $options['conditions']['id'] = $delito_especifico_id;
+	    }*/
+
+	    $de_especificos = $this->DelitoEspecifico->find('all',$options);
+	    $json = json_encode($de_especificos);
+	    $this->response->body($json);
+	}
+
+
+	/*Configurar cuadro de presos*/
+	  public function presoschartjs(){
+	    $this->layout = false;
+	    $this->autoRender = false;
+	    $this->loadModel('Preso');
+	    $this->loadModel('TipoDocumento');
+
+		$delito_generico_id = $this->request->query['delito_generico_id']; //generico
+
+	    if (isset($this->request->query['delito_especifico_id']) && !empty($this->request->query['delito_especifico_id'])){ //especifico
+	        $especifico_ids = $this->request->query['delito_especifico_id']; // especifico
+	    }else{
+	        /*
+	         $options           = array('fields'=>array('DISTINCT distrito_id'),'recursive' => -1);
+	         $polygon_activo    = $this->Distrito->DistPolygon->find('all',$options);
+	         $distrito_ids      = Hash::extract($polygon_activo, '{n}.DistPolygon.distrito_id');
+	         */
+	        $options       = array('fields'=>array('id'),
+                    	            'conditions'   =>  array('delito_generico_id' => $delito_generico_id), //generico
+                    	            'recursive'    =>  -1);
+	        $especificos_act = $this->DelitoEspecifico->find('all',$options);
+	        $especifico_ids  = Hash::extract($especificos_act, '{n}.DelitoEspecifico.id'); //especifico
+
+	    }
+
+
+	    //No se esta conciderando OTROS y vIOLENCIA FAMILIAR
+	    $presos = $this->TipoDocumento->find('all', array('fields'       => array('TipoDocumento.id','TipoDocumento.nombre'),
+                                                	       'conditions'   => array('TipoDocumento.id' => array(1,2)),
+	                                                       'recursive'   => -1
+                                                	    ));
+
+	    $datasets = array();
+
+	    $backgroundColor   = array(
+	        'RGBA(255,  255,   0, 0.2)', //YELLOW
+	        'RGBA(255,    0, 255, 0.2)', //FUCHSIA
+	        'RGBA(  0,  255, 255, 0.2)', //AQUA
+	        'RGBA(  0,  128,   0, 0.2)', //GREEN
+	        'RGBA(255,    0,   0, 0.2)', //RED
+	        'RGBA(  0,    0, 255, 0.2)', //BLUE
+	        'RGBA(128,    0,   0, 0.2)', //MAROON
+	        'RGBA(128,    0, 128, 0.2)', //PURPLE
+	        'RGBA(  0,    0,   0, 0.2)', //BLACK
+	        'RGBA(  0,    0, 128, 0.2)', //NAVY
+	        'RGBA(  0,  128, 128, 0.2)'); //TEAL
+
+	    $borderColor       = array(
+	        'RGBA(255, 255,    0, 0.8)', //YELLOW
+	        'RGBA(255,   0,  255, 0.8)', //FUCHSIA
+	        'RGBA(  0,  255, 255, 0.8)', //AQUA
+	        'RGBA(  0,  128,   0, 0.8)', //GREEN
+	        'RGBA(255,    0,   0, 0.8)', //RED
+	        'RGBA(  0,    0, 255, 0.8)', //BLUE
+	        'RGBA(128,    0,   0, 0.8)', //MAROON
+	        'RGBA(128,    0, 128, 0.8)', //PURPLE
+	        'RGBA(  0,    0,   0, 0.8)', //BLACK
+	        'RGBA(  0,    0, 128, 0.8)', //NAVY
+	        'RGBA(  0,  128, 128, 0.8)'); //TEAL
+
+	    //pr($denuncias); exit;
+	    /*pr($backgroundColor);
+	    pr($borderColor);
+	    pr($denuncias);
+	    exit;*/
+	    foreach ($presos as $i => $row){
+
+	        $conditions    = array('Preso.tipo_documento_id'    => $row['TipoDocumento']['id'],
+	                               'Preso.fecha_ingreso >='  => '2017-01-31',
+								   'Preso.delito_especifico_id' => $especifico_ids,
+								   //'Preso.sit_juridi' => $juridica_ids,
+								   //'Preso.sexo' => 'Masculino',
+	                               //'Preso.delito_especifico_id'  => $especificos_ids,
+	                               //'Denuncia.estado_google'  => 'OK',
+	                               //'MONTH(fecha_hecho)' => 1
+	                               );
+	        $options       = array(
+                	            'conditions' => $conditions,
+	                            'fields'=>array('Preso.tipo_documento_id','YEAR(fecha_ingreso) as anio', 'MONTH(fecha_ingreso) as mes', 'COUNT(id) as preso_count'),
+                	            //'joins' => array('LEFT JOIN `entities` AS Entity ON `Entity`.`category_id` = `Category`.`id`'),
+	                            'group' => array('YEAR(fecha_ingreso)', 'MONTH(fecha_ingreso)'),'recursive'=>-1
+                	            //'contain' => array('Domain' => array('fields' => array('title')))
+                	        );
+
+	        $preso_cant = $this->Preso->find('all', $options);
+
+	        $data = Hash::extract($preso_cant, '{n}.0.preso_count');
+	        $data = Hash::combine($preso_cant, '{n}.0.mes', '{n}.0.preso_count');
+	        //pr($data);
+
+	        $mes_fin = 9;
+	        for ($mes_ini=1; $mes_ini <= $mes_fin; $mes_ini++){
+	            if (!isset($data[$mes_ini])){
+	                $data[$mes_ini] = 0;
+	            }
+	        }
+	        ksort($data);
+	        $data = implode(',',$data);
+	        $data =  explode(',', $data);
+	        //pr($data);
+
+	        $datasets[$i]  = array( 'label'             =>  $row['TipoDocumento']['nombre'],
+                    	            'fill'              =>  false,
+	                                'backgroundColor'   =>  $backgroundColor[$i],
+	                                'borderColor'       =>  $borderColor[$i],
+	                                'hidden'            =>  ( in_array($row['TipoDocumento']['id'], array(1,2)))?false:true,
+	                                'data'              =>  $data//array(881,734,786,670,761,780,669,885,415),
+                    	        );
+	    }
+
+		/**Detalle de Cuadro Estadistico */
+	    $presos2 = array(  'type'      => 'line',
+	        'data'      =>  array(  'labels' => array('Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Setiembre', 'Octubre', 'Noviembre', 'Diciembre'),
+	            'datasets'  =>  $datasets
+	        ),
+	        'options'   =>  array(  'responsive'    => true,
+	            'title'         => array(   'display'   =>  true,
+	                'text'      =>  'Cuadro Estadistico'),
+	            'tooltips'      => array(   'mode'      =>  'index',
+	                'intersect' =>  false),
+	            'hover'         => array(   'mode'      =>  'nearest',
+	                'intersect' =>  true),
+	            'scales'        =>  array(  'xAxes'     => array(array( 'display'       =>  true,
+	                'scaleLabel'    =>  array(  'display'       =>  true,
+	                    'labelString'   =>  'Meses')
+	            )
+	            ),
+	                'yAxes'     => array(array( 'display'       =>  true,
+	                    'scaleLabel'    =>  array(  'display'       =>  true,
+	                        'labelString'   =>  'Valor')
+	                )
+	                )
+	            )
+	        )
+	    );
+	    //pr($delitos2);
+	    //pr($delitos2);exit;
+	    //$json = json_encode($delitos);
+	    $json = json_encode($presos2);
+	    $this->response->body($json);
+	}
+
 
 /**
  * edit method

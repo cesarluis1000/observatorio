@@ -5,11 +5,12 @@ var randomScalingFactor = function() {
     return Math.round(Math.random() * 100);
 };
 
-var departamento_id = $('#ReportesDepartamentoId option:selected').val();
-var provincia_id 	= $('#ReportesProvinciaId option:selected').val();
-var distrito_id 	= $('#ReportesDistritoId option:selected').val();
+var delito_generico_id = $('#ReportesDelitoGenericoId option:selected').val();
+var delito_especifico_id = $('#ReportesDelitoEspecificoId option:selected').val();
+//var sit_juridi = $('#ReportesSitJuridi option:selected').val();
+//console.log(sit_juridi);
 var base  = $('base').attr('href');
-var url   = base+'Distritos/delitoschartjs?departamento_id='+departamento_id+'&provincia_id=' + provincia_id + '&distrito_id='+ distrito_id;
+var url   = base+'DelitoEspecificos/presoschartjs?delito_generico_id='+delito_generico_id+'&delito_especifico_id='+delito_especifico_id;
 $.ajax({
 	url : url,
 	dataType : 'json',

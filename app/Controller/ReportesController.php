@@ -739,6 +739,7 @@ $distrito_ids = array(797,784,796,827,787,785,779,750,740,739);//Sur*/
             $departamento_id = 0;
         }
 
+
         $distritos = null;
         $a_distrito_id = null;
         if (isset($this->request->query['provincia_id']) && !empty($this->request->query['provincia_id'])){
@@ -747,6 +748,7 @@ $distrito_ids = array(797,784,796,827,787,785,779,750,740,739);//Sur*/
                              'order' =>array('Distrito.nombdist' => 'asc'),
                              'recursive' => -1
                             );
+
 
             /*****Distrito del Gerente de seguridad******/
             $currentUser = $this->Auth->user();
@@ -760,7 +762,6 @@ $distrito_ids = array(797,784,796,827,787,785,779,750,740,739);//Sur*/
             }
             /***********/
             $distritos = $this->Distrito->find('list',$options);
-
 
         }else{
             $options           = array('fields'     => array('DISTINCT id'),
@@ -856,12 +857,106 @@ $distrito_ids = array(797,784,796,827,787,785,779,750,740,739);//Sur*/
 
 		$total = $this->Denuncia->find('count',$options);
 
+
 		if (isset($this->request->query['delito'])){
             $this->request->data['Reportes']['delito'] = $this->request->query['delito'];
         }
 
+		/*var_dump($this->request->query['delito']);
+		exit;*/
+
         $this->set(compact('departamentos','provincias','distritos','distrito','denuncias','total','horas1','horas2'));
 
+    }
+
+
+	public function cuadroPreso(){
+
+        /********Filtros momentaneos para Perla y Iquitos*******/
+        unset($this->request->query['n']);
+        if(empty($this->request->query)){
+            $filtros = Array
+            (
+                'delito_generico_id' => 1,
+                'delito_especifico_id' => 1,
+				//'sit_juridi' => 'Procesado',
+				//'sexo' => 'M',
+				'fecha_ingreso' => '2017-03-27',
+                //'tipo_documento_id' =>1,
+                );
+            $this->request->query = $filtros;
+        }
+
+        /********Filtros momentaneos para Perla y Iquitos*******/
+
+		$this->loadModel('DelitoGenerico');
+        $this->loadModel('DelitoEspecifico');
+        //$this->loadModel('TipoDocumento');
+        $this->loadModel('Preso');
+        $this->loadModel('Parametro');
+
+        $options = array('recursive'=>-1);
+        $de_genericos = $this->DelitoGenerico->find('list',$options);
+		//print_r($de_genericos);exit;
+
+        //pr($this->request->query);
+        $conditions = array();
+        $de_especificos = null;
+        if (isset($this->request->query['delito_generico_id'])){
+            $delito_generico_id = $this->request->data['Reportes']['delito_generico_id'] = $this->request->query['delito_generico_id'];
+            $options = array('conditions' => array('delito_generico_id' => $delito_generico_id),
+                'recursive' => -1
+            );
+            $de_especificos = $this->DelitoEspecifico->find('list',$options);
+        }else{
+            $delito_generico_id = 0;
+        }
+
+		if (isset($this->request->query['delito_especifico_id']) && !empty($this->request->query['delito_especifico_id'])){
+            $delito_especifico_id = $de_especifico_ids = $this->request->data['Reportes']['delito_especifico_id'] = $this->request->query['delito_especifico_id'];
+            $options = array('conditions' => array('delito_especifico_id' => $delito_especifico_id),
+                             'recursive' => -1
+                            );
+
+            /*****Distrito del Gerente de seguridad******/
+            $currentUser = $this->Auth->user();
+            $options2 = array('conditions' => array('variable' => $currentUser['username'],
+                                                    'modulo' => 'municipalidad'));
+            $param = $this->Parametro->find('first',$options2);
+
+            if (isset($param['Parametro']['valor']) && !empty($param['Parametro']['valor'])){
+                $options['conditions']['id'] = $param['Parametro']['valor'];
+                //$this->request->query['distrito_id'] = $param['Parametro']['valor'];
+            }
+            /***********/
+            //$distritos = $this->Distrito->find('list',$options);
+
+        }else{
+            $options           = array('fields'     => array('DISTINCT id'),
+                'conditions'   =>  array('delito_generico_id' => $delito_generico_id),
+                'recursive'  => -1);
+            $de_especificos_act    = $this->DelitoEspecifico->DelitoGenerico->find('all',$options);
+            $de_especifico_ids     = Hash::extract($de_especificos_act, '{n}.DelitoEspecifico.id');
+        }
+
+
+		if (isset($this->request->query['fecha_ingreso'])){
+            $this->request->data['Reportes']['fecha_ingreso'] = $this->request->query['fecha_ingreso'];
+        }else{
+            $this->request->data['Reportes']['fecha_ingreso'] = '2019-09-01';
+        }
+
+		$conditions = array_merge($conditions,array("fecha_ingreso >=" => $this->request->data['Reportes']['fecha_ingreso']));
+
+		$options = array('fields' => array('Preso.id'),
+			'conditions'=> $conditions
+		);
+
+		$total = $this->Preso->find('count',$options);
+
+
+		$this->set(compact('de_genericos','de_especificos','presos','total'));
 
     }
+
 }

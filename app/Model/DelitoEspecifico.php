@@ -13,7 +13,7 @@ class DelitoEspecifico extends AppModel {
  *
  * @var string
  */
-	public $displayField = 'delito_generico_id';
+	public $displayField = 'nombre';
 
 /**
  * Validation rules
