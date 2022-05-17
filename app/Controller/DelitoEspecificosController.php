@@ -84,10 +84,6 @@ class DelitoEspecificosController extends AppController {
 	        'order' => array('nombre')
 		);
 
-	    /*if (isset($this->request->query['delito_especifico_id'])){
-	        $delito_especifico_id = $this->request->query['delito_especifico_id'];
-	        $options['conditions']['id'] = $delito_especifico_id;
-	    }*/
 
 	    $de_especificos = $this->DelitoEspecifico->find('all',$options);
 	    $json = json_encode($de_especificos);
@@ -127,6 +123,25 @@ class DelitoEspecificosController extends AppController {
 	                                                       'recursive'   => -1
                                                 	    ));
 
+		//sit_juridi
+		$sit_juridi = $this->request->query['sit_juridi'];
+
+		if (isset($this->request->query['sit_juridi']) && !empty($this->request->query['sit_juridi'])){ //
+	        $sit_juridico_ids = $this->request->query['sit_juridi']; //
+	    }else{
+	        /*
+	         $options           = array('fields'=>array('DISTINCT distrito_id'),'recursive' => -1);
+	         $polygon_activo    = $this->Distrito->DistPolygon->find('all',$options);
+	         $distrito_ids      = Hash::extract($polygon_activo, '{n}.DistPolygon.distrito_id');
+	         */
+	        $options       = array('fields'=>array('id'),
+                    	            'conditions'   =>  array('sit_juridi' => $sit_juridi), //
+                    	            'recursive'    =>  -1);
+	        $sit_juridicos_act = $this->Preso->find('all',$options);
+	        $sit_juridico_ids  = Hash::extract($sit_juridicos_act, '{n}.Preso.id'); //
+
+	    }
+
 	    $datasets = array();
 
 	    $backgroundColor   = array(
@@ -163,9 +178,9 @@ class DelitoEspecificosController extends AppController {
 	    foreach ($presos as $i => $row){
 
 	        $conditions    = array('Preso.tipo_documento_id'    => $row['TipoDocumento']['id'],
-	                               'Preso.fecha_ingreso >='  => '2017-01-31',
+								   'Preso.fecha_ingreso >='  => '2017-01-01',
 								   'Preso.delito_especifico_id' => $especifico_ids,
-								   //'Preso.sit_juridi' => $juridica_ids,
+								   'Preso.sit_juridi' => $sit_juridico_ids,
 								   //'Preso.sexo' => 'Masculino',
 	                               //'Preso.delito_especifico_id'  => $especificos_ids,
 	                               //'Denuncia.estado_google'  => 'OK',
@@ -196,7 +211,7 @@ class DelitoEspecificosController extends AppController {
 	        $data =  explode(',', $data);
 	        //pr($data);
 
-	        $datasets[$i]  = array( 'label'             =>  $row['TipoDocumento']['nombre'],
+	        $datasets[$i]  = array('label'             =>  $row['TipoDocumento']['nombre'],
                     	            'fill'              =>  false,
 	                                'backgroundColor'   =>  $backgroundColor[$i],
 	                                'borderColor'       =>  $borderColor[$i],

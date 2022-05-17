@@ -7,17 +7,17 @@ var randomScalingFactor = function() {
 
 var delito_generico_id = $('#ReportesDelitoGenericoId option:selected').val();
 var delito_especifico_id = $('#ReportesDelitoEspecificoId option:selected').val();
-//var sit_juridi = $('#ReportesSitJuridi option:selected').val();
-//console.log(sit_juridi);
+var sit_juridi = $('#ReportesSitJuridi option:selected').val();
 var base  = $('base').attr('href');
-var url   = base+'DelitoEspecificos/presoschartjs?delito_generico_id='+delito_generico_id+'&delito_especifico_id='+delito_especifico_id;
+var url   = base+'DelitoEspecificos/presoschartjs?delito_generico_id='+delito_generico_id+'&delito_especifico_id='+delito_especifico_id+'&sit_juridi='+sit_juridi;
+
+
 $.ajax({
 	url : url,
 	dataType : 'json',
 	async : false,
 }).done(function(data) {
 	config = data;
-	//console.info(config);
 });
 
 var config2 = {
@@ -88,7 +88,6 @@ var config2 = {
 	}
 };
 
-//console.info(config2);
 
 window.onload = function() {
 	var ctx = document.getElementById('canvas').getContext('2d');

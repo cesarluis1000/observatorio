@@ -862,8 +862,6 @@ $distrito_ids = array(797,784,796,827,787,785,779,750,740,739);//Sur*/
             $this->request->data['Reportes']['delito'] = $this->request->query['delito'];
         }
 
-		/*var_dump($this->request->query['delito']);
-		exit;*/
 
         $this->set(compact('departamentos','provincias','distritos','distrito','denuncias','total','horas1','horas2'));
 
@@ -879,9 +877,9 @@ $distrito_ids = array(797,784,796,827,787,785,779,750,740,739);//Sur*/
             (
                 'delito_generico_id' => 1,
                 'delito_especifico_id' => 1,
-				//'sit_juridi' => 'Procesado',
+				'sit_juridi' => 'Procesado',
 				//'sexo' => 'M',
-				'fecha_ingreso' => '2017-03-27',
+				'fecha_ingreso' => '2017-01-01',
                 //'tipo_documento_id' =>1,
                 );
             $this->request->query = $filtros;
@@ -939,11 +937,16 @@ $distrito_ids = array(797,784,796,827,787,785,779,750,740,739);//Sur*/
             $de_especifico_ids     = Hash::extract($de_especificos_act, '{n}.DelitoEspecifico.id');
         }
 
+		if (isset($this->request->query['sit_juridi'])){
+            $this->request->data['Reportes']['sit_juridi'] = $this->request->query['sit_juridi'];
+        }else{
+            $this->request->data['Reportes']['sit_juridi'] = 'Procesado';
+        }
 
 		if (isset($this->request->query['fecha_ingreso'])){
             $this->request->data['Reportes']['fecha_ingreso'] = $this->request->query['fecha_ingreso'];
         }else{
-            $this->request->data['Reportes']['fecha_ingreso'] = '2019-09-01';
+            $this->request->data['Reportes']['fecha_ingreso'] = '2017-01-01';
         }
 
 		$conditions = array_merge($conditions,array("fecha_ingreso >=" => $this->request->data['Reportes']['fecha_ingreso']));
