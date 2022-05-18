@@ -879,7 +879,7 @@ $distrito_ids = array(797,784,796,827,787,785,779,750,740,739);//Sur*/
                 'delito_especifico_id' => 1,
 				'sit_juridi' => 'Procesado',
 				//'sexo' => 'M',
-				'fecha_ingreso' => '2017-01-01',
+				'fecha_ingreso' => '2021-01-01',
                 //'tipo_documento_id' =>1,
                 );
             $this->request->query = $filtros;
@@ -940,7 +940,7 @@ $distrito_ids = array(797,784,796,827,787,785,779,750,740,739);//Sur*/
 		if (isset($this->request->query['sit_juridi'])){
             $this->request->data['Reportes']['sit_juridi'] = $this->request->query['sit_juridi'];
         }else{
-            $this->request->data['Reportes']['sit_juridi'] = 'Procesado';
+            $this->request->data['Reportes']['sit_juridi'] = 'Sentenciado';
         }
 
 		if (isset($this->request->query['fecha_ingreso'])){
