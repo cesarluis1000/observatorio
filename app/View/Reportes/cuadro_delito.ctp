@@ -26,7 +26,7 @@
                 <?php echo $this->Form->input('departamento_id',array('label'=>array('class'=>'control-label col-sm-4'),'options'=> $departamentos,'empty' => 'Seleccionar')); ?>
                 <?php echo $this->Form->input('provincia_id',array('label'=>array('class'=>'control-label col-sm-4'),'options'=> $provincias,'empty' => 'Seleccionar')); ?>
                 <?php echo $this->Form->input('distrito_id',array('label'=>array('class'=>'control-label col-sm-4'),'options'=> $distritos,'empty' => 'Seleccionar')); ?>
-				<?php echo $this->Form->input('fecha_de',array('label'=>array('class'=>'control-label col-sm-4'),'type' => 'text','placeholder'=>'YYYY-MM-DD')); ?>
+				<?php echo $this->Form->input('fecha_ingreso',array('label'=>array('class'=>'control-label col-sm-4'),'type' => 'text','placeholder'=>'YYYY-MM-DD')); ?>
                 <?php echo $this->Form->input('hasta',array('label'=>array('class'=>'control-label col-sm-4'),'type' => 'text','placeholder'=>'YYYY-MM-DD')); ?>
 				<?php echo $this->Form->input('horas',array('label'=>array('class'=>'control-label col-sm-4'),'type' => 'text','readonly'=>'readonly')); ?>
 				<?php echo $this->Form->input('horas1',array('type' => 'hidden','value'=>$horas1)); ?>

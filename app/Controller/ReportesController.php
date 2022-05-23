@@ -947,13 +947,13 @@ $distrito_ids = array(797,784,796,827,787,785,779,750,740,739);//Sur*/
 		if (isset($this->request->query['fecha_ingreso'])){
             $this->request->data['Reportes']['fecha_ingreso'] = $this->request->query['fecha_ingreso'];
         }else{
-            $this->request->data['Reportes']['fecha_ingreso'] = '2019-09-01';
+            $this->request->data['Reportes']['fecha_ingreso'] = '2020-09-01';
         }
 
 		if (isset($this->request->query['hasta'])){
             $this->request->data['Reportes']['hasta'] = $this->request->query['hasta'];
         }else{
-            $this->request->data['Reportes']['hasta'] = '2019-09-30';
+            $this->request->data['Reportes']['hasta'] = '2020-09-30';
         }
 
 		$conditions = array_merge($conditions,array("fecha_ingreso >=" => $this->request->data['Reportes']['fecha_ingreso']));
