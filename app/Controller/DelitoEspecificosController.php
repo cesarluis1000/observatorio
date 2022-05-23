@@ -181,9 +181,8 @@ class DelitoEspecificosController extends AppController {
 								   'Preso.fecha_ingreso BETWEEN ? AND ?'  => array('2021-01-01','2021-12-31'),
 								   'Preso.delito_especifico_id' => $especifico_ids,
 								   'Preso.sit_juridi' => $sit_juridico_ids,
+								   'Preso.fecha_ingreso >='  =>  '2021-01-01',
 								   //'Preso.sexo' => 'Masculino',
-	                               //'Preso.delito_especifico_id'  => $especificos_ids,
-	                               //'Denuncia.estado_google'  => 'OK',
 	                               //'MONTH(fecha_hecho)' => 1
 								     //'Preso.fecha_ingreso >='  => '2017-01-01',
 	                               );
