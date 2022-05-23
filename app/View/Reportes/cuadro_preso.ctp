@@ -28,7 +28,7 @@
 				<?php echo $this->Form->input('sit_juridi',array('label'=>array('class'=>'control-label col-sm-4'),'options'=> $sit_juridi,'empty' => 'Seleccionar')); ?>
 				<?php //echo $this->Form->input('sexo',array('label'=>array('class'=>'control-label col-sm-4'),'options'=> $a_sexos,'empty' => 'Seleccionar')); ?>
 				<?php echo $this->Form->input('fecha_ingreso',array('label'=>array('class'=>'control-label col-sm-4'),'type' => 'text','placeholder'=>'YYYY-MM-DD')); ?>
-
+				<?php echo $this->Form->input('hasta',array('label'=>array('class'=>'control-label col-sm-4'),'type' => 'text','placeholder'=>'YYYY-MM-DD')); ?>
 
 
                 <div id="slider-range"></div>
